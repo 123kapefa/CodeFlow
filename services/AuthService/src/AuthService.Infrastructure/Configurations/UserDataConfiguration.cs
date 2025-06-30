@@ -13,6 +13,10 @@ public class UserDataConfiguration : IEntityTypeConfiguration<UserData>
 
         builder.HasKey(u => u.Id).HasName("pk_users_data_id");
 
+        builder.Property (u => u.IsExternal)
+           .HasColumnName ("is_external")
+           .IsRequired ();
+        
         builder.Property(u => u.Id)
             .HasColumnName("id")
             .IsRequired();
