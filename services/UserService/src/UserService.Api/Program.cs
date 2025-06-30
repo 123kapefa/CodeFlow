@@ -46,6 +46,23 @@ builder.Services.AddSwaggerGen (options => {
     });
 });
 
+builder.Services.AddControllers();
+
+builder.Services.AddDbContext<UserServiceDbContext> (options =>
+    options.UseNpgsql (builder.Configuration.GetConnectionString ("DefaultConnection")));
+
+builder.Services.AddScoped<IUserInfoService, UserInfoService> ();
+
+// Swagger
+builder.Services.AddEndpointsApiExplorer ();
+builder.Services.AddSwaggerGen (options => {
+    options.SwaggerDoc ("v1", new OpenApiInfo {
+        Title = "Product API",
+        Version = "v1",
+        Description = "Пример документации Swagger для ProductService"
+    });
+});
+
 var app = builder.Build();
 
 //TODO подумать как разрулить это (docker стартует в Production, а swagger запускается из Development)
@@ -66,8 +83,3 @@ app.UseDeveloperExceptionPage ();
 app.MapControllers ();
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
