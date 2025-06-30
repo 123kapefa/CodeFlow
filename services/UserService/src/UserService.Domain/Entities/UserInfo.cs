@@ -12,7 +12,7 @@ public class UserInfo {
     public string? Location { get; set; }
 
     public string? WebsiteUrl { get; set; }
-    public string? GitHubUrl { get; set; }    
+    public string? GitHubUrl { get; set; }
 
     public Guid UserStatisticId { get; set; }
     public UserStatistic UserStatistic { get; set; } = null!;
