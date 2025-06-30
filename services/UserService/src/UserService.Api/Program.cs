@@ -1,34 +1,42 @@
+using Microsoft.EntityFrameworkCore;
+using UserService.Application.Interfaces;
+using UserService.Infrastructure.Services;
+using UserService.Infrastructure.Data;
+using Microsoft.OpenApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//builder.Services.AddInfrastructure (builder.Configuration);
+
+builder.Services.AddControllers();
+
+builder.Services.AddDbContext<UserServiceDbContext> (options =>
+    options.UseNpgsql (builder.Configuration.GetConnectionString ("DefaultConnection")));
+
+builder.Services.AddScoped<IUserInfoService, UserInfoService> ();
+
+// Swagger
+builder.Services.AddEndpointsApiExplorer ();
+builder.Services.AddSwaggerGen (options => {
+    options.SwaggerDoc ("v1", new OpenApiInfo {
+        Title = "Product API",
+        Version = "v1",
+        Description = "Пример документации Swagger для ProductService"
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment ()) {
+    app.UseSwagger ();
+    app.UseSwaggerUI (options => {
+        options.SwaggerEndpoint ("/swagger/v1/swagger.json", "Product API v1");
+    });
+}
 
-app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseHttpsRedirection(); // ???????Don't need?????
+app.MapControllers ();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-});
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
