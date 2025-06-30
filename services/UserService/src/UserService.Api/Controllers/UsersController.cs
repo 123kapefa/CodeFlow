@@ -9,7 +9,7 @@ namespace UserService.Api.Controllers;
 public class UsersController : ControllerBase {
 
     private readonly IUserInfoService _userInfoService;
-    private const int PageSize = 20; // ???? ПОМЕНЯТЬ ????
+    private const int PageSize = 20; // ???? ПОМЕНЯТЬ или ПОЛУЧАТЬ ОТ UI ????
 
     public UsersController (IUserInfoService userInfoService) {
         _userInfoService = userInfoService;
