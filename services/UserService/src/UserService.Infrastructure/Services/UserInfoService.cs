@@ -1,11 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 using UserService.Application.DTO;
 using UserService.Application.Interfaces;
 using UserService.Domain.Entities;
@@ -131,8 +125,9 @@ public class UserInfoService : IUserInfoService {
 
         UserStatistic userStat = await _dbContext.UsersStatistic.FirstOrDefaultAsync (u => u.UserId == userDto.UserId);
         if(userStat == null) return false;
-
-        userStat.LastVisitAt = DateTime.UtcNow;
+     
+        if(userDto.LastVisitAt != null)
+            userStat.LastVisitAt = userDto.LastVisitAt;
         userStat.VisitCount += userDto.VisitCount;
         userStat.Reputation += userDto.Reputation;
 

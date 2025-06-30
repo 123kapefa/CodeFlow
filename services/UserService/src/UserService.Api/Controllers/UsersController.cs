@@ -21,7 +21,7 @@ namespace UserService.Api.Controllers;
 public class UsersController : ControllerBase {
 
     private readonly IUserInfoService _userInfoService;
-    private const int PageSize = 20; // ???? ПОМЕНЯТЬ ????
+    private const int PageSize = 20; // ???? ПОМЕНЯТЬ или ПОЛУЧАТЬ ОТ UI ????
 
     [HttpGet]
     public async Task<Result<PagedResult<IEnumerable<UserShortDTO>>>> GetUsersAsync(
