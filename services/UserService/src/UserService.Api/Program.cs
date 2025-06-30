@@ -1,8 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Configuration;
 using UserService.Application.Interfaces;
-using UserService.Infrastructure;
 using UserService.Infrastructure.Services;
 using UserService.Infrastructure.Data;
 using Microsoft.OpenApi.Models;
