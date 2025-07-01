@@ -125,6 +125,10 @@ public class UserInfoService : IUserInfoService {
             throw new ArgumentException ("Invalid Website URL.");
         }
 
+        if (!string.IsNullOrEmpty (userDto.GitHubUrl) && !IsValidUrl (userDto.GitHubUrl)) {
+            throw new ArgumentException ("Invalid GitHub URL.");
+        }
+
         if (userDto.UserId == Guid.Empty) {
             throw new ArgumentException ("User ID cannot be empty.");
         }
