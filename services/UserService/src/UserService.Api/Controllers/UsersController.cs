@@ -21,7 +21,7 @@ namespace UserService.Api.Controllers;
 public class UsersController : ControllerBase {
 
     private readonly IUserInfoService _userInfoService;
-    private const int PageSize = 20; // ???? ПОМЕНЯТЬ или ПОЛУЧАТЬ ОТ UI ????
+    private readonly int _pageSize; // ???? ПОМЕНЯТЬ или ПОЛУЧАТЬ ОТ UI ????
 
     [HttpGet]
     public async Task<Result<PagedResult<IEnumerable<UserShortDTO>>>> GetUsersAsync(
@@ -58,14 +58,29 @@ public class UsersController : ControllerBase {
         [FromServices] ICommandHandler<UpdateUserInfoCommand>  handler) => 
         await handler.Handle(new UpdateUserInfoCommand(userDto), new CancellationToken(false));
 
-        IEnumerable<UserShortDTO> users = await _userInfoService.GetUsersByDateAsync (pageNumber, PageSize);
-        return Ok (users);
+        try {
+            IEnumerable<UserShortDTO> users = await _userInfoService.GetUsersByDateAsync (pageNumber, _pageSize);
+            return Ok (users);
+        }
+        catch (Exception ex) {
+            return StatusCode (500, new { message = "Internal server error.", details = ex.Message });
+        }
+
+        
     }
 
     [HttpPost("info")]
     public async Task<IActionResult> CreateUserInfoAsync ([FromBody] UserInfoCreateDTO userDto) {
-        bool created = await _userInfoService.CreateUserInfoAsync (userDto);
-        return created ? Ok (created) : Conflict (new { message = "User already exists" });
+        try {
+            bool created = await _userInfoService.CreateUserInfoAsync (userDto);
+            return created ? Ok (created) : Conflict (new { message = "User already exists." });
+        }
+        catch (ArgumentException ex) {
+            return BadRequest (new { message = ex.Message });
+        }
+        catch (Exception ex) {
+            return StatusCode (500, new { message = "Internal server error.", details = ex.Message });
+        }
     }
 
     [HttpPut("reputation/{userId}/{reputation}")] //TODO нужен для проверки
@@ -83,8 +98,16 @@ public class UsersController : ControllerBase {
 
     [HttpPut("statistic")]
     public async Task<IActionResult> UpdateUserStatisticAsync ([FromBody]UserStatisticUpdateDto userDto) {
-        bool updated = await _userInfoService.UpdateUserStatisticAsync (userDto);
-        return updated ? Ok (updated) : NotFound ();
+        try {
+            bool updated = await _userInfoService.UpdateUserStatisticAsync (userDto);
+            return updated ? Ok (updated) : NotFound ();
+        }
+        catch (ArgumentException ex) {
+            return BadRequest (new { message = ex.Message });
+        }
+        catch (Exception ex) {
+            return StatusCode (500, new { message = "Internal server error.", details = ex.Message });
+        }
     }
 
     [HttpDelete("{userId}")]
