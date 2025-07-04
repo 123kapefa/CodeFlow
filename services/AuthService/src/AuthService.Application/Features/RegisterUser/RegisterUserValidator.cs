@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace AuthService.Application.Features.RegisterUser;
 
-public class RegisterUserValidator : AbstractValidator<RegisterDto> {
+public class RegisterUserValidator : AbstractValidator<RegisterUserDto> {
 
   public RegisterUserValidator()
   {
