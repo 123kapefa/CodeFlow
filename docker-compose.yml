@@ -1,0 +1,39 @@
+networks:
+  backend: {}
+
+volumes:
+  pg-auth-data:
+
+services:
+  ##########################################################
+  # Database
+  ##########################################################
+  postgres-auth:
+    image: postgres:16
+    container_name: postgres-auth
+    environment:
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: authdb
+    volumes:
+      - pg-auth-data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    networks: [backend]
+
+  ##########################################################
+  # AuthService
+  ##########################################################
+#  authservice:
+#    build:
+#      context: ./services/AuthService/src
+#      dockerfile: ../docker/Dockerfile
+#    container_name: auth-service
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Development
+#      - ConnectionStrings__Default=Host=postgres-auth;Database=authdb;Username=auth;Password=secret
+#    depends_on:
+#      - postgres-auth
+#    ports:
+#      - "5001:8080"
+#    networks: [backend]
