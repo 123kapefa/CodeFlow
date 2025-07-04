@@ -12,6 +12,14 @@ public interface IUserDataRepository {
   Task<Result<bool>> CheckPasswordAsync(UserData user, string password);
   Task<Result<string>> AddToRoleAsync(UserData user, string role);
   Task<Result<IList<string>>> GetRolesAsync(UserData user);
+  Task<Result<UserData>> GetByRefreshTokenAsync (string refreshToken);
+  Task<Result> RevokeRefreshTokenAsync (string refreshToken);
+  Task<Result> AddRefreshTokenAsync (Guid userId, string refreshToken);
+  /// <summary>Сгенерировать токен для сброса пароля (Identity).</summary>
+  Task<string> GeneratePasswordResetTokenAsync(UserData user);
+
+  /// <summary>Сбросить пароль по токену (Identity). Возвращает true, если прошло успешно.</summary>
+  Task<bool> ResetPasswordAsync(UserData user, string token, string newPassword);
   Task SaveChangesAsync();
 
 }
