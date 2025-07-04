@@ -1,47 +1,46 @@
 using Ardalis.Result;
+using Ardalis.Result.FluentValidation;
 
 using AuthService.Application.Abstractions;
 using AuthService.Application.DTOs;
-using AuthService.Application.Extensions;
 using AuthService.Domain.Entities;
 using AuthService.Domain.Repositories;
 
 using FluentValidation;
 
-using Microsoft.Extensions.Logging;
-
-namespace AuthService.Application.Features.Register;
+namespace AuthService.Application.Features.RegisterUser;
 
 public class RegisterUserHandler : ICommandHandler<Guid, RegisterUserCommand> {
   
   private readonly IUserDataRepository _userDataRepository;
-  private readonly IValidator<RegisterDto> _validator;
-
+  private readonly IValidator<RegisterUserDto> _validator;
+  
   public RegisterUserHandler (
     IUserDataRepository userDataRepository
-    , IValidator<RegisterDto> validator) {
+    , IValidator<RegisterUserDto> validator) {
     _userDataRepository = userDataRepository;
     _validator = validator;
   }
 
+  
   public async Task<Result<Guid>> Handle (RegisterUserCommand command, CancellationToken cancellationToken) {
 
-    var dto = new RegisterDto (command.Email, command.Password);
-
-    var validationResult = await _validator.ValidateAsync (dto, cancellationToken);
+    var validationResult = await _validator.ValidateAsync (command.Request, cancellationToken);
     
     if (!validationResult.IsValid) {
-      return validationResult.ToInvalidResult<Guid> ("user.not.valid");
+      return Result<Guid>.Invalid(validationResult.AsErrors ());
     }
 
-    var createResult = await _userDataRepository.CreateAsync (UserData.Create (command.Email), command.Password);
+    var createResult = await _userDataRepository.CreateAsync (UserData.Create (command.Request.Email), command.Request.Password);
 
     if (!createResult.IsSuccess) {
       return createResult;
     }
-
+    
+    // TODO добавить отправку сообщение в другой сервис (UserService) для дальнейшей работы
+    
     var userId = createResult.Value; 
-    var response = new { UserId = userId, Email = command.Email, CreatedAt = DateTime.UtcNow };
+    var response = new { UserId = userId, Email = command.Request.Email, CreatedAt = DateTime.UtcNow };
     
     return Result<Guid>.Success (userId);
   }
