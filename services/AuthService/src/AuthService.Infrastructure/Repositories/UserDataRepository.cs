@@ -67,6 +67,26 @@ public class UserDataRepository : IUserDataRepository {
     return Result<IList<string>>.Success (await _userManager.GetRolesAsync (user));
   }
 
+  public Task<Result<UserData>> GetByRefreshTokenAsync (string refreshToken) {
+    throw new NotImplementedException ();
+  }
+
+  public Task<Result> RevokeRefreshTokenAsync (string refreshToken) {
+    throw new NotImplementedException ();
+  }
+
+  public Task<Result> AddRefreshTokenAsync (Guid userId, string refreshToken) {
+    throw new NotImplementedException ();
+  }
+
+  public Task<string> GeneratePasswordResetTokenAsync (UserData user) =>
+    _userManager.GeneratePasswordResetTokenAsync (user);
+
+  public async Task<bool> ResetPasswordAsync (UserData user, string token, string newPassword) {
+    var result = await _userManager.ResetPasswordAsync (user, token, newPassword);
+    return result.Succeeded;
+  }
+
   public async Task SaveChangesAsync () {
     await _context.SaveChangesAsync ();
   }
