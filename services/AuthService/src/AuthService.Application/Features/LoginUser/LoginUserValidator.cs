@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace AuthService.Application.Features.LoginUser;
 
-public class LoginUserValidator : AbstractValidator<LoginUserDto> {
+public class LoginUserValidator : AbstractValidator<LoginUserCommand> {
 
   public LoginUserValidator () {
     RuleFor (x => x.Email)

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AuthService.Application.Features.Logout;
 
-public class LogoutHandler : ICommandHandler<LogoutCommand> {
+public class LogoutHandler : ICommandHandler<bool, LogoutCommand> {
 
   private readonly IUserDataRepository _userDataRepository;
   private readonly ILogger<LogoutHandler> _logger;
@@ -17,10 +17,10 @@ public class LogoutHandler : ICommandHandler<LogoutCommand> {
     _logger = logger;
   }
 
-  public async Task<Result> Handle (LogoutCommand command, CancellationToken cancellationToken) {
+  public async Task<Result<bool>> Handle (LogoutCommand command, CancellationToken cancellationToken) {
     await _userDataRepository.RevokeRefreshTokenAsync(command.RefreshToken);
     await _userDataRepository.SaveChangesAsync();
-    return Result.Success();
+    return Result.Success(true);
 
   }
 
