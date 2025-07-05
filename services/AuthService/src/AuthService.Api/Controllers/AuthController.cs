@@ -1,11 +1,46 @@
+using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
+
+using AuthService.Application.Abstractions;
+using AuthService.Application.Features.LoginUser;
+using AuthService.Application.Features.Logout;
+using AuthService.Application.Features.RegisterUser;
+using AuthService.Application.Reauests;
+using AuthService.Application.Requests;
+using AuthService.Application.Response;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthService.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[TranslateResultToActionResult]
 public class AuthController : ControllerBase {
 
+  [HttpPost ("register")]
+  public async Task<Result<Guid>> RegisterUser (
+    [FromBody] RegisterUserRequest request, 
+    [FromServices] ICommandHandler<Guid, RegisterUserCommand> handler) =>
+    await handler.Handle (
+      new RegisterUserCommand (request.Email, request.Password), 
+      new CancellationToken (false));
   
+  
+  [HttpPost("login")]
+  public async Task<Result<LoginResponse>> LoginUser (
+    [FromBody] LoginUserRequest request, 
+    [FromServices] ICommandHandler<LoginResponse, LoginUserCommand> handler) =>
+    await handler.Handle (
+      new LoginUserCommand (request.Email, request.Password), 
+      new CancellationToken(false));
+
+  [HttpGet ("logout")] 
+  public async Task<Result<bool>> LogoutUser (
+    [FromBody] string token,
+    [FromServices] ICommandHandler<bool, LogoutCommand>  handler) =>
+  await handler.Handle(
+    new LogoutCommand(token),
+    new CancellationToken(false));
 
 }
