@@ -12,19 +12,20 @@ ARG PROJECT_NAME
 ARG CONFIGURATION
 
 # 1.1 Копируем .sln (чтобы restore по solution, если захотите)
-COPY services/${PROJECT_NAME}/*.sln ./
+COPY services/${PROJECT_NAME}/src/ ./services/${PROJECT_NAME}/src/
 
 # 1.2 только *.csproj (кэш слоя restore)
 COPY services/${PROJECT_NAME}/src/**/*.csproj ./services/${PROJECT_NAME}/src/
 COPY shared/BuildingBlocks/**/*.csproj          ./shared/BuildingBlocks/
-RUN dotnet restore "./${PROJECT_NAME}.sln"
+RUN dotnet restore \
+    "services/${PROJECT_NAME}/src/${PROJECT_NAME}.Api/${PROJECT_NAME}.Api.csproj"
 
 # 1.3 Копируем остальной код
-COPY services/${PROJECT_NAME}/src ./services/${PROJECT_NAME}/src
-COPY shared/BuildingBlocks        ./shared/BuildingBlocks
+COPY shared/BuildingBlocks/         ./shared/BuildingBlocks/
+COPY services/${PROJECT_NAME}/src/  ./services/${PROJECT_NAME}/src/
 RUN dotnet publish \
-      "services/${PROJECT_NAME}/src/${PROJECT_NAME}.Api/${PROJECT_NAME}.Api.csproj" \
-      -c ${CONFIGURATION} -o /app/publish
+    "services/${PROJECT_NAME}/src/${PROJECT_NAME}.Api/${PROJECT_NAME}.Api.csproj" \
+    -c ${CONFIGURATION} -o /app/publish
 
 # ---------- 2. Runtime stage ----------
 FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_VERSION} AS final
