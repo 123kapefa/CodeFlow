@@ -1,13 +1,28 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 var builder = WebApplication.CreateBuilder (args);
 
-builder.Services.AddOpenApi ();
+builder.Services
+ .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+ .AddJwtBearer(options =>
+  {
+    options.Authority = builder.Configuration["Jwt:Authority"];
+    options.Audience  = builder.Configuration["Jwt:Audience"];
+    options.RequireHttpsMetadata = false;
+  });
 
-var app = builder.Build ();
+builder.Services
+ .AddReverseProxy()
+ .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
-if (app.Environment.IsDevelopment ()) {
-  app.MapOpenApi ();
-}
+var app = builder.Build();
 
-app.UseHttpsRedirection ();
+app.UseRouting();
 
-app.Run ();
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapReverseProxy()
+ .RequireAuthorization();
+
+app.Run();
