@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<UserServiceDbContext> (options =>
-    options.UseNpgsql (builder.Configuration.GetConnectionString ("DefaultConnection")));
+    options.UseNpgsql (builder.Configuration.GetConnectionString ("Main")));
 
 builder.Services.AddScoped<IUserInfoService, UserInfoService> ();
 
@@ -21,21 +21,27 @@ builder.Services.AddSwaggerGen (options => {
     options.SwaggerDoc ("v1", new OpenApiInfo {
         Title = "Product API",
         Version = "v1",
-        Description = "ѕример документации Swagger дл€ ProductService"
+        Description = "ѕример документации Swagger дл€ UsertService"
     });
 });
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment ()) {
-    app.UseSwagger ();
-    app.UseSwaggerUI (options => {
-        options.SwaggerEndpoint ("/swagger/v1/swagger.json", "Product API v1");
-    });
-}
 
+//TODO подумать как разрулить это (docker стартует в Production, а swagger запускаетс€ из Development)
 
-app.UseHttpsRedirection(); // ???????Don't need?????
+//if (app.Environment.IsDevelopment ()) {
+//    app.UseSwagger ();
+//    app.UseSwaggerUI (options => {
+//        options.SwaggerEndpoint ("/swagger/v1/swagger.json", "Product API v1");
+//    });
+//}
+
+app.UseSwagger ();
+app.UseSwaggerUI (options => {
+    options.SwaggerEndpoint ("/swagger/v1/swagger.json", "Product API v1");
+});
+
 app.MapControllers ();
 
 
