@@ -42,5 +42,5 @@ public class AuthController : ControllerBase {
   await handler.Handle(
     new LogoutCommand(token),
     new CancellationToken(false));
-
+    
 }

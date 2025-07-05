@@ -33,6 +33,7 @@ public class RegisterUserHandler : ICommandHandler<Guid, RegisterUserCommand> {
 
     var createResult = await _userDataRepository.CreateAsync (UserData.Create (command.Email), command.Password);
 
+
     if (!createResult.IsSuccess) {
       return createResult;
     }
