@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<UserServiceDbContext> (options =>
-    options.UseNpgsql (builder.Configuration.GetConnectionString ("DefaultConnection")));
+    options.UseNpgsql (builder.Configuration.GetConnectionString ("Main")));
 
 builder.Services.AddScoped<IUserInfoService, UserInfoService> ();
 

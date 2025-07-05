@@ -57,6 +57,8 @@ services:
   # ────────── AuthService + БД ──────────
   postgres-auth:
     image: postgres:16
+    ports:
+    - "5433:5432"
     restart: unless-stopped
     environment:
       POSTGRES_DB: authdb
@@ -89,6 +91,8 @@ services:
   # ────────── UserService + БД ──────────
   user-db:
     image: postgres:16
+    ports:
+    - "5434:5432"
     restart: unless-stopped
     environment:
       POSTGRES_DB: userdb
@@ -121,6 +125,8 @@ services:
   # ────────── QuestionService + БД ──────────
   question-db:
     image: postgres:16
+    ports:
+    - "5435:5432"
     restart: unless-stopped
     environment:
       POSTGRES_DB: questiondb
