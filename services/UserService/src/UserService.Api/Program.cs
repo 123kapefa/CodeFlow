@@ -41,7 +41,7 @@ app.UseSwagger ();
 app.UseSwaggerUI (options => {
     options.SwaggerEndpoint ("/swagger/v1/swagger.json", "Product API v1");
 });
-}
+app.UseDeveloperExceptionPage ();
 
 
 app.MapControllers ();
