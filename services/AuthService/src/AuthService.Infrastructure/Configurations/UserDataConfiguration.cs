@@ -3,6 +3,8 @@ using AuthService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
+using static AuthService.Domain.LengthConstants;
+
 namespace AuthService.Infrastructure.Configurations;
 
 public class UserDataConfiguration : IEntityTypeConfiguration<UserData>
@@ -16,6 +18,10 @@ public class UserDataConfiguration : IEntityTypeConfiguration<UserData>
         builder.Property (u => u.IsExternal)
            .HasColumnName ("is_external")
            .IsRequired ();
+
+        builder.Property (u => u.Fullname)
+           .HasColumnName ("fullname")
+           .HasMaxLength (LENGTH20);
         
         builder.Property(u => u.Id)
             .HasColumnName("id")
@@ -23,19 +29,19 @@ public class UserDataConfiguration : IEntityTypeConfiguration<UserData>
 
         builder.Property(u => u.UserName)
             .HasColumnName("username")
-            .HasMaxLength(256);
+            .HasMaxLength(LENGTH256);
 
         builder.Property(u => u.NormalizedUserName)
             .HasColumnName("normalized_username")
-            .HasMaxLength(256);
+            .HasMaxLength(LENGTH256);
 
         builder.Property(u => u.Email)
             .HasColumnName("email")
-            .HasMaxLength(256);
+            .HasMaxLength(LENGTH256);
 
         builder.Property(u => u.NormalizedEmail)
             .HasColumnName("normalized_email")
-            .HasMaxLength(256);
+            .HasMaxLength(LENGTH256);
 
         builder.Property(u => u.EmailConfirmed)
             .HasColumnName("email_confirmed")
@@ -72,11 +78,9 @@ public class UserDataConfiguration : IEntityTypeConfiguration<UserData>
             .HasColumnName("access_failed_count")
             .IsRequired();
 
-        // Индексы (как в Identity по умолчанию)
         builder.HasIndex(u => u.NormalizedUserName).HasDatabaseName("ix_users_data_normalized_username").IsUnique();
         builder.HasIndex(u => u.NormalizedEmail).HasDatabaseName("ix_users_data_normalized_email");
 
-        // Дополнительно можно установить ограничения
         builder.HasIndex(u => u.Email).HasDatabaseName("ix_users_data_email");
     }
 }
