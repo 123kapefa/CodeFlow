@@ -1,5 +1,3 @@
-using AuthService.Application.DTOs;
-
 using FluentValidation;
 
 namespace AuthService.Application.Features.RegisterUser;

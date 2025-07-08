@@ -4,34 +4,46 @@ using AuthService.Application.Abstractions;
 using AuthService.Application.Response;
 using AuthService.Domain.Repositories;
 
+using Contracts.Commands;
+
 namespace AuthService.Application.Features.RefreshToken;
 
 public class RefreshTokenHandler : ICommandHandler<RefreshTokenResponse, RefreshTokenCommand> {
 
   private readonly IUserDataRepository _userDataRepository;
-  private readonly ITokenService _tokenService;
+  private readonly IAuthTokenManager _authTokenManager;
 
-  public RefreshTokenHandler (IUserDataRepository userDataRepository, ITokenService tokenService) {
+  public RefreshTokenHandler (
+    IUserDataRepository userDataRepository, 
+    IAuthTokenManager authTokenManager) {
     _userDataRepository = userDataRepository;
-    _tokenService = tokenService;
+    _authTokenManager = authTokenManager;
   }
 
   public async Task<Result<RefreshTokenResponse>> Handle (RefreshTokenCommand command, CancellationToken cancellationToken) {
-    var resultRefreshToken = await _userDataRepository.GetByRefreshTokenAsync(command.RefreshToken);
-    if (!resultRefreshToken.IsSuccess)
+    var userDataResult = await _userDataRepository.GetByRefreshTokenAsync(command.RefreshToken);
+    if (!userDataResult.IsSuccess)
       return Result<RefreshTokenResponse>.Invalid(
         new ValidationError("token.not.valid", "Неправильны токен.", "", ValidationSeverity.Error)
       );
+    
+    await _authTokenManager.RevokeRefreshAsync(command.RefreshToken);
 
-    // (опционально) аннулировать старый токен в БД
-    await _userDataRepository.RevokeRefreshTokenAsync(command.RefreshToken);
+    var tokensResult = await _authTokenManager.RefreshTokensAsync(command.RefreshToken, TimeSpan.FromDays (7));
 
-    var (access, refresh, exp) = _tokenService.GenerateTokens(resultRefreshToken.Value.Id, resultRefreshToken.Value.Email!);
-    await _userDataRepository.AddRefreshTokenAsync(resultRefreshToken.Value.Id, refresh);
-    await _userDataRepository.SaveChangesAsync();
+    if (!tokensResult.IsSuccess) {
+      return Result<RefreshTokenResponse>.Error(new ErrorList (tokensResult.Errors));
+    }
 
+    var (access, refresh, expiresInSeconds) = tokensResult.Value;
+
+    var response = new RefreshTokenResponse(
+      AccessToken:    access,
+      RefreshToken:   refresh,
+      ExpiresInSeconds: expiresInSeconds);
+    
     return Result<RefreshTokenResponse>
-     .Success(new RefreshTokenResponse(access, refresh, exp));
+     .Success(response);
   }
 
 }
