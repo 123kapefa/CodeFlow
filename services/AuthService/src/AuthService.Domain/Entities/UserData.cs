@@ -5,12 +5,22 @@ namespace AuthService.Domain.Entities;
 public class UserData : IdentityUser<Guid> {
 
   public bool IsExternal { get; set; }
+  public string Fullname { get; set; } = string.Empty;
 
-  protected UserData() {}
+  public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken> ();
 
-  private UserData (string email) {}
-  
-  public static UserData Create (string email) {
-    return new UserData(email);
+  protected UserData () { }
+
+  private UserData (string fullname) {
+    Fullname = fullname;
   }
+
+  public static UserData Create (string email) {
+    return new UserData () { Email = email };
+  }
+
+  public static UserData Create (string fullname, string email) {
+    return new UserData (fullname) { Email = email };
+  }
+
 }

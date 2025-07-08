@@ -1,3 +1,5 @@
+using AuthService.Domain;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -18,16 +20,15 @@ public class RoleConfiguration : IEntityTypeConfiguration<IdentityRole<Guid>>
 
     builder.Property(r => r.Name)
      .HasColumnName("name")
-     .HasMaxLength(256);
+     .HasMaxLength(LengthConstants.LENGTH256);
 
     builder.Property(r => r.NormalizedName)
      .HasColumnName("normalized_name")
-     .HasMaxLength(256);
+     .HasMaxLength(LengthConstants.LENGTH256);
 
     builder.Property(r => r.ConcurrencyStamp)
      .HasColumnName("concurrency_stamp");
 
-    // Индекс на NormalizedName — как в стандартной реализации
     builder.HasIndex(r => r.NormalizedName)
      .HasDatabaseName("ix_roles_normalized_name")
      .IsUnique();
