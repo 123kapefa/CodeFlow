@@ -1,10 +1,8 @@
-using AuthService.Application.DTOs;
-
 using FluentValidation;
 
 namespace AuthService.Application.Features.RegisterUser;
 
-public class RegisterUserValidator : AbstractValidator<RegisterUserDto> {
+public class RegisterUserValidator : AbstractValidator<RegisterUserCommand> {
 
   public RegisterUserValidator()
   {

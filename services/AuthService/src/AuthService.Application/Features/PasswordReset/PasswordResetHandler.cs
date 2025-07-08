@@ -4,6 +4,8 @@ using AuthService.Application.Abstractions;
 using AuthService.Application.Response;
 using AuthService.Domain.Repositories;
 
+using Contracts.Commands;
+
 using Microsoft.Extensions.Logging;
 
 namespace AuthService.Application.Features.PasswordReset;
