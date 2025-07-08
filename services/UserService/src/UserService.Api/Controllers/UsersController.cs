@@ -72,4 +72,4 @@ public class UsersController : ControllerBase {
         [FromServices] ICommandHandler<DeleteUserCommand> handler ) =>
         await handler.Handle(new DeleteUserCommand(userId), new CancellationToken(false));
 
-}в
+}
