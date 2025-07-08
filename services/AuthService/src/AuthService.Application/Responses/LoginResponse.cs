@@ -1,4 +1,4 @@
-namespace AuthService.Application.Response;
+namespace AuthService.Application.Responses;
 
 public record LoginResponse(
   string AccessToken,

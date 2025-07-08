@@ -1,10 +1,10 @@
 using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 
-using AuthService.Application.Abstractions;
-using AuthService.Application.DTOs;
 using AuthService.Domain.Entities;
 using AuthService.Domain.Repositories;
+
+using Contracts.Commands;
 
 using FluentValidation;
 
@@ -23,15 +23,15 @@ public class RegisterUserHandler : ICommandHandler<Guid, RegisterUserCommand> {
   }
 
   
-  public async Task<Result<Guid>> Handle (RegisterUserCommand command, CancellationToken cancellationToken) {
+  public async Task<Result<Guid>> Handle (RegisterUserCommand dataCommand, CancellationToken cancellationToken) {
 
-    var validationResult = await _validator.ValidateAsync (command, cancellationToken);
+    var validationResult = await _validator.ValidateAsync (dataCommand, cancellationToken);
     
     if (!validationResult.IsValid) {
       return Result<Guid>.Invalid(validationResult.AsErrors ());
     }
 
-    var createResult = await _userDataRepository.CreateAsync (UserData.Create (command.Email), command.Password);
+    var createResult = await _userDataRepository.CreateAsync (UserData.Create (dataCommand.Username, dataCommand.Email), dataCommand.Password);
 
 
     if (!createResult.IsSuccess) {
@@ -41,7 +41,7 @@ public class RegisterUserHandler : ICommandHandler<Guid, RegisterUserCommand> {
     // TODO добавить отправку сообщение в другой сервис (UserService) для дальнейшей работы
     
     var userId = createResult.Value; 
-    var response = new { UserId = userId, Email = command.Email, CreatedAt = DateTime.UtcNow };
+    var response = new { UserId = userId, Email = dataCommand.Email, CreatedAt = DateTime.UtcNow };
     
     return Result<Guid>.Success (userId);
   }
