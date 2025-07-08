@@ -11,7 +11,24 @@ public class UserServiceDbContext : DbContext {
     public DbSet<UserStatistic> UsersStatistic { get; set; }
 
     protected override void OnModelCreating (ModelBuilder modelBuilder) {
-        modelBuilder.Entity<UserInfo> ().HasKey (x => x.Id);
+
+        modelBuilder.Entity<UserInfo>().HasOne(u => u.UserStatistic);       
+
         modelBuilder.Entity<UserStatistic> ().HasKey (x => x.Id);
+
+        modelBuilder.Entity<UserInfo>()
+                   .HasOne(u => u.UserStatistic)        
+                   .WithOne()                           
+                   .HasForeignKey<UserInfo>(u => u.UserStatisticId) 
+                   .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserStatistic>()
+                   .Property(s => s.UserId)
+                   .ValueGeneratedNever();
+
+        modelBuilder.Entity<UserStatistic>()
+                    .HasIndex(s => s.UserId)
+                    .IsUnique();
     }
+
 }

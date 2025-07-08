@@ -1,19 +1,40 @@
 using Microsoft.EntityFrameworkCore;
-using UserService.Application.Interfaces;
-using UserService.Infrastructure.Services;
 using UserService.Infrastructure.Data;
 using Microsoft.OpenApi.Models;
+using UserService.Domain.Repositories;
+using UserService.Infrastructure.Repositories;
+using Contracts.Commands;
+using UserService.Application.Features.UpdateUserInfo;
+using Ardalis.Result;
+using UserService.Application.DTO;
+using UserService.Application.Features.GetUsers;
+using FluentValidation;
+using UserService.Application.Features.DeleteUser;
+using UserService.Application.Features.UpdateUserReputation;
+using UserService.Application.Features.UpdateUserReputationStatistic;
+using UserService.Application.Features.UpdateUserVisit;
+using UserService.Domain.Entities;
+using UserService.Application.Features.GetUserFullInfo;
+using UserService.Application.Features.CreateUserInfo;
 
 var builder = WebApplication.CreateBuilder(args);
-
-//builder.Services.AddInfrastructure (builder.Configuration);
 
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<UserServiceDbContext> (options =>
     options.UseNpgsql (builder.Configuration.GetConnectionString ("Main")));
 
-builder.Services.AddScoped<IUserInfoService, UserInfoService> ();
+builder.Services.AddScoped<IUserInfoRepository, UserInfoRepository>();
+
+builder.Services.AddScoped<ICommandHandler<UpdateUserInfoCommand>, UpdateUserInfoHandler>();
+builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<UserShortDTO>>, GetUsersCommand>, GetUsersHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteUserCommand>, DeleteUserHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateUserReputationCommand>, UpdateUserReputationHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateUserVisitCommand>, UpdateUserVisitHandler>();
+builder.Services.AddScoped<ICommandHandler<Result<UserInfo>, GetUserFullInfoCommand>, GetUserFullInfoHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateUserInfoCommand>, CreateUserInfoHandler>();
+
+builder.Services.AddScoped<IValidator<UpdateUserInfoCommand>, UpdateUserInfoValidator>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer ();
@@ -26,7 +47,6 @@ builder.Services.AddSwaggerGen (options => {
 });
 
 var app = builder.Build();
-
 
 //TODO подумать как разрулить это (docker стартует в Production, а swagger запускается из Development)
 
@@ -43,8 +63,6 @@ app.UseSwaggerUI (options => {
 });
 app.UseDeveloperExceptionPage ();
 
-
 app.MapControllers ();
-
 
 app.Run();
