@@ -1,6 +1,6 @@
 using Ardalis.Result;
 
-namespace AuthService.Application.Abstractions;
+namespace Contracts.Commands;
 
 public interface ICommand;
 
