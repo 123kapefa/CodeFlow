@@ -14,6 +14,8 @@ public class AuthServiceDbContext : IdentityDbContext<UserData, IdentityRole<Gui
   public AuthServiceDbContext (string connectionString) {
     _connectionString = connectionString;
   }
+  
+  public DbSet<RefreshToken> RefreshTokens { get; set; }
 
   protected override void OnConfiguring (DbContextOptionsBuilder options) {
     options.UseNpgsql (_connectionString);
