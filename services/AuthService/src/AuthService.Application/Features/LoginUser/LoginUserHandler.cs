@@ -14,11 +14,11 @@ public class LoginUserHandler : ICommandHandler<LoginResponse, LoginUserCommand>
 
   private readonly IUserDataRepository _userDataRepository;
   private readonly ITokenService _tokenService;
-  private readonly IValidator<LoginUserDto> _validator;
+  private readonly IValidator<LoginUserCommand> _validator;
 
   public LoginUserHandler (
     IUserDataRepository userDataRepository, 
-    IValidator<LoginUserDto> validator, 
+    IValidator<LoginUserCommand> validator, 
     ITokenService tokenService) {
     _userDataRepository = userDataRepository;
     _validator = validator;
@@ -26,19 +26,19 @@ public class LoginUserHandler : ICommandHandler<LoginResponse, LoginUserCommand>
   }
 
   public async Task<Result<LoginResponse>> Handle (LoginUserCommand command, CancellationToken cancellationToken) {
-    var validationResult = await _validator.ValidateAsync (command.Request, cancellationToken);
+    var validationResult = await _validator.ValidateAsync (command, cancellationToken);
     if (!validationResult.IsValid) {
       return Result<LoginResponse>.Invalid (validationResult.AsErrors());
     }
 
-    var result = await _userDataRepository.GetByEmailAsync (command.Request.Email);
+    var result = await _userDataRepository.GetByEmailAsync (command.Email);
     if (!result.IsSuccess) {
       return Result<LoginResponse>.NotFound ($"Неверный email или пароль");
     }
 
     var user = result.Value;
 
-    var isValid = await _userDataRepository.CheckPasswordAsync (user, command.Request.Password);
+    var isValid = await _userDataRepository.CheckPasswordAsync (user, command.Password);
     if (!isValid.Value) {
       return Result<LoginResponse>.Error (new ErrorList (new[] { "Неверный email или пароль" }));
     }

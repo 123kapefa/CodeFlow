@@ -1,4 +1,5 @@
 ﻿services:
+
   # ────────── инфраструктура ──────────
   rabbitmq:
     image: rabbitmq:3.13-management

@@ -13,11 +13,11 @@ namespace AuthService.Application.Features.RegisterUser;
 public class RegisterUserHandler : ICommandHandler<Guid, RegisterUserCommand> {
   
   private readonly IUserDataRepository _userDataRepository;
-  private readonly IValidator<RegisterUserDto> _validator;
+  private readonly IValidator<RegisterUserCommand> _validator;
   
   public RegisterUserHandler (
     IUserDataRepository userDataRepository
-    , IValidator<RegisterUserDto> validator) {
+    , IValidator<RegisterUserCommand> validator) {
     _userDataRepository = userDataRepository;
     _validator = validator;
   }
@@ -25,13 +25,14 @@ public class RegisterUserHandler : ICommandHandler<Guid, RegisterUserCommand> {
   
   public async Task<Result<Guid>> Handle (RegisterUserCommand command, CancellationToken cancellationToken) {
 
-    var validationResult = await _validator.ValidateAsync (command.Request, cancellationToken);
+    var validationResult = await _validator.ValidateAsync (command, cancellationToken);
     
     if (!validationResult.IsValid) {
       return Result<Guid>.Invalid(validationResult.AsErrors ());
     }
 
-    var createResult = await _userDataRepository.CreateAsync (UserData.Create (command.Request.Email), command.Request.Password);
+    var createResult = await _userDataRepository.CreateAsync (UserData.Create (command.Email), command.Password);
+
 
     if (!createResult.IsSuccess) {
       return createResult;
@@ -40,7 +41,7 @@ public class RegisterUserHandler : ICommandHandler<Guid, RegisterUserCommand> {
     // TODO добавить отправку сообщение в другой сервис (UserService) для дальнейшей работы
     
     var userId = createResult.Value; 
-    var response = new { UserId = userId, Email = command.Request.Email, CreatedAt = DateTime.UtcNow };
+    var response = new { UserId = userId, Email = command.Email, CreatedAt = DateTime.UtcNow };
     
     return Result<Guid>.Success (userId);
   }
