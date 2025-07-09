@@ -13,7 +13,6 @@ using UserService.Application.Features.DeleteUser;
 using UserService.Application.Features.UpdateUserReputation;
 using UserService.Application.Features.UpdateUserReputationStatistic;
 using UserService.Application.Features.UpdateUserVisit;
-using UserService.Domain.Entities;
 using UserService.Application.Features.GetUserFullInfo;
 using UserService.Application.Features.CreateUserInfo;
 
@@ -45,6 +44,8 @@ builder.Services.AddSwaggerGen (options => {
         Description = "Пример документации Swagger для UsertService"
     });
 });
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 

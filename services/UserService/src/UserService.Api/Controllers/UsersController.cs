@@ -5,12 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using UserService.Application.DTO;
 using UserService.Application.Features.CreateUserInfo;
 using UserService.Application.Features.DeleteUser;
-using UserService.Application.Features.GetUserFullInfo;
 using UserService.Application.Features.GetUsers;
 using UserService.Application.Features.UpdateUserInfo;
 using UserService.Application.Features.UpdateUserReputation;
 using UserService.Application.Features.UpdateUserVisit;
-using UserService.Domain.Entities;
 using UserService.Domain.Filters;
 
 namespace UserService.Api.Controllers;
@@ -18,8 +16,7 @@ namespace UserService.Api.Controllers;
 [ApiController]
 [Route ("users")]
 [TranslateResultToActionResult]
-public class UsersController : ControllerBase {   
-
+public class UsersController : ControllerBase {    
 
     [HttpGet]
     public async Task<Result<PagedResult<IEnumerable<UserShortDTO>>>> GetUsersAsync(
@@ -27,14 +24,7 @@ public class UsersController : ControllerBase {
         [FromQuery] SortParams sortParams,
         [FromServices] ICommandHandler<PagedResult<IEnumerable<UserShortDTO>>, GetUsersCommand> handler ) => 
         await handler.Handle(new GetUsersCommand(pageParams,sortParams), new CancellationToken(false));
-
-
-    [HttpGet("{userId}")]
-    public async Task<Result<UserFullInfoDTO>> GetUserFullInfoAsync(
-        Guid userId,
-        [FromServices] ICommandHandler<Result<UserFullInfoDTO>, GetUserFullInfoCommand> handler ) =>
-        await handler.Handle(new GetUserFullInfoCommand(userId), new CancellationToken(false));
-
+  
 
     [HttpPost("create/{userId}/{userName}")] //TODO нужен для проверки
     public async Task<Result> CreateUserInfoAsync(
@@ -45,11 +35,10 @@ public class UsersController : ControllerBase {
 
 
     [HttpPut("info")]
-    public async Task<Result> UpdateUserInfoAsync( 
-        [FromBody]UserInfoUpdateDTO userDto, 
-        [FromServices] ICommandHandler<UpdateUserInfoCommand>  handler) => 
-        await handler.Handle(new UpdateUserInfoCommand(userDto), new CancellationToken(false));
-
+    public async Task<Result> UpdateUserInfoAsync(
+      [FromBody] UserInfoUpdateDTO userDto,
+      [FromServices] ICommandHandler<UpdateUserInfoCommand> handler ) =>
+      await handler.Handle(new UpdateUserInfoCommand(userDto), new CancellationToken(false));
 
 
     [HttpPut("reputation/{userId}/{reputation}")] //TODO нужен для проверки
@@ -64,7 +53,7 @@ public class UsersController : ControllerBase {
         Guid userId,
         [FromServices] ICommandHandler<UpdateUserVisitCommand> handler ) =>
         await handler.Handle(new UpdateUserVisitCommand(userId), new CancellationToken(false));
- 
+
 
     [HttpDelete("{userId}")]
     public async Task<Result> DeleteUserInfoAsync(
