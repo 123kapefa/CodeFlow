@@ -8,6 +8,8 @@ public class UserStatistic {
     public int VisitCount { get; set; } = 0;
     public int Reputation { get; set; } = 0;
 
+    public UserInfo UserInfo { get; set; } = null!;
+
     protected UserStatistic() { }
 
     private UserStatistic(Guid userId) {
