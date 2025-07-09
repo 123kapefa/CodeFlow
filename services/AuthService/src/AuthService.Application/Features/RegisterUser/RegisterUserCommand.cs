@@ -3,4 +3,5 @@ using AuthService.Application.DTOs;
 
 namespace AuthService.Application.Features.RegisterUser;
 
-public record RegisterUserCommand (RegisterUserDto Request) : ICommand;
+public record RegisterUserCommand (string Email, string Password) : ICommand;
+
