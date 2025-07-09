@@ -1,8 +1,11 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using QuestionService.Infrastructure.Data;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers ();
+builder.Services.AddDbContext<QuestionServiceDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Main")));
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer ();
@@ -14,6 +17,7 @@ builder.Services.AddSwaggerGen (options => {
     });
 });
 
+builder.Services.AddControllers();
 
 WebApplication app = builder.Build();
 
@@ -30,7 +34,7 @@ app.UseSwagger ();
 app.UseSwaggerUI (options => {
     options.SwaggerEndpoint ("/swagger/v1/swagger.json", "Product API v1");
 });
-
+app.UseDeveloperExceptionPage();
 
 app.MapControllers ();
 
