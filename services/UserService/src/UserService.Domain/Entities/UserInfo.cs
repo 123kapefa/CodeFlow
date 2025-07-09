@@ -12,5 +12,23 @@ public class UserInfo {
     public string? Location { get; set; }
 
     public string? WebsiteUrl { get; set; }
-    public string? GitHubUrl { get; set; }
+    public string? GitHubUrl { get; set; }    
+
+    public Guid UserStatisticId { get; set; }
+    public UserStatistic UserStatistic { get; set; } = null!;
+    
+
+    protected UserInfo() { }
+
+    private UserInfo(Guid userId, string username ) {        
+        UserId = userId;
+        Username = username;
+        UserStatistic = UserStatistic.Create(userId);
+        UserStatisticId = UserStatistic.Id;
+    }
+
+    public static UserInfo Create( Guid userId, string username ) {
+        return new UserInfo(userId, username);    
+    }
+   
 }

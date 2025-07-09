@@ -13,12 +13,12 @@ ARG CONFIGURATION
 
 # 1.1 Копируем .sln (чтобы restore по solution, если захотите)
 COPY services/${PROJECT_NAME}/src/ ./services/${PROJECT_NAME}/src/
-COPY shared/BuildingBlocks/**/*.csproj          ./shared/BuildingBlocks/
+COPY shared/**/*.csproj          ./shared/
 RUN dotnet restore \
     "services/${PROJECT_NAME}/src/${PROJECT_NAME}.Api/${PROJECT_NAME}.Api.csproj"
 
 # 1.3 Копируем остальной код
-COPY shared/BuildingBlocks/         ./shared/BuildingBlocks/
+COPY shared/         ./shared/
 COPY services/${PROJECT_NAME}/src/  ./services/${PROJECT_NAME}/src/
 RUN dotnet publish \
     "services/${PROJECT_NAME}/src/${PROJECT_NAME}.Api/${PROJECT_NAME}.Api.csproj" \
