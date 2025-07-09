@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UserService.Infrastructure.Data;
@@ -11,9 +12,11 @@ using UserService.Infrastructure.Data;
 namespace UserService.Infrastructure.Migrations
 {
     [DbContext(typeof(UserServiceDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250707161123_DbRefactor")]
+    partial class DbRefactor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,9 +61,6 @@ namespace UserService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserStatisticId")
-                        .IsUnique();
-
                     b.ToTable("UsersInfos");
                 });
 
@@ -90,15 +90,19 @@ namespace UserService.Infrastructure.Migrations
                     b.ToTable("UsersStatistic");
                 });
 
-            modelBuilder.Entity("UserService.Domain.Entities.UserInfo", b =>
+            modelBuilder.Entity("UserService.Domain.Entities.UserStatistic", b =>
                 {
-                    b.HasOne("UserService.Domain.Entities.UserStatistic", "UserStatistic")
-                        .WithOne()
-                        .HasForeignKey("UserService.Domain.Entities.UserInfo", "UserStatisticId")
+                    b.HasOne("UserService.Domain.Entities.UserInfo", null)
+                        .WithOne("UserStatistic")
+                        .HasForeignKey("UserService.Domain.Entities.UserStatistic", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.Navigation("UserStatistic");
+            modelBuilder.Entity("UserService.Domain.Entities.UserInfo", b =>
+                {
+                    b.Navigation("UserStatistic")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
