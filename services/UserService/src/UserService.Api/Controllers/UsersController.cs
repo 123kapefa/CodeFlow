@@ -30,9 +30,9 @@ public class UsersController : ControllerBase {
 
 
     [HttpGet("{userId}")]
-    public async Task<Result<UserInfo>> GetUserFullInfoAsync(
+    public async Task<Result<UserFullInfoDTO>> GetUserFullInfoAsync(
         Guid userId,
-        [FromServices] ICommandHandler<Result<UserInfo>, GetUserFullInfoCommand> handler ) =>
+        [FromServices] ICommandHandler<Result<UserFullInfoDTO>, GetUserFullInfoCommand> handler ) =>
         await handler.Handle(new GetUserFullInfoCommand(userId), new CancellationToken(false));
 
 

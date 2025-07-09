@@ -5,7 +5,7 @@ namespace UserService.Application.Features.UpdateUserInfo;
 public class UpdateUserInfoValidator : AbstractValidator<UpdateUserInfoCommand> {
 
     public UpdateUserInfoValidator() {
-        RuleFor(u => u.UserInfoUpdateDTO.Username)
+        RuleFor(u => u.UserInfoUpdateDTO.UserName)
             .NotEmpty().WithMessage("Имя пользователя не должно быть пустым");
 
         RuleFor(u => u.UserInfoUpdateDTO.GitHubUrl)

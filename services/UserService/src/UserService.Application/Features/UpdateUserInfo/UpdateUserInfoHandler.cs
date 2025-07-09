@@ -28,7 +28,7 @@ public class UpdateUserInfoHandler : ICommandHandler<UpdateUserInfoCommand> {
         if(!userInfo.IsSuccess)
             return Result.Error(new ErrorList(userInfo.Errors));
 
-        userInfo.Value.Username = command.UserInfoUpdateDTO.Username;
+        userInfo.Value.Username = command.UserInfoUpdateDTO.UserName;
         userInfo.Value.Location = command.UserInfoUpdateDTO.Location;
         userInfo.Value.AvatarUrl = command.UserInfoUpdateDTO.AvatarUrl;
         userInfo.Value.GitHubUrl = command.UserInfoUpdateDTO.GitHubUrl;
