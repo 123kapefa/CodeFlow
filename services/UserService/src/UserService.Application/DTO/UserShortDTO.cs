@@ -1,7 +1,7 @@
 ﻿namespace UserService.Application.DTO;
 
 public class UserShortDTO {
-    public string Username { get; set; } = string.Empty;
+    public string UserName { get; set; } = string.Empty;
     public string? Location { get; set; }
     public string? AboutMe { get; set; }
     public string? AvatarUrl { get; set; }

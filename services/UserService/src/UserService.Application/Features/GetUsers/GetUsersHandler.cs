@@ -21,7 +21,7 @@ public class GetUsersHandler : ICommandHandler<PagedResult<IEnumerable<UserShort
         }
 
         IEnumerable<UserShortDTO> usersInfoDTO = usersResult.Value.items.Select(i => new UserShortDTO {
-            Username = i.Username,
+            UserName = i.Username,
             Location = i.Location,
             AboutMe = i.AboutMe,
             AvatarUrl = i.AvatarUrl,
