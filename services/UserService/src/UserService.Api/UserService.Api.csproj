@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ardalis.Result.AspNetCore" Version="10.1.0" />
     <PackageReference Include="MassTransit" Version="8.5.0" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
@@ -19,6 +20,12 @@
   <ItemGroup>
     <ProjectReference Include="..\UserService.Application\UserService.Application.csproj" />
     <ProjectReference Include="..\UserService.Infrastructure\UserService.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Contracts">
+      <HintPath>..\..\..\..\shared\Contracts\bin\Debug\net9.0\Contracts.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
