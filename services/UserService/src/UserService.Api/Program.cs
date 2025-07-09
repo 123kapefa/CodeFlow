@@ -13,7 +13,6 @@ using UserService.Application.Features.DeleteUser;
 using UserService.Application.Features.UpdateUserReputation;
 using UserService.Application.Features.UpdateUserReputationStatistic;
 using UserService.Application.Features.UpdateUserVisit;
-using UserService.Domain.Entities;
 using UserService.Application.Features.GetUserFullInfo;
 using UserService.Application.Features.CreateUserInfo;
 
@@ -47,21 +46,6 @@ builder.Services.AddSwaggerGen (options => {
 });
 
 builder.Services.AddControllers();
-
-builder.Services.AddDbContext<UserServiceDbContext> (options =>
-    options.UseNpgsql (builder.Configuration.GetConnectionString ("DefaultConnection")));
-
-builder.Services.AddScoped<IUserInfoService, UserInfoService> ();
-
-// Swagger
-builder.Services.AddEndpointsApiExplorer ();
-builder.Services.AddSwaggerGen (options => {
-    options.SwaggerDoc ("v1", new OpenApiInfo {
-        Title = "Product API",
-        Version = "v1",
-        Description = "Пример документации Swagger для ProductService"
-    });
-});
 
 var app = builder.Build();
 

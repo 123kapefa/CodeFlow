@@ -132,7 +132,7 @@ public class UserInfoRepository : IUserInfoRepository {
             return Result.Error("ID пользователя не может быть пустым");
         }
 
-        UserInfo? user = await _dbContext.UsersInfos
+        UserStatistic? user = await _dbContext.UsersStatistic
             .Where(u => u.UserId == userId)            
             .FirstOrDefaultAsync();
 
@@ -140,7 +140,7 @@ public class UserInfoRepository : IUserInfoRepository {
             return Result.Error("пользователь с таким ID не найден");
         }
 
-        _dbContext.UsersInfos.Remove(user);
+        _dbContext.UsersStatistic.Remove(user);
         await _dbContext.SaveChangesAsync();
 
         return Result.Success();
