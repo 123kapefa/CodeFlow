@@ -2,6 +2,8 @@ using System.Security.Claims;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using AuthService.Application.Abstractions;
+using AuthService.Infrastructure.Settings;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

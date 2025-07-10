@@ -11,6 +11,7 @@ using AuthService.Application.Responses;
 using AuthService.Domain.Repositories;
 using AuthService.Infrastructure.Repositories;
 using AuthService.Infrastructure.Security;
+using AuthService.Infrastructure.Settings;
 
 using Contracts.Commands;
 
@@ -28,8 +29,12 @@ public static class ServiceCollectionExtensions {
     
     builder.Services.Configure<JwtSettings>(
       builder.Configuration.GetSection("JwtSettings"));
+    
+    builder.Services.Configure<GoogleAuthSettings>(
+      builder.Configuration.GetSection(GoogleAuthSettings.SectionName));
+    
     builder.Services.AddSingleton<ITokenService, JwtTokenService>();
-    builder.Services.AddSingleton<IAuthTokenManager, AuthTokenManager>();
+    builder.Services.AddScoped<IAuthTokenManager, AuthTokenManager>();
     
     
     builder.Services.AddScoped<ICommandHandler<Guid, RegisterUserCommand>, RegisterUserHandler> ();

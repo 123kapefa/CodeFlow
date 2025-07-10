@@ -31,7 +31,7 @@ public class RegisterUserHandler : ICommandHandler<Guid, RegisterUserCommand> {
       return Result<Guid>.Invalid(validationResult.AsErrors ());
     }
 
-    var createResult = await _userDataRepository.CreateAsync (UserData.Create (dataCommand.Username, dataCommand.Email), dataCommand.Password);
+    var createResult = await _userDataRepository.CreateAsync (UserData.Create (dataCommand.Email), dataCommand.Password);
 
 
     if (!createResult.IsSuccess) {

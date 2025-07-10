@@ -1,22 +1,40 @@
+using System.Security.Claims;
+
 using AuthService.Api.Extensions;
+using AuthService.Application.Abstractions;
 using AuthService.Application.Features.LoginUser;
 using AuthService.Application.Features.RegisterUser;
 using AuthService.Domain.Entities;
+using AuthService.Domain.Repositories;
 using AuthService.Infrastructure;
+using AuthService.Infrastructure.Email;
+using AuthService.Infrastructure.Security;
+using AuthService.Infrastructure.Settings;
 
 using FluentValidation;
 
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 
 
 var builder = WebApplication.CreateBuilder (args);
 
+var config = new ConfigurationBuilder()
+ .AddUserSecrets<Program>()
+ .Build();
+
 builder.UseBase ();
 builder.UseDatabase ();
 
 builder.Services.AddScoped<IValidator<RegisterUserCommand>, RegisterUserValidator> ();
 builder.Services.AddScoped<IValidator<LoginUserCommand>, LoginUserValidator> ();
+
+builder.Services.AddSingleton<IEmailSender, SmtpEmailSender> ();
+
 
 builder.Services.AddDataProtection();
 builder.Services.AddIdentityCore<UserData>(options => {
@@ -29,8 +47,8 @@ builder.Services.AddIdentityCore<UserData>(options => {
    .AddSignInManager<SignInManager<UserData>>()
    .AddDefaultTokenProviders();
 
-builder.UseCustomServices ();
 
+builder.UseCustomServices ();
 builder.Services.AddEndpointsApiExplorer ();
 
 builder.Services.AddCors(opt =>
@@ -52,7 +70,6 @@ app.UseSwaggerUI (options => {
 app.UseHttpsRedirection ();
 
 app.UseAuthorization ();
-
 app.MapControllers ();
 
 app.Run ();
