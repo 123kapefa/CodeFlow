@@ -1,11 +1,26 @@
+using Contracts.Commands;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using QuestionService.Application.DTO;
+using QuestionService.Application.Features.GetQuestion;
+using QuestionService.Application.Features.GetQuestionHistory;
+using QuestionService.Application.Features.GetQuestionShort;
+using QuestionService.Domain.Entities;
+using QuestionService.Domain.Repositories;
 using QuestionService.Infrastructure.Data;
+using QuestionService.Infrastructure.Repositories;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<QuestionServiceDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Main")));
+
+builder.Services.AddScoped<IQuestionServiceRepository, QuestionServiceRepository>();
+
+builder.Services.AddScoped<ICommandHandler<QuestionDTO, GetQuestionCommand>, GetQuestionHandler>();
+builder.Services.AddScoped<ICommandHandler<QuestionShortDTO, GetQuestionShortCommand>, GetQuestionShortHandler>();
+builder.Services.AddScoped<ICommandHandler<IEnumerable<QuestionHistoryDTO>, GetQuestionHistoryCommand>, GetQuestionHistoryHandler>();
+
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer ();
