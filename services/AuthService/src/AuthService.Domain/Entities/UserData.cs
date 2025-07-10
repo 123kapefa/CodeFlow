@@ -5,7 +5,7 @@ namespace AuthService.Domain.Entities;
 public class UserData : IdentityUser<Guid> {
 
   public bool IsExternal { get; set; }
-  public string Fullname { get; set; } = string.Empty;
+  public string? Fullname { get; set; }
 
   public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken> ();
 

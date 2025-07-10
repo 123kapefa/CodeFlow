@@ -38,6 +38,9 @@ public class AuthController : ControllerBase {
     , [FromServices] ICommandHandler<LoginResponse, LoginUserCommand> handler) =>
     await handler.Handle (new LoginUserCommand (request.Email, request.Password), new CancellationToken (false));
 
+  [HttpPost ("singin-google")]
+    public async Task<Result> LoginUserWithGoogle () => Result.Success();
+  
   [HttpPost ("logout")]
   public async Task<Result<bool>> LogoutUser (
     [FromBody] string token
