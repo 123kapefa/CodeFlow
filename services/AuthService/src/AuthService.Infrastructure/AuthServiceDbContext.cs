@@ -10,13 +10,14 @@ namespace AuthService.Infrastructure;
 public class AuthServiceDbContext : IdentityDbContext<UserData, IdentityRole<Guid>, Guid> {
 
   private readonly string _connectionString;
+  
+  public DbSet<RefreshToken> RefreshTokens { get; set; }
+  public DbSet<PendingPasswordChange> PendingPasswordChanges { get; set; }
 
   public AuthServiceDbContext (string connectionString) {
     _connectionString = connectionString;
   }
   
-  public DbSet<RefreshToken> RefreshTokens { get; set; }
-
   protected override void OnConfiguring (DbContextOptionsBuilder options) {
     options.UseNpgsql (_connectionString);
     options.EnableSensitiveDataLogging ();

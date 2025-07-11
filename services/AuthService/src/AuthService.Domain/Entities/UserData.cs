@@ -16,11 +16,11 @@ public class UserData : IdentityUser<Guid> {
   }
 
   public static UserData Create (string email) {
-    return new UserData () { Email = email };
+    return new UserData () { Email = email, UserName = email };
   }
 
   public static UserData Create (string fullname, string email) {
-    return new UserData (fullname) { Email = email };
+    return new UserData (fullname) { Email = email, UserName = email };
   }
 
 }

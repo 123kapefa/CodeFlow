@@ -49,6 +49,8 @@ builder.Services.AddIdentityCore<UserData>(options => {
 
 
 builder.UseCustomServices ();
+builder.UseCustomSerilog ();
+builder.UseMail ();
 builder.Services.AddEndpointsApiExplorer ();
 
 builder.Services.AddCors(opt =>

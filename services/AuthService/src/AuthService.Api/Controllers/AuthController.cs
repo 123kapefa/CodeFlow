@@ -1,17 +1,18 @@
 using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
-
-using AuthService.Application.Abstractions;
 using AuthService.Application.Features.EditUser;
 using AuthService.Application.Features.EmailChangeConfirm;
 using AuthService.Application.Features.LoginUser;
 using AuthService.Application.Features.LogoutUser;
+using AuthService.Application.Features.PasswordChange;
+using AuthService.Application.Features.PasswordChangeConfirm;
 using AuthService.Application.Features.RegisterUser;
 using AuthService.Application.Features.RemoveUser;
 using AuthService.Application.Features.RequestEmailChange;
 using AuthService.Application.Reauests;
 using AuthService.Application.Requests;
 using AuthService.Application.Responses;
+using AuthService.Domain.Entities;
 
 using Contracts.Commands;
 
@@ -42,9 +43,9 @@ public class AuthController : ControllerBase {
     public async Task<Result> LoginUserWithGoogle () => Result.Success();
   
   [HttpPost ("logout")]
-  public async Task<Result<bool>> LogoutUser (
+  public async Task<Result> LogoutUser (
     [FromBody] string token
-    , [FromServices] ICommandHandler<bool, LogoutUserCommand> handler) =>
+    , [FromServices] ICommandHandler<LogoutUserCommand> handler) =>
     await handler.Handle (new LogoutUserCommand (token), new CancellationToken (false));
   
   [HttpPut("{userId:guid}")]
@@ -68,6 +69,20 @@ public class AuthController : ControllerBase {
     , [FromServices] ICommandHandler<EmailChangeConfirmCommand> handler) =>
     await handler.Handle (new EmailChangeConfirmCommand (userId, request), new CancellationToken (false));
 
+  [HttpPost ("password-change/{userId:guid}")]
+  public async Task<Result> PasswordChange (
+    [FromRoute] Guid userId
+    , [FromBody] PasswordChangeRequest request
+    , [FromServices] ICommandHandler<PasswordChangeCommand> handler) =>
+    await handler.Handle (new PasswordChangeCommand(userId, request), new CancellationToken (false));
+  
+  [HttpPost ("password-change-confirm/{email}/{token}")]
+  public async Task<Result> PasswordChangeConfirm (
+    [FromRoute] string email
+    , [FromRoute] string token
+    , [FromServices] ICommandHandler<PasswordChangeConfirmCommand> handler) =>
+    await handler.Handle (new PasswordChangeConfirmCommand(email, token), new CancellationToken (false));
+  
   [HttpDelete ("{userId:guid}")]
   public async Task<Result> DeleteUser (
     [FromRoute] Guid userId

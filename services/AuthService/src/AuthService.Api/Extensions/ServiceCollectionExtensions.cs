@@ -3,6 +3,8 @@ using AuthService.Application.Features.EditUser;
 using AuthService.Application.Features.EmailChangeConfirm;
 using AuthService.Application.Features.LoginUser;
 using AuthService.Application.Features.LogoutUser;
+using AuthService.Application.Features.PasswordChange;
+using AuthService.Application.Features.PasswordChangeConfirm;
 using AuthService.Application.Features.RefreshToken;
 using AuthService.Application.Features.RegisterUser;
 using AuthService.Application.Features.RemoveUser;
@@ -25,6 +27,7 @@ public static class ServiceCollectionExtensions {
   {
     builder.Services.AddScoped<IUserDataRepository, UserDataRepository>();
     builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+    builder.Services.AddScoped<IPasswordChangeRepository, PasswordChangeRepository> ();
     
     
     builder.Services.Configure<JwtSettings>(
@@ -44,6 +47,9 @@ public static class ServiceCollectionExtensions {
     builder.Services.AddScoped<ICommandHandler<EmailChangeCommand>, EmailChangeHandler> ();
     builder.Services.AddScoped<ICommandHandler<EmailChangeConfirmCommand>, EmailChangeConfirmHandler> ();
     builder.Services.AddScoped<ICommandHandler<RemoveUserCommand>, RemoveUserHandler> ();
+    
+    builder.Services.AddScoped<ICommandHandler<PasswordChangeCommand>, PasswordChangeHandler> ();
+    builder.Services.AddScoped<ICommandHandler<PasswordChangeConfirmCommand>, PasswordChangeConfirmHandler> ();
     
     builder.Services.AddScoped<IValidator<RegisterUserCommand>, RegisterUserValidator> ();
     builder.Services.AddScoped<IValidator<LoginUserCommand>, LoginUserValidator> ();

@@ -25,39 +25,37 @@ public class EditUserHandler : ICommandHandler<EditUserDataResponse, EditUserCom
     , CancellationToken cancellationToken) {
     _logger.LogInformation ("Редактирование IdentityUser {UserId}", command.UserId);
 
-    // 1. Получаем пользователя
     var user = await _userManager.FindByIdAsync (command.UserId.ToString ());
     if (user == null) {
       _logger.LogWarning ("User {UserId} не найден", command.UserId);
+
       return Result.NotFound ($"Пользователь {command.UserId} не найден");
     }
-    
 
-    // 2. Обновляем UserName (логин)
-    if (!string.IsNullOrWhiteSpace(command.Request.Username) &&
-        !string.Equals(user.UserName, command.Request.Username, StringComparison.OrdinalIgnoreCase))
-    {
-      var setNameResult = await _userManager.SetUserNameAsync(user, command.Request.Username);
-      if (!setNameResult.Succeeded)
-      {
-        var errors = string.Join("; ", setNameResult.Errors.Select(e => e.Description));
-        _logger.LogError("Ошибка установки UserName: {Errors}", errors);
-        return Result.Error(errors);
+
+    if (!string.IsNullOrWhiteSpace (command.Request.Username) && 
+        !string.Equals (user.UserName, command.Request.Username
+          , StringComparison.OrdinalIgnoreCase)) {
+      var setNameResult = await _userManager.SetUserNameAsync (user, command.Request.Username);
+      if (!setNameResult.Succeeded) {
+        var errors = string.Join ("; ", setNameResult.Errors.Select (e => e.Description));
+        _logger.LogError ("Ошибка установки UserName: {Errors}", errors);
+        
+        return Result.Error (errors);
       }
     }
-
-    // 3. Обновляем PhoneNumber
-    if (!string.IsNullOrWhiteSpace (command.Request.PhoneNumber) &&
-        !string.Equals (user.PhoneNumber, command.Request.PhoneNumber, StringComparison.OrdinalIgnoreCase)) {
+    
+    if (!string.IsNullOrWhiteSpace (command.Request.PhoneNumber) && !string.Equals (user.PhoneNumber
+          , command.Request.PhoneNumber, StringComparison.OrdinalIgnoreCase)) {
       var setPhone = await _userManager.SetPhoneNumberAsync (user, command.Request.PhoneNumber);
       if (!setPhone.Succeeded) {
         var errors = string.Join ("; ", setPhone.Errors.Select (e => e.Description));
         _logger.LogError ("Ошибка установки PhoneNumber: {Errors}", errors);
+        
         return Result.Error (errors);
       }
     }
-
-    // 4. Сохраняем изменения
+    
     var update = await _userManager.UpdateAsync (user);
     if (!update.Succeeded) {
       var errors = string.Join ("; ", update.Errors.Select (e => e.Description));
