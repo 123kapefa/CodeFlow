@@ -16,11 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTO\" />
-    <Folder Include="Features\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="Contracts">
       <HintPath>..\..\..\..\shared\Contracts\bin\Debug\net9.0\Contracts.dll</HintPath>
     </Reference>

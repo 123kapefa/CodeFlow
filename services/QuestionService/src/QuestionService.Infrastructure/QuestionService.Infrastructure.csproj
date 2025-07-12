@@ -25,8 +25,4 @@
     <ProjectReference Include="..\QuestionService.Domain\QuestionService.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-
 </Project>

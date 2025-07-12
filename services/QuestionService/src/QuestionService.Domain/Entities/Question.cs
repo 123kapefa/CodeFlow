@@ -11,7 +11,7 @@ public class Question {
     public Guid Id { get; set; } = Guid.NewGuid();
     
     public Guid UserId { get; set; }    
-    public Guid UserEditorId { get; set; }
+    public Guid? UserEditorId { get; set; }
 
   
     public string Title { get; set; } = string.Empty;    
