@@ -28,6 +28,7 @@ public class QuestionServiceDbContext : DbContext {
             .WithOne(qt => qt.Question)
             .HasForeignKey(qt => qt.QuestionId)
             .OnDelete(DeleteBehavior.Cascade);
+
     }
 
 }
