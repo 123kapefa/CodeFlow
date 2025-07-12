@@ -10,7 +10,6 @@ namespace QuestionService.Application.DTO;
 public class CreateQuestionDTO {  
     public Guid UserId { get; set; } 
     public string Title { get; set; } = string.Empty;
-    public string Content { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow; 
-    public List<QuestionTag> QuestionTags { get; set; } = [];
+    public string Content { get; set; } = string.Empty;    
+    public List<QuestionTagDTO> QuestionTagsDTO { get; set; } = [];
 }

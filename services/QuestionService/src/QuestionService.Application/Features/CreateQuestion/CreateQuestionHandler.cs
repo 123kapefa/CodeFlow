@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result;
+using Ardalis.Result.FluentValidation;
 using Contracts.Commands;
 using FluentValidation;
 using QuestionService.Domain.Entities;
@@ -23,16 +24,31 @@ public class CreateQuestionHandler : ICommandHandler<CreateQuestionCommand> {
 
     public async Task<Result> Handle( CreateQuestionCommand command, CancellationToken cancellationToken ) {
 
-        var validationResult = await _validator.ValidateAsync(command);
+        var validateResult = await _validator.ValidateAsync(command);
+
+        if(!validateResult.IsValid)
+            return Result.Invalid(validateResult.AsErrors());
 
         Question question = new Question {
-            UserId = command.QuestionDTO.UserId,
-            Title = command.QuestionDTO.Title,
-            Content = command.QuestionDTO.Content,
+            UserId = command.CreateQuestionDTO.UserId,
+            Title = command.CreateQuestionDTO.Title,
+            Content = command.CreateQuestionDTO.Content,
             CreatedAt = DateTime.UtcNow,
-            QuestionTags = command.QuestionDTO.QuestionTags
+            QuestionChangingHistories = 
+            new List<QuestionChangingHistory> { new QuestionChangingHistory {
+                UserId = command.CreateQuestionDTO.UserId,
+                Content = command.CreateQuestionDTO.Content,
+                UpdatedAt = DateTime.UtcNow
+            } },
+            QuestionTags = command.CreateQuestionDTO.QuestionTagsDTO.Select(q => new QuestionTag {
+                TagId = q.TagId,
+                WatchedAt = DateTime.UtcNow  
+            }).ToList()
         };
 
+        Result result = await _questionServiceRepository.CreateQuestionAsync(question, cancellationToken);
+
+        return result.IsSuccess ? Result.Success() : Result.Error(new ErrorList(result.Errors));
     }
 
 }

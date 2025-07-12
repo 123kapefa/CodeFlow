@@ -40,8 +40,21 @@ public class GetQuestionHandler : ICommandHandler<QuestionDTO, GetQuestionComman
             Downvotes = result.Value.Downvotes,
             IsClosed = result.Value.IsClosed,
             AcceptedAnswerId = result.Value.AcceptedAnswerId,
-            QuestionChangingHistories = result.Value.QuestionChangingHistories,
-            QuestionTags = result.Value.QuestionTags
+            QuestionChangingHistories = 
+            result.Value.QuestionChangingHistories
+            .Select(qh => new QuestionHistoryDTO {
+                UserId = qh.Id,
+                Content = qh.Content,
+                UpdatedAt = qh.UpdatedAt                
+            })
+            .ToList(),
+            QuestionTags = 
+            result.Value.QuestionTags
+            .Select(qt => new QuestionTagDTO {
+                TagId = qt.TagId,
+                WatchedAt = qt.WatchedAt
+            })
+            .ToList()
         };
 
         return Result<QuestionDTO>.Success(question) ;

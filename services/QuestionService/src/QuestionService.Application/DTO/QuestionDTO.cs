@@ -29,6 +29,6 @@ public class QuestionDTO {
     public bool IsClosed { get; set; } = false;
     public Guid? AcceptedAnswerId { get; set; }
 
-    public List<QuestionChangingHistory> QuestionChangingHistories { get; set; } = [];
-    public List<QuestionTag> QuestionTags { get; set; } = [];
+    public List<QuestionHistoryDTO> QuestionChangingHistories { get; set; } = [];
+    public List<QuestionTagDTO> QuestionTags { get; set; } = [];
 }

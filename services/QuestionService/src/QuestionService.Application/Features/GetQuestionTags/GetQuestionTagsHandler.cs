@@ -27,9 +27,9 @@ public class GetQuestionTagsHandler : ICommandHandler<IEnumerable<QuestionTagDTO
         if(!result.IsSuccess)
             return Result<IEnumerable<QuestionTagDTO>>.Error(new ErrorList(result.Errors));
 
+        //TODO может добавить ID для QuestionTagDTO ??????
         List<QuestionTagDTO> questionTags = result.Value
-            .Select(qt => new QuestionTagDTO {
-                Id = qt.Id,
+            .Select(qt => new QuestionTagDTO {                
                 TagId = qt.TagId,
                 WatchedAt = qt.WatchedAt
             })

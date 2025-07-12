@@ -7,22 +7,22 @@ using System.Threading.Tasks;
 
 namespace QuestionService.Application.Features.CreateQuestion;
 
-public class CreateQuestionCommand : AbstractValidator<CreateQuestionCommand> {
+public class CreateQuestionValidator : AbstractValidator<CreateQuestionCommand> {
 
-    public CreateQuestionCommand() {
-        RuleFor(q => q.QuestionDTO.UserId)
+    public CreateQuestionValidator() {
+        RuleFor(q => q.CreateQuestionDTO.UserId)
             .NotEmpty().WithMessage("Id автора вопроса не может быть пустым");
 
-        RuleFor(q => q.QuestionDTO.Title)
+        RuleFor(q => q.CreateQuestionDTO.Title)
             .NotEmpty().WithMessage("Заголовок вопроса не может быть пустым");
 
-        RuleFor(q => q.QuestionDTO.Content)
+        RuleFor(q => q.CreateQuestionDTO.Content)
             .NotEmpty().WithMessage("Тело запроса не может быть пустым");
 
-        RuleFor(q => q.QuestionDTO.QuestionTags)
+        RuleFor(q => q.CreateQuestionDTO.QuestionTagsDTO)
             .Cascade(CascadeMode.Stop)
             .NotNull().WithMessage("Список тэгов обязателен")
-            .Empty().WithMessage("Нужно указать минимум один тег");
+            .NotEmpty().WithMessage("Нужно указать минимум один тег");
     }
 
 }
