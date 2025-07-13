@@ -4,10 +4,14 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>4c493faa-3e7c-41ba-af03-4c30218572af</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Ardalis.Result.AspNetCore" Version="10.1.0" />
+        <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="9.4.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.3.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.6" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
 
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
