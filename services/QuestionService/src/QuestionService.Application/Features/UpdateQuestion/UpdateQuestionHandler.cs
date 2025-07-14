@@ -24,7 +24,7 @@ public class UpdateQuestionHandler : ICommandHandler<UpdateQuestionCommand> {
     }
 
 
-
+    // TODO ПОДУМАТЬ НАД ТЕМ КАК СДЕЛАТЬ ВСЕ ЭТО В ОДИН SaveChange
     public async Task<Result> Handle( UpdateQuestionCommand command, CancellationToken token ) {
         // 1) валидация
         var validateResult = await _validator.ValidateAsync(command, token);
@@ -116,7 +116,7 @@ public class UpdateQuestionHandler : ICommandHandler<UpdateQuestionCommand> {
 
     //    // 6) одно сохранение + обработка ошибок
 
-    //    var r = await _questionServiceRepository.UpdateQuestionAsync(q,ct);          // ← единственный SaveChanges
+    //    var r = await _questionServiceRepository.UpdateQuestionAsync(q, ct);          // ← единственный SaveChanges
     //    return r.IsSuccess ? Result.Success() : Result.Error(new ErrorList(r.Errors));
 
     //}
