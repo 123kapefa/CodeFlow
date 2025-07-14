@@ -74,6 +74,39 @@ public class AnswerRepository : IAnswerRepository {
       return Result<Answer>.Error ("База данных не отвечает.");
     }
   }
+  
+  public async Task<Result> EditAsync (AnswerChangingHistory answerChanging, CancellationToken ct) {
+    try {
+      _context.AnswerChangingHistories.Add(answerChanging);
+      await _context.SaveChangesAsync(ct);
+      
+      return Result.Success ();
+    }
+    catch (Exception ex) {
+      return Result.Error ("");
+    }
+  }
+
+  public async Task<Result> AcceptChangesAsync (Guid answerChangingHistoryId, CancellationToken ct) {
+    try {
+      var answersHistory = await _context.AnswerChangingHistories
+       .Where (a => a.Id == answerChangingHistoryId).ToListAsync (ct);
+
+      foreach (var answerChangingHistory in answersHistory) {
+        if (answerChangingHistory.Id == answerChangingHistoryId)
+          answerChangingHistory.IsActive = true; 
+        
+        answerChangingHistory.IsActive = false;
+      }
+      
+      await _context.SaveChangesAsync(ct);
+      return Result.Success ();
+    }
+    catch (Exception) {
+      _logger.LogError ("База данных не отвечает");
+      return Result.Error ("База данных не отвечает.");
+    }
+  }
 
   public async Task<Result> AddAsync (Answer answer, CancellationToken ct) {
     try {
@@ -84,8 +117,8 @@ public class AnswerRepository : IAnswerRepository {
       
       _logger.LogDebug ("Ответ успешно добавлен.");
       return Result.Success ();
-    } catch (Exception ex) {
-      _logger.LogError (ex, "Ошибка при добавлении ответа для вопроса {QuestionId}", answer.QuestionId);
+    } catch (Exception) {
+      _logger.LogError ("Ошибка при добавлении ответа для вопроса {QuestionId}", answer.QuestionId);
       return Result.Error ("Не удалось добавить ответ.");
     }
   }
@@ -98,7 +131,7 @@ public class AnswerRepository : IAnswerRepository {
       
       _logger.LogDebug ("Ответ успешно обновлен.");
       return Result.Success();
-    } catch (Exception e) {
+    } catch (Exception) {
       _logger.LogError ("База данных не отвечает");
       return Result.Error ("База данных не отвечает.");
     }
@@ -112,7 +145,7 @@ public class AnswerRepository : IAnswerRepository {
       
       _logger.LogDebug ("Ответ успешно обновлен.");
       return Result.Success();
-    } catch (Exception e) {
+    } catch (Exception) {
       _logger.LogError ("База данных не отвечает");
       return Result.Error ("База данных не отвечает.");
     }
@@ -132,7 +165,7 @@ public class AnswerRepository : IAnswerRepository {
       
       _logger.LogDebug ("Правильный ответ выбран.");
       return Result.Success();
-    } catch (Exception e) {
+    } catch (Exception) {
       _logger.LogError ("База данных не отвечает");
       return Result.Error ("База данных не отвечает.");
     }
@@ -152,7 +185,7 @@ public class AnswerRepository : IAnswerRepository {
 
       _logger.LogDebug ("Возврат ответов данного пользователя с таким ID: {userId}.", userId);
       return Result<IEnumerable<Answer>>.Success(answers);
-    } catch (Exception e) {
+    } catch (Exception) {
       _logger.LogError ("База данных не отвечает");
       return Result<IEnumerable<Answer>>.Error ("База данных не отвечает.");
     }
