@@ -24,7 +24,7 @@ public class UpdateQuestionHandler : ICommandHandler<UpdateQuestionCommand> {
     }
 
 
-
+    // TODO ПОДУМАТЬ НАД ТЕМ КАК СДЕЛАТЬ ВСЕ ЭТО В ОДИН SaveChange
     public async Task<Result> Handle( UpdateQuestionCommand command, CancellationToken token ) {
         // 1) валидация
         var validateResult = await _validator.ValidateAsync(command, token);
