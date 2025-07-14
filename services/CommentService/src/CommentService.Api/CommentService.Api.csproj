@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommentService.Application\CommentService.Application.csproj" />
-    <ProjectReference Include="..\CommentService.Infrastucture\CommentService.Infrastucture.csproj" />
+    <ProjectReference Include="..\CommentService.Infrastructure\CommentService.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
