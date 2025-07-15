@@ -1,11 +1,6 @@
 ﻿using CommentService.Domain.Entities;
 using CommentService.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommentService.Infrastructure.Data;
 
