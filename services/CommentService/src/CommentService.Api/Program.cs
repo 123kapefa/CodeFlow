@@ -11,6 +11,8 @@ using CommentService.Domain.Enums;
 using CommentService.Application.DTO;
 using CommentService.Application.Features.GetCommentById;
 using CommentService.Application.Features.DeleteCommentById;
+using CommentService.Application.Features.UpdateComment;
+using CommentService.Application.Features.GetQuestionComments;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,8 @@ builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommandHandler<CreateCommentCommand>, CreateCommentHandler>();
 builder.Services.AddScoped<ICommandHandler<CommentDTO, GetCommentByIdCommand>, GetCommentByIdHandler>();
 builder.Services.AddScoped<ICommandHandler<DeleteCommentByIdCommand>, DeleteCommentByIdHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateCommentCommand>, UpdateCommentHandler>();
+builder.Services.AddScoped<ICommandHandler<IEnumerable<CommentDTO>, GetCommentsCommand>, GetCommentsHandler>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -36,7 +40,6 @@ builder.Services.AddSwaggerGen(options => {
     });
 
     options.EnableAnnotations();
-
 });
 
 builder.Services.AddDbContext<CommentDbContext>(opt =>

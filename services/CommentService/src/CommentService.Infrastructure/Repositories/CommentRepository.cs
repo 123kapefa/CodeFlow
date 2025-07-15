@@ -4,12 +4,6 @@ using CommentService.Domain.Enums;
 using CommentService.Domain.Repositories;
 using CommentService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommentService.Infrastructure.Repositories;
 
@@ -36,11 +30,17 @@ public class CommentRepository : ICommentRepository {
     }
 
 
-    public Task<Result<IEnumerable<Comment>>> GetQuestionCommentsAsync( TypeTarget target, Guid questionId, CancellationToken token ) => throw new NotImplementedException();
+    /// <summary> Получить список комментариев комментарий. </summary>
+    public async Task<Result<IEnumerable<Comment>>> GetCommentsAsync( 
+        TypeTarget type, Guid targetId, CancellationToken token ) {
 
+        if(targetId == Guid.Empty)
+            return Result<IEnumerable<Comment>>.Error("ID комментария не может быть пустым");
 
-    public Task<Result<IEnumerable<Comment>>> GetAnswerCommentsAsync( TypeTarget target, Guid answerId, CancellationToken token ) => throw new NotImplementedException();
+        List<Comment> comments = await _commentDbContext.Comments.Where(c => c.Type == type && c.TargetId == targetId).ToListAsync();
 
+        return Result<IEnumerable<Comment>>.Success(comments);
+    }
 
 
     /// <summary> Создать комментарий. </summary>
@@ -63,8 +63,26 @@ public class CommentRepository : ICommentRepository {
 
     }
 
-    public Task<Result> UpdateCommentAsync( Comment comment, CancellationToken token ) => throw new NotImplementedException();
+    /// <summary> Обновить комментарий. </summary>
+    public async Task<Result> UpdateCommentAsync( Comment comment, CancellationToken token ) {
 
+        if(comment is null)
+            return Result.Error("Аргумент запроса не может быть null");
+
+        try {
+            _commentDbContext.Comments.Update(comment);
+            await _commentDbContext.SaveChangesAsync( token);
+
+            return Result.Success();
+        }
+        catch(DbUpdateConcurrencyException) {
+            return Result.Error("Комментарий был изменён или удалён другим пользователем");
+        }
+        catch(DbUpdateException) {
+            return Result.Error("Ошибка БД");
+        }
+
+    }
 
     /// <summary> Удалить комментарий. </summary>
     public async Task<Result> DeleteCommentByIdAsync( Guid commentId, CancellationToken token ) {
