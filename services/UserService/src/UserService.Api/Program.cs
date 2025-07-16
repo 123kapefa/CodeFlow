@@ -43,6 +43,8 @@ builder.Services.AddSwaggerGen (options => {
         Version = "v1",
         Description = "Пример документации Swagger для UsertService"
     });
+
+    options.EnableAnnotations();
 });
 
 builder.Services.AddControllers();
