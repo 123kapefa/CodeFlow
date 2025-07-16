@@ -16,7 +16,7 @@ public class Answer {
   public int Upvotes { get; set; }
   public int Downvotes { get; set; }
 
-  public IEnumerable<AnswerChangingHistory> AnswerChangingHistoriesChanges { get; set; } = new  List<AnswerChangingHistory> ();
+  public List<AnswerChangingHistory> AnswerChangingHistoriesChanges { get; set; } = new  List<AnswerChangingHistory> ();
 
   protected Answer () { }
 

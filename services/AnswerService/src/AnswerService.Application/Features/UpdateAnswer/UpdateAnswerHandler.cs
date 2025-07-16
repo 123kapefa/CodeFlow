@@ -25,13 +25,12 @@ public class UpdateAnswerHandler : ICommandHandler<UpdateAnswerCommand> {
     _validator = validator;
   }
 
-  public async Task<Result> Handle (UpdateAnswerCommand command, CancellationToken ct) {
+  public async Task<Result> Handle (UpdateAnswerCommand command, CancellationToken ct) { 
     
     var validationResult = await _validator.ValidateAsync(command, ct);
 
-    if (!validationResult.IsValid) {
+    if (!validationResult.IsValid)
       return Result.Invalid(validationResult.AsErrors());
-    }
     
     var answer = await _answerRepository.GetByIdAsync (command.Id, ct);
     
@@ -40,15 +39,20 @@ public class UpdateAnswerHandler : ICommandHandler<UpdateAnswerCommand> {
 
     var newAnswerChangingHistory = AnswerChangingHistory
      .Create (command.Id, command.Request.EditedUserId, command.Request.Content);
-
-    var resultAdd = await _answerHistoryRepository.CreateAsync (newAnswerChangingHistory, ct);
+    // TODO проверить на правильность добавления такой записи в бд
+    // var resultAdd = await _answerHistoryRepository.CreateAsync (newAnswerChangingHistory, ct);
+    //
+    // if (!resultAdd.IsSuccess)
+    //   return Result.Error (new ErrorList(resultAdd.Errors));
+    //
+    // answer.Value.Content = newAnswerChangingHistory.Content;
     
-    if (!resultAdd.IsSuccess)
-      return Result.Error (new ErrorList(resultAdd.Errors));
-
-    var resultEdit = await _answerRepository.EditAsync (newAnswerChangingHistory, ct);
+    answer.Value.AnswerChangingHistoriesChanges.Add (newAnswerChangingHistory);
+    answer.Value.Content = newAnswerChangingHistory.Content;
     
-    return resultEdit.IsSuccess ? Result.Success () : Result.Error (new ErrorList (resultEdit.Errors));
+    var resultUpdate = await _answerRepository.UpdateAsync(answer.Value, ct);
+    
+    return resultUpdate.IsSuccess ? Result.Success () : Result.Error (new ErrorList (resultUpdate.Errors));
   }
 
 }
