@@ -10,9 +10,4 @@
     <PackageReference Include="Ardalis.Result" Version="10.1.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Filters\" />
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-
 </Project>
