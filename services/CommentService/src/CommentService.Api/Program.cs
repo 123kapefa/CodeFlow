@@ -26,7 +26,7 @@ builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 
 builder.Services.AddScoped<ICommandHandler<CreateCommentCommand>, CreateCommentHandler>();
 builder.Services.AddScoped<ICommandHandler<CommentDTO, GetCommentByIdCommand>, GetCommentByIdHandler>();
-builder.Services.AddScoped<ICommandHandler<DeleteCommentByIdCommand>, DeleteCommentByIdHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteCommentCommand>, DeleteCommentHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateCommentCommand>, UpdateCommentHandler>();
 builder.Services.AddScoped<ICommandHandler<IEnumerable<CommentDTO>, GetCommentsCommand>, GetCommentsHandler>();
 

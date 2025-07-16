@@ -2,4 +2,4 @@
 
 namespace CommentService.Application.Features.DeleteCommentById;
 
-public record DeleteCommentByIdCommand(Guid CommentId) : ICommand;
+public record DeleteCommentCommand(Guid CommentId) : ICommand;

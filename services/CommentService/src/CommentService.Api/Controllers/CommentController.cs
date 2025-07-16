@@ -29,14 +29,14 @@ public class CommentController : ControllerBase {
         await handler.Handle(new CreateCommentCommand(createCommentDTO), new CancellationToken(false));
 
 
-    [HttpPut("{commentId}/{content}")]
+    [HttpPut("{commentId}")]
     [SwaggerOperation(
     Summary = "Обновить комментарий.",
     Description = "Обновляет запись в таблице Comments.",
     OperationId = "Comment_Put")]
     public async Task<Result> UpdateCommentAsync(
         Guid commentId,
-        string content,
+        [FromBody]string content,
         [FromServices] ICommandHandler<UpdateCommentCommand> handler ) =>
         await handler.Handle(new UpdateCommentCommand(commentId, content), new CancellationToken(false));
 
@@ -81,7 +81,7 @@ public class CommentController : ControllerBase {
     OperationId = "Comment_Delete")]
     public async Task<Result> DeleteCommentByIdAsync(
         Guid commentId,
-        [FromServices] ICommandHandler<DeleteCommentByIdCommand> handler ) =>
-        await handler.Handle(new DeleteCommentByIdCommand(commentId), new CancellationToken(false));
+        [FromServices] ICommandHandler<DeleteCommentCommand> handler ) =>
+        await handler.Handle(new DeleteCommentCommand(commentId), new CancellationToken(false));
 
 }
