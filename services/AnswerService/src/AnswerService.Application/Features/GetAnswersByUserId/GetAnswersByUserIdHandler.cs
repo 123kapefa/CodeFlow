@@ -24,5 +24,4 @@ public class GetAnswersByUserIdHandler : ICommandHandler<GetAnswersResponse, Get
       ? Result<GetAnswersResponse>.Error(new ErrorList(answers.Errors))
       : Result<GetAnswersResponse>.Success (new GetAnswersResponse(answers.Value.ToDto()));
   }
-
 }

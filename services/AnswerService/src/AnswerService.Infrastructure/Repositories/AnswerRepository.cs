@@ -74,17 +74,6 @@ public class AnswerRepository : IAnswerRepository {
       return Result<Answer>.Error ("База данных не отвечает.");
     }
   }
-  
-  public async Task<Result> EditAsync (AnswerChangingHistory answerChanging, CancellationToken ct) {
-    try {
-      
-      return Result.Success ();
-    }
-    catch (Exception ex) {
-      _logger.LogError ("База данных не отвечает");
-      return Result.Error ("База данных не отвечает.");
-    }
-  }
 
   public async Task<Result> AddAsync (Answer answer, CancellationToken ct) {
     try {
