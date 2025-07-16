@@ -51,13 +51,13 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
                 .Sort(sortParams)                
                 .ToPagedAsync(pageParams);
 
-
             return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Success(users);
         }
         catch(Exception) {
             return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Error("Ошибка базы данных");
         }
     }
+
 
     /// <summary> Получить список вопросов пользователя. </summary>
     public async Task<Result<(IEnumerable<Question> items, PagedInfo pageInfo)>> GetUserQuestionsAsync( 
@@ -73,15 +73,12 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
                 .Sort(sortParams)
                 .ToPagedAsync(pageParams);
 
-
             return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Success(users);
         }
         catch(Exception) {
             return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Error("Ошибка базы данных");
         }
     }
-
-
 
 
     /// <summary> Получить историю изменений вопроса. </summary>
@@ -130,9 +127,12 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
             await _dbContext.SaveChangesAsync(token);
             return Result.Success();
         }
-        catch(DbUpdateException) {
-            return Result.Error($"Ошибка БД");
+        catch(DbUpdateConcurrencyException) {
+            return Result.Error("Ошибка во время создания истории вопроса");
         }
+        catch(DbUpdateException) {
+            return Result.Error("Ошибка БД");
+        }       
     }
 
   
@@ -151,7 +151,7 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
             return Result.Success();
         }
         catch(DbUpdateConcurrencyException) {
-            return Result.Error("Ошибка во время создания истории вопроса");
+            return Result.Error("Ошибка во время создания истории изменений вопроса");
         }
         catch(DbUpdateException) {
             return Result.Error("Ошибка БД");
@@ -164,7 +164,6 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
     public async Task<Result> UpdateQuestionAsync( Question question, CancellationToken token ) {
         if(question == null)
             return Result.Error("Аргумент запроса не может быть null");
-
 
         try {           
             _dbContext.Questions.Update(question);
