@@ -4,15 +4,15 @@ using Contracts.Commands;
 
 namespace CommentService.Application.Features.DeleteCommentById;
 
-public class DeleteCommentByIdHandler : ICommandHandler<DeleteCommentByIdCommand> {
+public class DeleteCommentHandler : ICommandHandler<DeleteCommentCommand> {
 
     private readonly ICommentRepository _commentRepository;
 
-    public DeleteCommentByIdHandler( ICommentRepository commentRepository ) {
+    public DeleteCommentHandler( ICommentRepository commentRepository ) {
         _commentRepository = commentRepository;
     }
 
-    public async Task<Result> Handle( DeleteCommentByIdCommand command, CancellationToken token ) {
+    public async Task<Result> Handle( DeleteCommentCommand command, CancellationToken token ) {
 
         Result result = await _commentRepository.DeleteCommentByIdAsync(command.CommentId, token);
 
