@@ -1,9 +1,9 @@
+using AnswerService.Domain.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using QuestionService.Domain.Entities;
-
-namespace QuestionService.Infrastructure.Configurations;
+namespace AnswerService.Infrastructure.Configurations;
 
 public class AnswerChangingHistoryConfiguration : IEntityTypeConfiguration<AnswerChangingHistory>
 {
@@ -13,7 +13,7 @@ public class AnswerChangingHistoryConfiguration : IEntityTypeConfiguration<Answe
     builder.HasKey(h => h.Id);
 
     builder.HasKey(x => x.Id)
-    .HasName ("pk_answer_changing_history_id");
+     .HasName ("pk_answer_changing_history_id");
     
     builder.Property(h => h.Id)
      .HasColumnName("id")

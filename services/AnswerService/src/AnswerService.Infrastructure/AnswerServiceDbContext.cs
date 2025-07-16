@@ -1,16 +1,16 @@
+using AnswerService.Domain.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-using QuestionService.Domain.Entities;
-
-namespace QuestionService.Infrastructure;
+namespace AnswerService.Infrastructure;
 
 public class AnswerServiceDbContext : DbContext {
 
   private readonly string _connectionString;
   
-  DbSet<Answer> Answers { get; set; }
-  DbSet<AnswerChangingHistory>  AnswerChangingHistories { get; set; }
+  public DbSet<Answer> Answers { get; set; }
+  public DbSet<AnswerChangingHistory>  AnswerChangingHistories { get; set; }
 
   public AnswerServiceDbContext (string connectionString) {
     _connectionString = connectionString;

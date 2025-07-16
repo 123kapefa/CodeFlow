@@ -1,9 +1,9 @@
+using AnswerService.Domain.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using QuestionService.Domain.Entities;
-
-namespace QuestionService.Infrastructure.Configurations;
+namespace AnswerService.Infrastructure.Configurations;
 
 public class AnswerConfiguration : IEntityTypeConfiguration<Answer> {
 
