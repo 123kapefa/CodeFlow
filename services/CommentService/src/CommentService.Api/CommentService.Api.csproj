@@ -10,7 +10,7 @@
     <PackageReference Include="Ardalis.Result.AspNetCore" Version="10.1.0" />
     <PackageReference Include="MassTransit" Version="8.5.0" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -19,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\QuestionService.Application\QuestionService.Application.csproj" />
-    <ProjectReference Include="..\QuestionService.Infrastructure\QuestionService.Infrastructure.csproj" />
+    <ProjectReference Include="..\CommentService.Application\CommentService.Application.csproj" />
+    <ProjectReference Include="..\CommentService.Infrastructure\CommentService.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
