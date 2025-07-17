@@ -12,7 +12,7 @@ using TagService.Infrastructure.Data;
 namespace TagService.Infrastructure.Migrations
 {
     [DbContext(typeof(TagServiceDbContext))]
-    [Migration("20250717150639_Init")]
+    [Migration("20250717191826_Init")]
     partial class Init
     {
         /// <inheritdoc />
