@@ -8,24 +8,24 @@ using Contracts.Commands;
 
 using FluentValidation;
 
-namespace AnswerService.Application.Features.UpdateAnswer;
+namespace AnswerService.Application.Features.EditAnswer;
 
-public class UpdateAnswerHandler : ICommandHandler<UpdateAnswerCommand> {
+public class EditAnswerHandler : ICommandHandler<EditAnswerCommand> {
 
   private readonly IAnswerRepository _answerRepository;
   private readonly IAnswerChangingHistoryRepository _answerHistoryRepository;
-  private readonly IValidator<UpdateAnswerCommand> _validator;
+  private readonly IValidator<EditAnswerCommand> _validator;
   
-  public UpdateAnswerHandler (
+  public EditAnswerHandler (
     IAnswerRepository answerRepository, 
     IAnswerChangingHistoryRepository answerHistoryRepository, 
-    IValidator<UpdateAnswerCommand> validator) {
+    IValidator<EditAnswerCommand> validator) {
     _answerRepository = answerRepository;
     _answerHistoryRepository = answerHistoryRepository;
     _validator = validator;
   }
 
-  public async Task<Result> Handle (UpdateAnswerCommand command, CancellationToken ct) { 
+  public async Task<Result> Handle (EditAnswerCommand command, CancellationToken ct) { 
     
     var validationResult = await _validator.ValidateAsync(command, ct);
 
