@@ -1,4 +1,16 @@
+using AnswerService.Api.Extensions;
+using AnswerService.Domain.Repositories;
+using AnswerService.Infrastructure.Repositories;
+
 var builder = WebApplication.CreateBuilder (args);
+
+builder.UseCustomSerilog ();
+builder.UseBase ();
+builder.UseDatabase ();
+
+builder.Services.AddScoped<IAnswerRepository, AnswerRepository> ();
+
+builder.UseHandlers ();
 
 builder.Services.AddControllers ();
 
