@@ -155,12 +155,47 @@ services:
     ports:
       - "5003:5000"  # Swagger → http://localhost:5003/swagger
     networks: [ clonenet ]
+    
+  # ────────── AnswerService + БД ──────────
+  answer-db:
+    image: postgres:16
+    ports:
+      - "5436:5432"
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: answerdb
+      POSTGRES_USER: answer
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - answer-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  answerservice:
+    build:
+      context: .
+      dockerfile: services/AnswerService/docker/Dockerfile
+      args:
+        PROJECT_NAME: AnswerService
+        DOTNET_VERSION: 9.0-preview
+    environment:
+      ASPNETCORE_URLS:          http://+:5000
+      ConnectionStrings__AnswerServiceDbContext: 'Host=localhost;Port=5433;Database=answerdb;Username=answer;Password=secret'
+      Rabbit__Host:             rabbitmq
+      Rabbit__User:             guest
+      Rabbit__Pass:             guest
+    depends_on:
+      - rabbitmq
+      - answer-db
+    ports:
+      - "5004:5000"  # Swagger → http://localhost:5003/swagger
+    networks: [ clonenet ]
 
 # ────────── тома для персистентных БД ──────────
 volumes:
   auth-db-data:
   user-db-data:
   question-db-data:
+  answer-db-data:
 
 # ────────── общая bridge-сеть ──────────
 networks:
