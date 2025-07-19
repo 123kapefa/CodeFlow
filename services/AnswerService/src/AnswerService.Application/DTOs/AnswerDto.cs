@@ -14,4 +14,6 @@ public class AnswerDto {
   public int Upvotes { get; set; }
   public int Downvotes { get; set; }
   
+  public bool IsAccepted { get; set; }
+  
 }

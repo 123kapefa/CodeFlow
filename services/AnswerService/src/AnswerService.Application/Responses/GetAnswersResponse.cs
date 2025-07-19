@@ -5,4 +5,4 @@ using Ardalis.Result;
 
 namespace AnswerService.Application.Responses;
 
-public class GetAnswersResponse (IEnumerable<AnswerDto> answers) {}
+public record GetAnswersResponse (IEnumerable<AnswerDto> Answers);

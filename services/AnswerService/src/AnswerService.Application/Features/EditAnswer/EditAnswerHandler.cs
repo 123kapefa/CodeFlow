@@ -47,10 +47,10 @@ public class EditAnswerHandler : ICommandHandler<EditAnswerCommand> {
     //
     // answer.Value.Content = newAnswerChangingHistory.Content;
     
-    answer.Value.AnswerChangingHistoriesChanges.Add (newAnswerChangingHistory);
-    answer.Value.Content = newAnswerChangingHistory.Content;
+    // answer.Value.AnswerChangingHistoriesChanges.Add (newAnswerChangingHistory);
+    // answer.Value.Content = newAnswerChangingHistory.Content;
     
-    var resultUpdate = await _answerRepository.UpdateAsync(answer.Value, ct);
+    var resultUpdate = await _answerRepository.UpdateAsync(answer.Value, newAnswerChangingHistory, ct);
     
     return resultUpdate.IsSuccess ? Result.Success () : Result.Error (new ErrorList (resultUpdate.Errors));
   }

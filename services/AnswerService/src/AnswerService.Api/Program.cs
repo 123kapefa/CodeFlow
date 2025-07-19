@@ -9,6 +9,7 @@ builder.UseBase ();
 builder.UseDatabase ();
 
 builder.Services.AddScoped<IAnswerRepository, AnswerRepository> ();
+builder.Services.AddScoped<IAnswerChangingHistoryRepository, AnswerChangingHistoryRepository> ();
 
 builder.UseHandlers ();
 
@@ -18,9 +19,11 @@ builder.Services.AddOpenApi ();
 
 var app = builder.Build ();
 
-if (app.Environment.IsDevelopment ()) {
-  app.MapOpenApi ();
-}
+app.UseCors("AllowAll");
+app.UseSwagger ();
+app.UseSwaggerUI (options => {
+  options.SwaggerEndpoint ("/swagger/v1/swagger.json", "AnswerService API v1");
+});
 
 app.UseHttpsRedirection ();
 

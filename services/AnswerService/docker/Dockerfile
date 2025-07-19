@@ -1,6 +1,6 @@
 # ---------- 0. build-time аргументы ----------
 ARG DOTNET_VERSION=9.0-preview
-ARG PROJECT_NAME=AuthService
+ARG PROJECT_NAME=AnswerService
 ARG CONFIGURATION=Release
 
 # ---------- 1. Build stage ----------

@@ -11,8 +11,10 @@ public interface IAnswerRepository {
   Task<Result> AddAsync (Answer answer, CancellationToken ct);
   Task<Result> DeleteAsync (Answer answer, CancellationToken ct);
   Task<Result> UpdateAsync (Answer answer, CancellationToken ct);
+  Task<Result> UpdateAsync (Answer answer, AnswerChangingHistory answerChangingHistory, CancellationToken ct);
   Task<Result> AcceptAsync (IEnumerable<Answer> answers, Guid answerId, CancellationToken ct);
   Task<Result<IEnumerable<Answer>>> GetByUserIdAsync (Guid userId, CancellationToken ct);
   Task<Result<IEnumerable<string>>> GetCommentsByAnswerIdAsync (Guid userId, CancellationToken ct);
+  Task SaveAsync (CancellationToken ct);
 
 }

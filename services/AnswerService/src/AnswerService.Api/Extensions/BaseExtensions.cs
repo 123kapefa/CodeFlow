@@ -15,6 +15,7 @@ public static class BaseExtensions {
         Version = "v1",
         Description = "Swagger AuthService"
       });
+      options.EnableAnnotations ();
     });
 
     return builder;
