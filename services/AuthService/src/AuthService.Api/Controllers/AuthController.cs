@@ -1,13 +1,15 @@
 using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 
-using AuthService.Application.Abstractions;
 using AuthService.Application.Features.LoginUser;
-using AuthService.Application.Features.Logout;
+using AuthService.Application.Features.LogoutUser;
 using AuthService.Application.Features.RegisterUser;
 using AuthService.Application.Reauests;
 using AuthService.Application.Requests;
 using AuthService.Application.Response;
+using AuthService.Application.Responses;
+
+using Contracts.Commands;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +25,7 @@ public class AuthController : ControllerBase {
     [FromBody] RegisterUserRequest request, 
     [FromServices] ICommandHandler<Guid, RegisterUserCommand> handler) =>
     await handler.Handle (
-      new RegisterUserCommand (request.Email, request.Password), 
+      new RegisterUserCommand (request.Username, request.Email, request.Password), 
       new CancellationToken (false));
   
   
@@ -38,9 +40,9 @@ public class AuthController : ControllerBase {
   [HttpGet ("logout")] 
   public async Task<Result<bool>> LogoutUser (
     [FromBody] string token,
-    [FromServices] ICommandHandler<bool, LogoutCommand>  handler) =>
+    [FromServices] ICommandHandler<bool, LogoutUserCommand>  handler) =>
   await handler.Handle(
-    new LogoutCommand(token),
+    new LogoutUserCommand(token),
     new CancellationToken(false));
     
 }

@@ -26,14 +26,6 @@ app.UseSwaggerUI (options => {
     options.SwaggerEndpoint ("/swagger/v1/swagger.json", "Product API v1");
 });
 
-var app = builder.Build ();
-
-if (app.Environment.IsDevelopment())
-{
-  app.MapOpenApi();
-  app.UseSwaggerUI (options => options.SwaggerEndpoint ("/openapi/v1.json", "AuthService"));
-}
-
 app.UseHttpsRedirection ();
 
 app.UseAuthorization ();
