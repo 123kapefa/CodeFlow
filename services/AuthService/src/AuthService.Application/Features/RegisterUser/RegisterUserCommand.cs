@@ -1,7 +1,6 @@
-using AuthService.Application.Abstractions;
-using AuthService.Application.DTOs;
+using Contracts.Commands;
 
 namespace AuthService.Application.Features.RegisterUser;
 
-public record RegisterUserCommand (string Email, string Password) : ICommand;
+public record RegisterUserCommand (string Username, string Email, string Password) : ICommand;
 

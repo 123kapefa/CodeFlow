@@ -1,5 +1,4 @@
-using AuthService.Application.Abstractions;
-using AuthService.Application.DTOs;
+using Contracts.Commands;
 
 namespace AuthService.Application.Features.LoginUser;
 

@@ -1,3 +1,3 @@
 namespace AuthService.Application.Requests;
 
-public record RegisterUserRequest (string Email, string Password);
+public record RegisterUserRequest (string Username, string Email, string Password);

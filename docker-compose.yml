@@ -1,5 +1,46 @@
-﻿services:
+# networks:
+#   backend: {}
 
+# volumes:
+#   pg-auth-data:
+
+# services:
+  ##########################################################
+  # Database
+  ##########################################################
+  # postgres-auth:
+  #   image: postgres:16
+  #   container_name: postgres-auth
+  #   environment:
+  #     POSTGRES_USER: auth
+  #     POSTGRES_PASSWORD: secret
+  #     POSTGRES_DB: authdb
+  #   volumes:
+  #     - pg-auth-data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5434:5432"
+  #   networks: [backend]
+
+  ##########################################################
+  # AuthService
+  ##########################################################
+#  authservice:
+#    build:
+#      context: ./services/AuthService/src
+#      dockerfile: ../docker/Dockerfile
+#    container_name: auth-service
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Development
+#      - ConnectionStrings__Default=Host=postgres-auth;Database=authdb;Username=auth;Password=secret
+#    depends_on:
+#      - postgres-auth
+#    ports:
+#      - "5001:8080"
+#    networks: [backend]
+
+
+
+services:
   # ────────── инфраструктура ──────────
   rabbitmq:
     image: rabbitmq:3.13-management
@@ -33,10 +74,10 @@
       dockerfile: services/AuthService/docker/Dockerfile
       args:
         PROJECT_NAME: AuthService
-        DOTNET_VERSION: 9.0
+        DOTNET_VERSION: 9.0-preview
     environment:
       ASPNETCORE_URLS:          http://+:5000
-      ConnectionStrings__Main: 'Host=postgres-auth;Port=5432;Database=authdb;Username=auth;Password=secret'
+      ConnectionStrings__AuthServiceDbContext: 'Host=postgres-auth;Port=5432;Database=authdb;Username=auth;Password=secret'
       Rabbit__Host:             rabbitmq
       Rabbit__User:             guest
       Rabbit__Pass:             guest
@@ -67,7 +108,7 @@
       dockerfile: services/UserService/docker/Dockerfile
       args:
         PROJECT_NAME: UserService
-        DOTNET_VERSION: 9.0
+        DOTNET_VERSION: 9.0-preview
     environment:
       ASPNETCORE_URLS:          http://+:5000
       ConnectionStrings__Main: 'Host=user-db;Port=5432;Database=userdb;Username=user;Password=secret'
@@ -101,7 +142,7 @@
       dockerfile: services/QuestionService/docker/Dockerfile
       args:
         PROJECT_NAME: QuestionService
-        DOTNET_VERSION: 9.0
+        DOTNET_VERSION: 9.0-preview
     environment:
       ASPNETCORE_URLS:          http://+:5000
       ConnectionStrings__Main: 'Host=question-db;Port=5432;Database=questiondb;Username=question;Password=secret'
@@ -114,12 +155,47 @@
     ports:
       - "5003:5000"  # Swagger → http://localhost:5003/swagger
     networks: [ clonenet ]
+    
+  # ────────── AnswerService + БД ──────────
+  answer-db:
+    image: postgres:16
+    ports:
+      - "5436:5432"
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: answerdb
+      POSTGRES_USER: answer
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - answer-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  answerservice:
+    build:
+      context: .
+      dockerfile: services/AnswerService/docker/Dockerfile
+      args:
+        PROJECT_NAME: AnswerService
+        DOTNET_VERSION: 9.0-preview
+    environment:
+      ASPNETCORE_URLS:          http://+:5000
+      ConnectionStrings__AnswerServiceDbContext: 'Host=localhost;Port=5433;Database=answerdb;Username=answer;Password=secret'
+      Rabbit__Host:             rabbitmq
+      Rabbit__User:             guest
+      Rabbit__Pass:             guest
+    depends_on:
+      - rabbitmq
+      - answer-db
+    ports:
+      - "5004:5000"  # Swagger → http://localhost:5003/swagger
+    networks: [ clonenet ]
 
 # ────────── тома для персистентных БД ──────────
 volumes:
   auth-db-data:
   user-db-data:
   question-db-data:
+  answer-db-data:
 
 # ────────── общая bridge-сеть ──────────
 networks:
