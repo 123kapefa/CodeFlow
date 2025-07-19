@@ -3,6 +3,18 @@ using System.Text.Json;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using TagService.Infrastructure.Data;
+using TagService.Domain.Repositories;
+using TagService.Infrastructure.Repositories;
+using Contracts.Commands;
+using TagService.Application.DTO;
+using TagService.Application.Features.Tags.GetTagById;
+using FluentValidation;
+using TagService.Application.Features.Tags.CreateTag;
+using TagService.Application.Features.Tags.UpdateTag;
+using TagService.Application.Features.Tags.DeleteTag;
+using TagService.Application.Features.Tags.GetTagByName;
+using TagService.Application.Features.Tags.UpdateTagRequest;
+using TagService.Application.Features.WatchedTags.GetUserWatchedTags;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +28,21 @@ builder.Services.AddDbContext<TagServiceDbContext>(options => {
      .EnableSensitiveDataLogging()
            .LogTo(Console.WriteLine, LogLevel.Information);
 });
+
+builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<IWatchedTagRepository, WatchedTagRepository>();
+
+builder.Services.AddScoped<IValidator<CreateTagCommand>, CreateTagValidator>();
+builder.Services.AddScoped<IValidator<UpdateTagCommand>, UpdateTagValidator>();
+
+builder.Services.AddScoped<ICommandHandler<TagDTO, GetTagByIdCommand>, GetTagByIdHandler>();
+builder.Services.AddScoped<ICommandHandler<TagDTO, GetTagByNameCommand>, GetTagByNameHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateTagCommand>, CreateTagHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateTagCommand>, UpdateTagHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteTagCommand>, DeleteTagHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateTagRequestCommand>, UpdateTagRequestHandler>();
+
+builder.Services.AddScoped<ICommandHandler<IEnumerable<WatchedTagDTO>, GetUserWatchedTagsCommand>, GetUserWatchedTagsHandler>();
 
 
 // Swagger

@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace TagService.Domain.Repositories;
 
-public class IUserTagParticipationRepository {
+public interface IUserTagParticipationRepository {
 }
