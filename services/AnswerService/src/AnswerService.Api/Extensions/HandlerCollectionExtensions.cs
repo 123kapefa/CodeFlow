@@ -8,6 +8,8 @@ using AnswerService.Application.Responses;
 
 using Contracts.Commands;
 
+using FluentValidation;
+
 namespace AnswerService.Api.Extensions;
 
 public static class HandlerCollectionExtensions {
@@ -21,6 +23,8 @@ public static class HandlerCollectionExtensions {
     builder.Services.AddScoped<ICommandHandler<GetAnswersResponse, GetAnswersByUserIdCommand>, GetAnswersByUserIdHandler> ();
     builder.Services.AddScoped<ICommandHandler<GetAnswersResponse, GetAnswersByQuestionIdCommand>, GetAnswersByQuestionIdHandler> ();
     
+    builder.Services.AddScoped<IValidator<CreateAnswerCommand>, CreateAnswerValidator> ();
+    builder.Services.AddScoped<IValidator<EditAnswerCommand>, EditAnswerValidator> ();
     return builder;
   }
 
