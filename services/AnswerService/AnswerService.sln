@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B1BD4605-13BF-4046-B1E0-39564E522D9D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{107DF4F7-6C4A-4B85-B1F4-138716804356}"
+	ProjectSection(SolutionItems) = preProject
+		docker\.dockerignore = docker\.dockerignore
+		docker\Dockerfile = docker\Dockerfile
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnswerService.Domain", "src\AnswerService.Domain\AnswerService.Domain.csproj", "{C6AC7E20-49E6-4011-9CDB-6687F9A4BA92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnswerService.Infrastructure", "src\AnswerService.Infrastructure\AnswerService.Infrastructure.csproj", "{6018731F-5B48-4EDA-A72D-21056E80D08A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnswerService.Application", "src\AnswerService.Application\AnswerService.Application.csproj", "{C8088770-9952-4468-9E1A-B38E1C9C588A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnswerService.Api", "src\AnswerService.Api\AnswerService.Api.csproj", "{B04B714A-A871-4E43-A477-6DFA2914D8BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "..\..\shared\Contracts\Contracts.csproj", "{AC37668D-7390-4EBD-BB18-D57FD14F4306}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C6AC7E20-49E6-4011-9CDB-6687F9A4BA92} = {B1BD4605-13BF-4046-B1E0-39564E522D9D}
+		{6018731F-5B48-4EDA-A72D-21056E80D08A} = {B1BD4605-13BF-4046-B1E0-39564E522D9D}
+		{C8088770-9952-4468-9E1A-B38E1C9C588A} = {B1BD4605-13BF-4046-B1E0-39564E522D9D}
+		{B04B714A-A871-4E43-A477-6DFA2914D8BA} = {B1BD4605-13BF-4046-B1E0-39564E522D9D}
+		{AC37668D-7390-4EBD-BB18-D57FD14F4306} = {B1BD4605-13BF-4046-B1E0-39564E522D9D}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C6AC7E20-49E6-4011-9CDB-6687F9A4BA92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6AC7E20-49E6-4011-9CDB-6687F9A4BA92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6AC7E20-49E6-4011-9CDB-6687F9A4BA92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6AC7E20-49E6-4011-9CDB-6687F9A4BA92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6018731F-5B48-4EDA-A72D-21056E80D08A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6018731F-5B48-4EDA-A72D-21056E80D08A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6018731F-5B48-4EDA-A72D-21056E80D08A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6018731F-5B48-4EDA-A72D-21056E80D08A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8088770-9952-4468-9E1A-B38E1C9C588A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8088770-9952-4468-9E1A-B38E1C9C588A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8088770-9952-4468-9E1A-B38E1C9C588A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8088770-9952-4468-9E1A-B38E1C9C588A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B04B714A-A871-4E43-A477-6DFA2914D8BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B04B714A-A871-4E43-A477-6DFA2914D8BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B04B714A-A871-4E43-A477-6DFA2914D8BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B04B714A-A871-4E43-A477-6DFA2914D8BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC37668D-7390-4EBD-BB18-D57FD14F4306}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC37668D-7390-4EBD-BB18-D57FD14F4306}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC37668D-7390-4EBD-BB18-D57FD14F4306}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC37668D-7390-4EBD-BB18-D57FD14F4306}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
