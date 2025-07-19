@@ -8,9 +8,16 @@ using TagService.Application.Features.Tags.CreateTag;
 using TagService.Application.Features.Tags.DeleteTag;
 using TagService.Application.Features.Tags.GetTagById;
 using TagService.Application.Features.Tags.GetTagByName;
+using TagService.Application.Features.Tags.GetTags;
 using TagService.Application.Features.Tags.UpdateTag;
+using TagService.Application.Features.Tags.UpdateTagCountQuestion;
 using TagService.Application.Features.Tags.UpdateTagRequest;
+using TagService.Application.Features.Tags.UpdateTagWatchers;
+using TagService.Application.Features.WatchedTags.CreateWatchedTag;
+using TagService.Application.Features.WatchedTags.DeleteUserWatchedTags;
+using TagService.Application.Features.WatchedTags.DeleteWatchedTag;
 using TagService.Application.Features.WatchedTags.GetUserWatchedTags;
+using TagService.Domain.Filters;
 
 
 namespace TagService.Api.Controllers;
@@ -40,6 +47,18 @@ public class TagServiceController : ControllerBase{
         [FromServices] ICommandHandler<TagDTO, GetTagByNameCommand> handler ) =>
         await handler.Handle(new GetTagByNameCommand(tagName), new CancellationToken(false));
 
+    [HttpGet]
+    [SwaggerOperation(
+    Summary = "Получить список тэгов.",
+    Description = "Получает список тэгов для указанной страницы.",
+    OperationId = "Tag_Get")]
+    public async Task<Result<PagedResult<IEnumerable<TagDTO>>>> GetTagsAsync(
+        [FromQuery] PageParams pageParams,
+        [FromQuery] SortParams sortParams,
+        [FromServices] ICommandHandler<PagedResult<IEnumerable<TagDTO>>, GetTagsCommand> handler ) =>
+        await handler.Handle(new GetTagsCommand(pageParams, sortParams), new CancellationToken(false));
+
+
     [HttpPost]
     [SwaggerOperation(
     Summary = "Создать тэг.",
@@ -62,6 +81,7 @@ public class TagServiceController : ControllerBase{
         [FromServices] ICommandHandler<UpdateTagCommand> handler ) =>
         await handler.Handle(new UpdateTagCommand(tagId, tagUpdateDTO), new CancellationToken(false));
 
+
     [HttpPut("request/{tagName}/daily")]
     [SwaggerOperation(
     Summary = "Обновить тэг(количество запросов за день).",
@@ -71,6 +91,30 @@ public class TagServiceController : ControllerBase{
         string tagName,
         [FromServices] ICommandHandler<UpdateTagRequestCommand> handler ) =>
         await handler.Handle(new UpdateTagRequestCommand(tagName), new CancellationToken(false));
+
+
+    [HttpPut("request/{tagName}/{count}")]
+    [SwaggerOperation(
+    Summary = "Обновить тэг(количество вопросов).",
+    Description = "Обновляет запись в таблице tags.",
+    OperationId = "Tag_Put")]
+    public async Task<Result> UpdateTagCountQuestionAsync(
+        string tagName, 
+        int count, 
+        [FromServices]ICommandHandler<UpdateTagCountQuestionCommand> handler) =>
+        await handler.Handle(new UpdateTagCountQuestionCommand(tagName, count), new CancellationToken(false));
+
+
+    [HttpPut("request/{tagId}/watcher/{count}")]
+    [SwaggerOperation(
+     Summary = "Обновить тэг(количество наблюдателей).",
+     Description = "Обновляет запись в таблице tags.",
+     OperationId = "Tag_Put")]
+    public async Task<Result> UpdateTagWatchersAsync(
+     int tagId,
+     int count,
+     [FromServices] ICommandHandler<UpdateTagWatchersCommand> handler ) =>
+     await handler.Handle(new UpdateTagWatchersCommand(tagId, count), new CancellationToken(false));
 
 
     [HttpDelete("{tagId}")]
@@ -87,12 +131,45 @@ public class TagServiceController : ControllerBase{
 
     [HttpGet("watched/{userId}")]
     [SwaggerOperation(
-    Summary = "Получить список тэгов пользователя по userId.",
+    Summary = "Получить список отслеживаемых тэгов пользователя по userId.",
     Description = "Возвращает список объектов(IEnumerable<WatchedTagDTO>).",
     OperationId = "Tag_Get")]
     public async Task<Result<IEnumerable<WatchedTagDTO>>> GetUserWatchedTagsAsync(
         Guid userId,
         [FromServices] ICommandHandler<IEnumerable<WatchedTagDTO>, GetUserWatchedTagsCommand> handler ) =>
         await handler.Handle(new GetUserWatchedTagsCommand(userId), new CancellationToken(false));
+
+
+    [HttpPost("watched/{userId}/{tagId}")]
+    [SwaggerOperation(
+    Summary = "Создать отслеживаемый тэг.",
+    Description = "Создает запись в таблице WatchedTags.",
+    OperationId = "Tag_Post")]
+    public async Task<Result> CreateWatchedTagAsync(
+        Guid userId,
+        int tagId,
+        [FromServices] ICommandHandler<CreateWatchedTagCommand> handler ) =>
+        await handler.Handle(new CreateWatchedTagCommand(userId, tagId), new CancellationToken(false));
+
+    [HttpDelete("watched/{tagId}/{userId}")]
+    [SwaggerOperation(
+    Summary = "Удалить отслеживаемый тэг.",
+    Description = "Удаляет запись в таблице WatchedTags.",
+    OperationId = "Tag_Delete")]
+    public async Task<Result> DeleteWatchedTagAsync(
+        int tagId,
+        Guid userId,
+        [FromServices] ICommandHandler<DeleteWatchedTagCommand> handler ) =>
+        await handler.Handle(new DeleteWatchedTagCommand(tagId, userId), new CancellationToken(false));
+
+    [HttpDelete("watched/{userId}")]
+    [SwaggerOperation(
+    Summary = "Удалить все отслеживаемые тэги пользователя по userId.",
+    Description = "Удаляет записи в таблице WatchedTags для определенного пользователя.",
+    OperationId = "Tag_Delete")]
+    public async Task<Result> DeleteUserWatchedTagsAsync(
+        Guid userId,
+        [FromServices] ICommandHandler<DeleteUserWatchedTagsCommand> handler ) =>
+        await handler.Handle(new DeleteUserWatchedTagsCommand(userId), new CancellationToken(false));
 
 }

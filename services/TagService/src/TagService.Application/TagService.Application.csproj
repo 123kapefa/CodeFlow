@@ -22,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\WatchedTags\CreateWatchedTag\" />
-    <Folder Include="Features\WatchedTags\DeleteWatchedTag\" />
+    <Folder Include="Features\ParticipationTags\CreateTags\" />
+    <Folder Include="Features\ParticipationTags\DeleteUserTags\" />
   </ItemGroup>
 
 </Project>

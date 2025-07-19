@@ -1,14 +1,10 @@
 ﻿using Ardalis.Result;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TagService.Domain.Entities;
 using TagService.Domain.Filters;
 using TagService.Domain.Repositories;
 using TagService.Infrastructure.Data;
+using TagService.Infrastructure.Extensions;
 
 namespace TagService.Infrastructure.Repositories;
 
@@ -29,6 +25,7 @@ public class TagRepository : ITagRepository {
         return tag is null ? Result.Error("Тэг не найден") : Result.Success(tag);
     }
 
+    /// <summary> Получить тэг по Name. </summary>
     public async Task<Result<Tag>> GetTagByNameAsync( string name, CancellationToken token ) {
 
         Tag? tag = await _dbContext.Tags.FirstOrDefaultAsync(t => t.Name == name, token);
@@ -41,7 +38,20 @@ public class TagRepository : ITagRepository {
     public async Task<Result<(IEnumerable<Tag> items, PagedInfo pageInfo)>> GetTagsAsync( 
         PageParams pageParams, 
         SortParams sortParams, 
-        CancellationToken token ) => throw new NotImplementedException();
+        CancellationToken token ) {
+
+        try {
+            var tags = await _dbContext.Tags
+                .Sort(sortParams)
+                .ToPagedAsync(pageParams);
+
+            return Result<(IEnumerable<Tag> items, PagedInfo pageInfo)>.Success(tags);
+        }
+        catch(Exception) {
+            return Result<(IEnumerable<Tag> items, PagedInfo pageInfo)>.Error("Ошибка базы данных");
+        }
+
+    }
 
 
     /// <summary> Создать тэг. </summary>

@@ -8,4 +8,4 @@ using System.Threading.Tasks;
 namespace TagService.Application.Features.Tags.UpdateTagCountQuestion;
 
 //TODO УДАЛИТЬ?? ИСПОЛЬЗОВАТЬ UpdateTagRequestCommand???
-public record UpdateTagCountQuestionCommand(string Name): ICommand;
+public record UpdateTagCountQuestionCommand(string Name, int Count): ICommand;
