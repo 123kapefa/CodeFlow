@@ -1,5 +1,5 @@
-# ---------- 0. build-time аргументы ----------
-ARG DOTNET_VERSION=9.0-preview
+﻿# ---------- 0. build-time аргументы ----------
+ARG DOTNET_VERSION=9.0
 ARG PROJECT_NAME=AuthService
 ARG CONFIGURATION=Release
 
@@ -13,15 +13,12 @@ ARG CONFIGURATION
 
 # 1.1 Копируем .sln (чтобы restore по solution, если захотите)
 COPY services/${PROJECT_NAME}/src/ ./services/${PROJECT_NAME}/src/
-
-# 1.2 только *.csproj (кэш слоя restore)
-COPY services/${PROJECT_NAME}/src/**/*.csproj ./services/${PROJECT_NAME}/src/
-COPY shared/BuildingBlocks/**/*.csproj          ./shared/BuildingBlocks/
+COPY shared/**/*.csproj          ./shared/
 RUN dotnet restore \
     "services/${PROJECT_NAME}/src/${PROJECT_NAME}.Api/${PROJECT_NAME}.Api.csproj"
 
 # 1.3 Копируем остальной код
-COPY shared/BuildingBlocks/         ./shared/BuildingBlocks/
+COPY shared/        ./shared/
 COPY services/${PROJECT_NAME}/src/  ./services/${PROJECT_NAME}/src/
 RUN dotnet publish \
     "services/${PROJECT_NAME}/src/${PROJECT_NAME}.Api/${PROJECT_NAME}.Api.csproj" \
@@ -37,4 +34,3 @@ EXPOSE 5000
 COPY --from=build /app/publish .
 
 ENTRYPOINT ["dotnet", "AuthService.Api.dll"]
-

@@ -46,6 +46,12 @@ namespace UserService.Infrastructure.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("UserStatisticId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("UserStatisticId1")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("text");
@@ -54,6 +60,12 @@ namespace UserService.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserStatisticId")
+                        .IsUnique();
+
+                    b.HasIndex("UserStatisticId1")
+                        .IsUnique();
 
                     b.ToTable("UsersInfos");
                 });
@@ -64,7 +76,7 @@ namespace UserService.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("LastVisitAt")
+                    b.Property<DateTime>("LastVisitAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Reputation")
@@ -78,7 +90,31 @@ namespace UserService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
                     b.ToTable("UsersStatistic");
+                });
+
+            modelBuilder.Entity("UserService.Domain.Entities.UserInfo", b =>
+                {
+                    b.HasOne("UserService.Domain.Entities.UserStatistic", "UserStatistic")
+                        .WithOne()
+                        .HasForeignKey("UserService.Domain.Entities.UserInfo", "UserStatisticId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UserService.Domain.Entities.UserStatistic", null)
+                        .WithOne("UserInfo")
+                        .HasForeignKey("UserService.Domain.Entities.UserInfo", "UserStatisticId1");
+
+                    b.Navigation("UserStatistic");
+                });
+
+            modelBuilder.Entity("UserService.Domain.Entities.UserStatistic", b =>
+                {
+                    b.Navigation("UserInfo")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
