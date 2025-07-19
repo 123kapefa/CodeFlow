@@ -33,4 +33,4 @@ EXPOSE 5000
 
 COPY --from=build /app/publish .
 
-ENTRYPOINT ["dotnet", "QuestionService.Api.dll"]
+ENTRYPOINT ["dotnet", "CommentService.Api.dll"]

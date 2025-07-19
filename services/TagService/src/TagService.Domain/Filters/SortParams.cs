@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TagService.Application.DTO;
+namespace TagService.Domain.Filters;
 
-public class ParticipationDTO {
+public class SortParams {
 }

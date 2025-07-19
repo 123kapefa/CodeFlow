@@ -24,6 +24,7 @@ namespace QuestionService.Api.Contollers;
 
 [ApiController]
 [Route("question")]
+[TranslateResultToActionResult]
 public class QuestionController : ControllerBase {
 
 

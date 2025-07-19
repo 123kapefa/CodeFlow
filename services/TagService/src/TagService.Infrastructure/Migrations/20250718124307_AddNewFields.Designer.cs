@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TagService.Infrastructure.Data;
@@ -11,9 +12,11 @@ using TagService.Infrastructure.Data;
 namespace TagService.Infrastructure.Migrations
 {
     [DbContext(typeof(TagServiceDbContext))]
-    partial class TagServiceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250718124307_AddNewFields")]
+    partial class AddNewFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,9 +42,6 @@ namespace TagService.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("DailyCountUpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<int>("DailyRequestCount")
                         .HasColumnType("integer");
 
@@ -51,9 +51,6 @@ namespace TagService.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<DateTime?>("WeeklyCountUpdatedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("WeeklyRequestCount")
                         .HasColumnType("integer");
