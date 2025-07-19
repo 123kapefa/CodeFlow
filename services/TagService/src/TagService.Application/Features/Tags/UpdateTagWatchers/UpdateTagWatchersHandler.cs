@@ -1,36 +1,39 @@
 ﻿using Ardalis.Result;
 using Contracts.Commands;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using TagService.Domain.Entities;
 using TagService.Domain.Repositories;
 
-namespace TagService.Application.Features.Tags.UpdateTagCountQuestion;
+namespace TagService.Application.Features.Tags.UpdateTagWatchers;
 
-//TODO УДАЛИТЬ?? ИСПОЛЬЗОВАТЬ UpdateTagRequestCommand???
-public class UpdateTagCountQuestionHandler : ICommandHandler<UpdateTagCountQuestionCommand> {
+public class UpdateTagWatchersHandler : ICommandHandler<UpdateTagWatchersCommand> {
 
     private readonly ITagRepository _tagRepository;
 
-    public UpdateTagCountQuestionHandler( ITagRepository tagRepository ) {
+    public UpdateTagWatchersHandler( ITagRepository tagRepository ) {
         _tagRepository = tagRepository;
     }
 
-    public async Task<Result> Handle( UpdateTagCountQuestionCommand command, CancellationToken token ) {
+    public async Task<Result> Handle( UpdateTagWatchersCommand command, CancellationToken token ) {
 
-        if(string.IsNullOrEmpty(command.Name))
+        if(command.TagId <= 0)
             return Result.Error("Некорректный аргумент запроса");
 
         if(command.Count == 0)
             return Result.Error("Количество не может быть равно 0");
 
-        Result<Tag> resultTag = await _tagRepository.GetTagByNameAsync(command.Name, token);
+        Result<Tag> resultTag = await _tagRepository.GetTagByIdAsync(command.TagId, token);
         if(!resultTag.IsSuccess)
             return Result.Error(new ErrorList(resultTag.Errors));
 
-        resultTag.Value.CountQuestion += command.Count;
+        resultTag.Value.CountWotchers += command.Count;
 
         Result result = await _tagRepository.UpdateTagAsync(resultTag.Value, token);
 
         return result.IsSuccess ? Result.Success() : Result.Error(new ErrorList(result.Errors));
     }
-
 }
