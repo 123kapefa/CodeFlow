@@ -17,6 +17,7 @@ public class UpdateTagHandler : ICommandHandler<UpdateTagCommand> {
         _validator = validator;
     }
 
+
     public async Task<Result> Handle( UpdateTagCommand command, CancellationToken token ) {
 
         var validated = await _validator.ValidateAsync(command);
@@ -37,4 +38,5 @@ public class UpdateTagHandler : ICommandHandler<UpdateTagCommand> {
 
         return result.IsSuccess ? Result.Success() : Result.Error(new ErrorList(result.Errors));
     }
+
 }

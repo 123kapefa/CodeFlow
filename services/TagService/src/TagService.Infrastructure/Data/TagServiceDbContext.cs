@@ -1,9 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TagService.Domain.Entities;
 
 namespace TagService.Infrastructure.Data;
@@ -13,6 +8,7 @@ public class TagServiceDbContext : DbContext {
     public DbSet<Tag> Tags { get; set; }
     public DbSet<WatchedTag> WatchedTags { get; set; }
     public DbSet<UserTagParticipation> UserTagParticipations { get; set; }
+    public DbSet<UserTagParticipationQuestion> UserTagParticipationQuestions { get; set; }
 
     public TagServiceDbContext( DbContextOptions<TagServiceDbContext> options ) : base(options) {}
 
@@ -37,7 +33,7 @@ public class TagServiceDbContext : DbContext {
         new Tag { Id = 7, Name = "docker", Description = "Контейнеризация", CreatedAt = new DateTime(2025, 7, 17, 0, 0, 0, DateTimeKind.Utc) },
         new Tag { Id = 8, Name = "rabbitmq", Description = "Очереди RabbitMQ", CreatedAt = new DateTime(2025, 7, 17, 0, 0, 0, DateTimeKind.Utc) },
         new Tag { Id = 9, Name = "rest", Description = "REST‑API", CreatedAt = new DateTime(2025, 7, 17, 0, 0, 0, DateTimeKind.Utc) },
-        new Tag { Id = 10, Name = "microservices", Description = "Микросервисная арх‑ра", CreatedAt = new DateTime(2025, 7, 17, 0, 0, 0, DateTimeKind.Utc) }
-    );
+        new Tag { Id = 10, Name = "microservices", Description = "Микросервисная арх‑ра", CreatedAt = new DateTime(2025, 7, 17, 0, 0, 0, DateTimeKind.Utc) });
     }
+
 }

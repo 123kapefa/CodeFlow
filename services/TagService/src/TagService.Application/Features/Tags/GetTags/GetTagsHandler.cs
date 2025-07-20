@@ -13,9 +13,10 @@ public class GetTagsHandler : ICommandHandler<PagedResult<IEnumerable<TagDTO>>, 
         _tagRepository = tagRepository;
     }
 
+
     public async Task<Result<PagedResult<IEnumerable<TagDTO>>>> Handle( GetTagsCommand command, CancellationToken token ) {
 
-        var tagsResult = await _tagRepository.GetTagsAsync(command.PageParams, command.SortParams, token);
+        var tagsResult = await _tagRepository.GetTagsAsync( command.PageParams, command.SortParams, token);
         if(!tagsResult.IsSuccess)
             return Result<PagedResult<IEnumerable<TagDTO>>>.Error(new ErrorList(tagsResult.Errors));
 
@@ -33,4 +34,5 @@ public class GetTagsHandler : ICommandHandler<PagedResult<IEnumerable<TagDTO>>, 
         return Result<PagedResult<IEnumerable<TagDTO>>>
             .Success(new PagedResult<IEnumerable<TagDTO>>(tagsResult.Value.pageInfo, tags));
     }
+
 }

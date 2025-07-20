@@ -1,10 +1,5 @@
 ﻿using Ardalis.Result;
 using Contracts.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TagService.Domain.Entities;
 using TagService.Domain.Repositories;
 
@@ -17,6 +12,7 @@ public class UpdateTagWatchersHandler : ICommandHandler<UpdateTagWatchersCommand
     public UpdateTagWatchersHandler( ITagRepository tagRepository ) {
         _tagRepository = tagRepository;
     }
+
 
     public async Task<Result> Handle( UpdateTagWatchersCommand command, CancellationToken token ) {
 
@@ -36,4 +32,5 @@ public class UpdateTagWatchersHandler : ICommandHandler<UpdateTagWatchersCommand
 
         return result.IsSuccess ? Result.Success() : Result.Error(new ErrorList(result.Errors));
     }
+
 }

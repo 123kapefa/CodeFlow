@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TagService.Infrastructure.Data;
@@ -11,9 +12,11 @@ using TagService.Infrastructure.Data;
 namespace TagService.Infrastructure.Migrations
 {
     [DbContext(typeof(TagServiceDbContext))]
-    partial class TagServiceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250720093327_AddNewTable2")]
+    partial class AddNewTable2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

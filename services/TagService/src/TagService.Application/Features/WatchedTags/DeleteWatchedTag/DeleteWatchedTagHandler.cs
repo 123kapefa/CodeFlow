@@ -1,10 +1,5 @@
 ﻿using Ardalis.Result;
 using Contracts.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TagService.Domain.Repositories;
 
 namespace TagService.Application.Features.WatchedTags.DeleteWatchedTag;
@@ -16,6 +11,7 @@ public class DeleteWatchedTagHandler : ICommandHandler<DeleteWatchedTagCommand> 
     public DeleteWatchedTagHandler( IWatchedTagRepository repository ) {
         _repository = repository;
     }
+
 
     public async Task<Result> Handle( DeleteWatchedTagCommand command, CancellationToken token ) {
 
@@ -29,4 +25,5 @@ public class DeleteWatchedTagHandler : ICommandHandler<DeleteWatchedTagCommand> 
 
         return result.IsSuccess ? Result.Success() : Result.Error(new ErrorList(result.Errors));
     }
+
 }

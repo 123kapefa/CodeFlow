@@ -17,4 +17,5 @@ public class UpdateTagValidator : AbstractValidator<UpdateTagCommand> {
             .WithMessage("Описание не длиннее 256 символов")
             .When(x => x.TagUpdateDTO.Description is not null);
     }
+
 }

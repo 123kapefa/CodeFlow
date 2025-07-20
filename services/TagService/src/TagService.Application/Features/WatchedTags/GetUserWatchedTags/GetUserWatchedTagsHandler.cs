@@ -1,10 +1,5 @@
 ﻿using Ardalis.Result;
 using Contracts.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TagService.Application.DTO;
 using TagService.Domain.Entities;
 using TagService.Domain.Repositories;
@@ -18,6 +13,7 @@ public class GetUserWatchedTagsHandler : ICommandHandler<IEnumerable<WatchedTagD
     public GetUserWatchedTagsHandler( IWatchedTagRepository repository ) {
         _repository = repository;
     }
+
 
     public async Task<Result<IEnumerable<WatchedTagDTO>>> Handle( 
         GetUserWatchedTagsCommand command, 
@@ -39,4 +35,5 @@ public class GetUserWatchedTagsHandler : ICommandHandler<IEnumerable<WatchedTagD
 
         return result.IsSuccess ? Result.Success(watchedTags) : Result.Error(new ErrorList(result.Errors));
     }
+
 }
