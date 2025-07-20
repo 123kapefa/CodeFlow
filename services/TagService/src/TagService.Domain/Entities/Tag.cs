@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TagService.Domain.Entities;
+﻿namespace TagService.Domain.Entities;
 
 public class Tag {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
     public DateTime CreatedAt { get; set; }
+   
+    public int CountQuestion { get; set; } //обновляется при создании вопроса  
+    public int CountWotchers { get; set; } //обновляется при добавлении в отслеживаемые в IWatchedTagRepository
 
-    // Количество вопросов с этим тегом
-    public int CountQuestion { get; set; }
-    // Количество пиписчоков у тега
-    public int CountWotchers { get; set; }
-    // Количество вопросов с этим тегом за день
-    public int DailyRequestCount { get; set; }
-    // Количество вопросов с этим тегом за неделю
-    public int WeeklyRequestCount { get; set; }
+    public int DailyRequestCount { get; set; } //обновляется при создании вопроса
+    public int WeeklyRequestCount { get; set; } //обновляется при создании вопроса
+
+    public DateTime? DailyCountUpdatedAt { get; set; } //когда обновляли «сутки»
+    public DateTime? WeeklyCountUpdatedAt { get; set; } //когда обновляли «неделю»
 
     // Навигация
     public ICollection<UserTagParticipation> UserTagParticipations { get; set; } = new List<UserTagParticipation>();

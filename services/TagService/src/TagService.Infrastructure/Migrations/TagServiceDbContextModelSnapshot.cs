@@ -39,6 +39,9 @@ namespace TagService.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("DailyCountUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("DailyRequestCount")
                         .HasColumnType("integer");
 
@@ -49,12 +52,127 @@ namespace TagService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("WeeklyCountUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("WeeklyRequestCount")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.ToTable("Tags");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CountQuestion = 0,
+                            CountWotchers = 0,
+                            CreatedAt = new DateTime(2025, 7, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DailyRequestCount = 0,
+                            Description = "Язык C#",
+                            Name = "csharp",
+                            WeeklyRequestCount = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CountQuestion = 0,
+                            CountWotchers = 0,
+                            CreatedAt = new DateTime(2025, 7, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DailyRequestCount = 0,
+                            Description = "ASP.NET Core 9",
+                            Name = "asp.net-core",
+                            WeeklyRequestCount = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CountQuestion = 0,
+                            CountWotchers = 0,
+                            CreatedAt = new DateTime(2025, 7, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DailyRequestCount = 0,
+                            Description = "Entity Framework Core",
+                            Name = "entity-framework",
+                            WeeklyRequestCount = 0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CountQuestion = 0,
+                            CountWotchers = 0,
+                            CreatedAt = new DateTime(2025, 7, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DailyRequestCount = 0,
+                            Description = "LINQ‑выражения",
+                            Name = "linq",
+                            WeeklyRequestCount = 0
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CountQuestion = 0,
+                            CountWotchers = 0,
+                            CreatedAt = new DateTime(2025, 7, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DailyRequestCount = 0,
+                            Description = "SQL‑запросы",
+                            Name = "sql",
+                            WeeklyRequestCount = 0
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CountQuestion = 0,
+                            CountWotchers = 0,
+                            CreatedAt = new DateTime(2025, 7, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DailyRequestCount = 0,
+                            Description = "PostgreSQL",
+                            Name = "postgresql",
+                            WeeklyRequestCount = 0
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CountQuestion = 0,
+                            CountWotchers = 0,
+                            CreatedAt = new DateTime(2025, 7, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DailyRequestCount = 0,
+                            Description = "Контейнеризация",
+                            Name = "docker",
+                            WeeklyRequestCount = 0
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CountQuestion = 0,
+                            CountWotchers = 0,
+                            CreatedAt = new DateTime(2025, 7, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DailyRequestCount = 0,
+                            Description = "Очереди RabbitMQ",
+                            Name = "rabbitmq",
+                            WeeklyRequestCount = 0
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CountQuestion = 0,
+                            CountWotchers = 0,
+                            CreatedAt = new DateTime(2025, 7, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DailyRequestCount = 0,
+                            Description = "REST‑API",
+                            Name = "rest",
+                            WeeklyRequestCount = 0
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CountQuestion = 0,
+                            CountWotchers = 0,
+                            CreatedAt = new DateTime(2025, 7, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DailyRequestCount = 0,
+                            Description = "Микросервисная арх‑ра",
+                            Name = "microservices",
+                            WeeklyRequestCount = 0
+                        });
                 });
 
             modelBuilder.Entity("TagService.Domain.Entities.UserTagParticipation", b =>
@@ -83,6 +201,25 @@ namespace TagService.Infrastructure.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("UserTagParticipations");
+                });
+
+            modelBuilder.Entity("TagService.Domain.Entities.UserTagParticipationQuestion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserTagParticipationId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserTagParticipationId");
+
+                    b.ToTable("UserTagParticipationQuestions");
                 });
 
             modelBuilder.Entity("TagService.Domain.Entities.WatchedTag", b =>
@@ -118,6 +255,17 @@ namespace TagService.Infrastructure.Migrations
                     b.Navigation("Tag");
                 });
 
+            modelBuilder.Entity("TagService.Domain.Entities.UserTagParticipationQuestion", b =>
+                {
+                    b.HasOne("TagService.Domain.Entities.UserTagParticipation", "UserTagParticipation")
+                        .WithMany("UserTagParticipationQuestions")
+                        .HasForeignKey("UserTagParticipationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserTagParticipation");
+                });
+
             modelBuilder.Entity("TagService.Domain.Entities.WatchedTag", b =>
                 {
                     b.HasOne("TagService.Domain.Entities.Tag", "Tag")
@@ -134,6 +282,11 @@ namespace TagService.Infrastructure.Migrations
                     b.Navigation("UserTagParticipations");
 
                     b.Navigation("WatchedTags");
+                });
+
+            modelBuilder.Entity("TagService.Domain.Entities.UserTagParticipation", b =>
+                {
+                    b.Navigation("UserTagParticipationQuestions");
                 });
 #pragma warning restore 612, 618
         }
