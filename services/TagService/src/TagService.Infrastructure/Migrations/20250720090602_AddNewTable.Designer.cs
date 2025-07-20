@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TagService.Infrastructure.Data;
@@ -11,9 +12,11 @@ using TagService.Infrastructure.Data;
 namespace TagService.Infrastructure.Migrations
 {
     [DbContext(typeof(TagServiceDbContext))]
-    partial class TagServiceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250720090602_AddNewTable")]
+    partial class AddNewTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -219,7 +222,7 @@ namespace TagService.Infrastructure.Migrations
 
                     b.HasIndex("UserTagParticipationId");
 
-                    b.ToTable("UserTagParticipationQuestions");
+                    b.ToTable("UserTagParticipationQuestion");
                 });
 
             modelBuilder.Entity("TagService.Domain.Entities.WatchedTag", b =>

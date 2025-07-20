@@ -2,11 +2,6 @@
 using Ardalis.Result.FluentValidation;
 using Contracts.Commands;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TagService.Domain.Entities;
 using TagService.Domain.Repositories;
 
@@ -21,6 +16,7 @@ public class CreateTagHandler : ICommandHandler<CreateTagCommand> {
         _tagRepository = tagRepository;
         _validator = validator;
     }
+
 
     public async Task<Result> Handle( CreateTagCommand command, CancellationToken token ) {
 
@@ -38,4 +34,5 @@ public class CreateTagHandler : ICommandHandler<CreateTagCommand> {
 
         return result.IsSuccess ? Result.Success() : Result.Error(new ErrorList(result.Errors));
     }
+
 }

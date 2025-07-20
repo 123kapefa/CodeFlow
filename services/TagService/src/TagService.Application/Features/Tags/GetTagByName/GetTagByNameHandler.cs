@@ -18,6 +18,7 @@ public class GetTagByNameHandler : ICommandHandler<TagDTO, GetTagByNameCommand> 
         _tagRepository = tagRepository;
     }
 
+
     public async Task<Result<TagDTO>> Handle( GetTagByNameCommand command, CancellationToken token ) {
 
         if(string.IsNullOrEmpty(command.Name))
@@ -40,4 +41,5 @@ public class GetTagByNameHandler : ICommandHandler<TagDTO, GetTagByNameCommand> 
 
         return Result.Success(resultDto);
     }
+
 }

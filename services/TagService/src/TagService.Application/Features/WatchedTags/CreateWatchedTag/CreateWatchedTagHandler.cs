@@ -1,11 +1,5 @@
 ﻿using Ardalis.Result;
 using Contracts.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TagService.Application.DTO;
 using TagService.Domain.Entities;
 using TagService.Domain.Repositories;
 
@@ -18,6 +12,7 @@ public class CreateWatchedTagHandler : ICommandHandler<CreateWatchedTagCommand> 
     public CreateWatchedTagHandler( IWatchedTagRepository watchedTagRepository ) {
         _watchedTagRepository = watchedTagRepository;
     }
+
 
     public async Task<Result> Handle( CreateWatchedTagCommand command, CancellationToken token ) {
 
@@ -36,4 +31,5 @@ public class CreateWatchedTagHandler : ICommandHandler<CreateWatchedTagCommand> 
 
         return result.IsSuccess ? Result.Success() : Result.Error(new ErrorList(result.Errors));
     }
+
 }

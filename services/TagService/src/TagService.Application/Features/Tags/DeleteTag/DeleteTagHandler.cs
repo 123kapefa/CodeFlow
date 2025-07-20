@@ -13,6 +13,7 @@ public class DeleteTagHandler : ICommandHandler<DeleteTagCommand> {
         _tagRepository = tagRepository;
     }
 
+
     public async Task<Result> Handle( DeleteTagCommand command, CancellationToken token ) {
 
         if(command.TagId <= 0)
@@ -26,4 +27,5 @@ public class DeleteTagHandler : ICommandHandler<DeleteTagCommand> {
 
         return result.IsSuccess ? Result.Success() : Result.Error(new ErrorList(result.Errors));
     }
+
 }

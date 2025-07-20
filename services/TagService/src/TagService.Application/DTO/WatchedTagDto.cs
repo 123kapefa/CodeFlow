@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TagService.Application.DTO;
+﻿namespace TagService.Application.DTO;
 
 public class WatchedTagDTO {
     public Guid Id { get; set; }

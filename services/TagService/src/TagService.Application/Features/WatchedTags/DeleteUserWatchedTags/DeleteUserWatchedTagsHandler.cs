@@ -13,6 +13,7 @@ public class DeleteUserWatchedTagsHandler : ICommandHandler<DeleteUserWatchedTag
         _repository = repository;
     }
 
+
     public async Task<Result> Handle( DeleteUserWatchedTagsCommand command, CancellationToken token ) {
 
         if(command.UserId == Guid.Empty)
@@ -26,6 +27,5 @@ public class DeleteUserWatchedTagsHandler : ICommandHandler<DeleteUserWatchedTag
 
         return result.IsSuccess ? Result.Success() : Result.Error(new ErrorList(result.Errors));
     }
-
 
 }

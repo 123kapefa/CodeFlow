@@ -25,6 +25,7 @@ public class TagRepository : ITagRepository {
         return tag is null ? Result.Error("Тэг не найден") : Result.Success(tag);
     }
 
+
     /// <summary> Получить тэг по Name. </summary>
     public async Task<Result<Tag>> GetTagByNameAsync( string name, CancellationToken token ) {
 
@@ -50,7 +51,6 @@ public class TagRepository : ITagRepository {
         catch(Exception) {
             return Result<(IEnumerable<Tag> items, PagedInfo pageInfo)>.Error("Ошибка базы данных");
         }
-
     }
 
 
@@ -76,7 +76,6 @@ public class TagRepository : ITagRepository {
         catch(DbUpdateException) {
             return Result.Error("Ошибка БД");
         }
-
     }
 
 

@@ -1,10 +1,5 @@
 ﻿using Ardalis.Result;
 using Contracts.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TagService.Application.DTO;
 using TagService.Domain.Entities;
 using TagService.Domain.Repositories;
@@ -18,6 +13,7 @@ public class GetTagByIdHandler : ICommandHandler<TagDTO, GetTagByIdCommand> {
     public GetTagByIdHandler( ITagRepository tagRepository ) {
         _tagRepository = tagRepository;
     }
+
 
     public async Task<Result<TagDTO>> Handle( GetTagByIdCommand command, CancellationToken token ) {
 

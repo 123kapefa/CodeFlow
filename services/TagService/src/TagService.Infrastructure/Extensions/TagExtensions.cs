@@ -1,10 +1,5 @@
 ﻿using Ardalis.Result;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using TagService.Domain.Entities;
 using TagService.Domain.Filters;
 
@@ -30,10 +25,12 @@ public static class TagExtensions {
         return Result<(IEnumerable<Tag> items, PagedInfo pageInfo)>.Success((items, pagedInfo));
     }
 
+
     public static IQueryable<Tag> Sort(this IQueryable<Tag> tags, SortParams sortParams ) {
         return sortParams.SortDirection == SortDirection.Descending ?
             tags = tags.OrderByDescending(GetKey(sortParams.OrderBy)) : tags.OrderBy(GetKey(sortParams.OrderBy));
     }
+
 
     private static Expression<Func<Tag, object>> GetKey( string? orderBy ) {
         if(string.IsNullOrEmpty(orderBy))

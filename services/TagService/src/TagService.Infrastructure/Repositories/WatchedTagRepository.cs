@@ -1,6 +1,5 @@
 ﻿using Ardalis.Result;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using TagService.Domain.Entities;
 using TagService.Domain.Repositories;
 using TagService.Infrastructure.Data;
@@ -40,8 +39,7 @@ public class WatchedTagRepository : IWatchedTagRepository {
         }
         catch(Exception) {
             return Result<IEnumerable<WatchedTag>>.Error("Ошибка базы данных при получении истории изменений вопросов");
-        }
-        
+        }        
     }
 
 
@@ -89,9 +87,10 @@ public class WatchedTagRepository : IWatchedTagRepository {
         catch(DbUpdateException) {
             return Result.Error("Ошибка БД");
         }
-
     }
 
+
+    /// <summary> Удалить все отслеживаемые тэги пользователя. </summary>
     public async Task<Result> DeleteUserTagsAsync( IEnumerable<WatchedTag> watchedTags, CancellationToken token ) {
 
         try {

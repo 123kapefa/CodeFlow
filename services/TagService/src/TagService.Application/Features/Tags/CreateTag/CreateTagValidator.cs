@@ -1,9 +1,4 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TagService.Application.Features.Tags.CreateTag;
 
@@ -21,4 +16,5 @@ public class CreateTagValidator : AbstractValidator<CreateTagCommand> {
             .WithMessage("Описание не длиннее 256 символов")
             .When(x => x.TagCreateDto.Description is not null);
     }
+
 }
