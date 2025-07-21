@@ -26,12 +26,15 @@ public class GetUserWatchedTagsHandler : ICommandHandler<IEnumerable<WatchedTagD
         if(!result.IsSuccess)
             return Result.Error(new ErrorList(result.Errors));
 
-        IEnumerable<WatchedTagDTO> watchedTags = result.Value.Select(x => new WatchedTagDTO {
-            Id = x.Id,
-            UserId = x.UserId,
-            TagId = x.TagId,
-            TagName = x.Tag.Name
-        }).ToList();
+        //IEnumerable<WatchedTagDTO> watchedTags = result.Value.Select(x => new WatchedTagDTO {
+        //    Id = x.Id,
+        //    UserId = x.UserId,
+        //    TagId = x.TagId,
+        //    TagName = x.Tag.Name
+        //}).ToList();
+
+        IEnumerable<WatchedTagDTO> watchedTags = result.Value.Select(x => WatchedTagDTO.Create(
+            x.Id, x.UserId, x.TagId, x.Tag.Name )).ToList();
 
         return result.IsSuccess ? Result.Success(watchedTags) : Result.Error(new ErrorList(result.Errors));
     }

@@ -30,9 +30,12 @@ public class UpdateTagsHandler : ICommandHandler<UpdateTagsCommand> {
         else
             resultTag.Value!.QuestionsCreated += 1;
 
-        resultTag.Value.UserTagParticipationQuestions.Add(new UserTagParticipationQuestion {
-            QuestionId = command.UpdateDto.QuestionId
-        });
+        //resultTag.Value.UserTagParticipationQuestions.Add(new UserTagParticipationQuestion {
+        //    QuestionId = command.UpdateDto.QuestionId
+        //});
+
+        resultTag.Value.UserTagParticipationQuestions.Add(
+               UserTagParticipationQuestion.Create(command.UpdateDto.QuestionId));
         resultTag.Value.LastActiveAt = DateTime.UtcNow;
 
         Result result = await _repository.UpdateAsync(resultTag.Value, token);

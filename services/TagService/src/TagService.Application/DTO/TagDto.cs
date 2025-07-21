@@ -1,4 +1,6 @@
-﻿namespace TagService.Application.DTO;
+﻿using TagService.Domain.Entities;
+
+namespace TagService.Application.DTO;
 
 public class TagDTO {
     public int Id { get; set; }
@@ -9,4 +11,37 @@ public class TagDTO {
     public int CountWotchers { get; set; }   
     public int DailyRequestCount { get; set; }    
     public int WeeklyRequestCount { get; set; }
+
+    protected TagDTO() { }
+
+    private TagDTO(
+        int tagId, 
+        string tagName, 
+        string? description, 
+        DateTime createdAt, 
+        int countQuestion, 
+        int countWotchers, 
+        int dailyRequestCount, 
+        int weeklyRequestCount ) {
+
+        Name = tagName;
+        Description = description; 
+        CreatedAt = createdAt;
+        CountQuestion = countQuestion;
+        CountWotchers = countWotchers;
+        DailyRequestCount = dailyRequestCount;
+        WeeklyRequestCount = weeklyRequestCount;
+    }
+
+    public static TagDTO Create( 
+        int tagId,
+        string tagName,
+        string? description,
+        DateTime createdAt,
+        int countQuestion,
+        int countWotchers,
+        int dailyRequestCount,
+        int weeklyRequestCount ) =>
+        new TagDTO(tagId, tagName, description, createdAt, countQuestion, countWotchers, dailyRequestCount, weeklyRequestCount);
+    }
 }
