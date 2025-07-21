@@ -1,8 +1,11 @@
-﻿using Ardalis.Result;
-using CommentService.Application.DTO;
+﻿using Abstractions.Commands;
+
+using Ardalis.Result;
+
 using CommentService.Domain.Entities;
 using CommentService.Domain.Repositories;
-using Contracts.Commands;
+
+using Contracts.CommentService.DTOs;
 
 namespace CommentService.Application.Features.GetCommentById;
 
@@ -26,7 +29,7 @@ public class GetCommentByIdHandler : ICommandHandler<CommentDTO, GetCommentByIdC
             AuthorId = result.Value.AuthorId,
             Content = result.Value.Content,
             CreatedAt = result.Value.CreatedAt,
-            Type = result.Value.Type,
+            Type = Enum.GetName (result.Value.Type)!,
             TargetId = result.Value.TargetId
         };
 

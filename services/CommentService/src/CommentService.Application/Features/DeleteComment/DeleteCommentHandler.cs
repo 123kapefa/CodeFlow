@@ -1,8 +1,10 @@
-﻿using Ardalis.Result;
-using CommentService.Domain.Repositories;
-using Contracts.Commands;
+﻿using Abstractions.Commands;
 
-namespace CommentService.Application.Features.DeleteCommentById;
+using Ardalis.Result;
+
+using CommentService.Domain.Repositories;
+
+namespace CommentService.Application.Features.DeleteComment;
 
 public class DeleteCommentHandler : ICommandHandler<DeleteCommentCommand> {
 

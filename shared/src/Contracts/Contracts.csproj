@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <Folder Include="AuthService\DTOs\" />
-      <Folder Include="CommentService\DTOs\" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
-﻿using Contracts.Commands;
+﻿using Abstractions.Commands;
 
-namespace CommentService.Application.Features.DeleteCommentById;
+namespace CommentService.Application.Features.DeleteComment;
 
 public record DeleteCommentCommand(Guid CommentId) : ICommand;

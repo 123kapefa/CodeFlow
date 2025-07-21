@@ -1,7 +1,9 @@
-﻿using Ardalis.Result;
+﻿using Abstractions.Commands;
+
+using Ardalis.Result;
 using CommentService.Domain.Entities;
+using CommentService.Domain.Enums;
 using CommentService.Domain.Repositories;
-using Contracts.Commands;
 
 namespace CommentService.Application.Features.CreateComment;
 
@@ -19,7 +21,7 @@ public class CreateCommentHandler : ICommandHandler<CreateCommentCommand> {
             AuthorId = command.CreateCommentDTO.AuthorId,
             Content = command.CreateCommentDTO.Content,
             CreatedAt = DateTime.UtcNow,
-            Type =  command.CreateCommentDTO.Type,
+            Type = Enum.Parse<TypeTarget>(command.CreateCommentDTO.Type),
             TargetId = command.CreateCommentDTO.TargetId,
         };
 
