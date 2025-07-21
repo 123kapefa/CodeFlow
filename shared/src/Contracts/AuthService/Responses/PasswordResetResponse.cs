@@ -1,3 +1,3 @@
-namespace AuthService.Application.Response;
+namespace Contracts.AuthService.Responses;
 
 public record PasswordResetResponse(bool Success);

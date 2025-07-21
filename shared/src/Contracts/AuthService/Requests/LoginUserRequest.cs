@@ -1,3 +1,3 @@
-namespace AuthService.Application.Reauests;
+namespace Contracts.AuthService.Requests;
 
 public record LoginUserRequest (string Email, string Password);
