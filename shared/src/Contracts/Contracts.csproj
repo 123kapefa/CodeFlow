@@ -9,7 +9,6 @@
     <ItemGroup>
       <Folder Include="AuthService\DTOs\" />
       <Folder Include="CommentService\DTOs\" />
-      <Folder Include="QuestionService\DTOs\" />
     </ItemGroup>
 
 </Project>
