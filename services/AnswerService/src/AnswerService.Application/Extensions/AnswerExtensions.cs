@@ -1,5 +1,7 @@
-using AnswerService.Application.DTOs;
+
 using AnswerService.Domain.Entities;
+
+using Contracts.AnswerService.DTOs;
 
 namespace AnswerService.Application.Extensions;
 
