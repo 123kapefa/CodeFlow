@@ -1,7 +1,4 @@
-﻿using System.Xml.Linq;
-using TagService.Domain.Entities;
-
-namespace TagService.Application.DTO;
+﻿namespace Contracts.TagService;
 
 public class WatchedTagDTO {
     public Guid Id { get; set; }

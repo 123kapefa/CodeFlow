@@ -1,4 +1,4 @@
-﻿namespace TagService.Application.DTO;
+﻿namespace Contracts.TagService;
 
 public class UpdateParticipationDto {
     public Guid UserId { get; set; }
