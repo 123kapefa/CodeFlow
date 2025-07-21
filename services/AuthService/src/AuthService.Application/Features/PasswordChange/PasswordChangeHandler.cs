@@ -1,13 +1,12 @@
 using System.Net;
 
+using Abstractions.Commands;
+
 using Ardalis.Result;
 
 using AuthService.Application.Abstractions;
-using AuthService.Application.Response;
 using AuthService.Domain.Entities;
 using AuthService.Domain.Repositories;
-
-using Contracts.Commands;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;

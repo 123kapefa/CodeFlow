@@ -1,13 +1,13 @@
 using System.Net;
 using System.Text.Encodings.Web;
 
+using Abstractions.Commands;
+
 using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 
 using AuthService.Application.Abstractions;
 using AuthService.Domain.Entities;
-
-using Contracts.Commands;
 
 using FluentValidation;
 
@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace AuthService.Application.Features.RequestEmailChange;
+namespace AuthService.Application.Features.EmailChange;
 
 public class EmailChangeHandler : ICommandHandler<EmailChangeCommand> {
 

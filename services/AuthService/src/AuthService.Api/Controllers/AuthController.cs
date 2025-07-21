@@ -1,6 +1,9 @@
+using Abstractions.Commands;
+
 using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 using AuthService.Application.Features.EditUser;
+using AuthService.Application.Features.EmailChange;
 using AuthService.Application.Features.EmailChangeConfirm;
 using AuthService.Application.Features.LoginUser;
 using AuthService.Application.Features.LogoutUser;
@@ -9,14 +12,10 @@ using AuthService.Application.Features.PasswordChangeConfirm;
 using AuthService.Application.Features.RegisterUser;
 using AuthService.Application.Features.RemoveUser;
 using AuthService.Application.Features.RequestEmailChange;
-using AuthService.Application.Reauests;
-using AuthService.Application.Requests;
-using AuthService.Application.Responses;
-using AuthService.Domain.Entities;
 
-using Contracts.Commands;
+using Contracts.AuthService.Requests;
+using Contracts.AuthService.Responses;
 
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthService.Api.Controllers;

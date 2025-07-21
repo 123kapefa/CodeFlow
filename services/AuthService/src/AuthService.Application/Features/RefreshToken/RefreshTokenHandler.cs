@@ -1,10 +1,11 @@
+using Abstractions.Commands;
+
 using Ardalis.Result;
 
 using AuthService.Application.Abstractions;
-using AuthService.Application.Response;
 using AuthService.Domain.Repositories;
 
-using Contracts.Commands;
+using Contracts.AuthService.Responses;
 
 namespace AuthService.Application.Features.RefreshToken;
 
