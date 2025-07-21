@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UserService.Application.DTO;
+﻿namespace Contracts.UserService.DTOs;
 
 public class UserFullInfoDTO {
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
