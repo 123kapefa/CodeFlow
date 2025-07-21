@@ -1,6 +1,6 @@
-using AnswerService.Application.Requests;
+using Abstractions.Commands;
 
-using Contracts.Commands;
+using Contracts.AnswerService.Requests;
 
 namespace AnswerService.Application.Features.EditAnswer;
 

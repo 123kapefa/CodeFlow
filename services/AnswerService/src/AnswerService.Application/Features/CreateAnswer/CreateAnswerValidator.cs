@@ -1,5 +1,3 @@
-using AnswerService.Application.Requests;
-
 using FluentValidation;
 
 namespace AnswerService.Application.Features.CreateAnswer;
