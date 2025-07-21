@@ -1,10 +1,10 @@
+using Abstractions.Commands;
+
 using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 
 using AuthService.Domain.Entities;
 using AuthService.Domain.Repositories;
-
-using Contracts.Commands;
 
 using FluentValidation;
 
