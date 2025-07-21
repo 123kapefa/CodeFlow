@@ -1,5 +1,6 @@
-﻿using Ardalis.Result;
-using Contracts.Commands;
+﻿using Abstractions.Commands;
+
+using Ardalis.Result;
 using TagService.Domain.Entities;
 using TagService.Domain.Repositories;
 
