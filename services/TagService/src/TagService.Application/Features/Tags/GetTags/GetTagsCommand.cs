@@ -1,4 +1,4 @@
-﻿using Contracts.Commands;
+﻿using Abstractions.Commands;
 using TagService.Domain.Filters;
 
 namespace TagService.Application.Features.Tags.GetTags;

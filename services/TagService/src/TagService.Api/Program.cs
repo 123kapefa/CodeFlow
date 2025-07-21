@@ -1,12 +1,13 @@
 using System.Text.Json.Serialization;
 using System.Text.Json;
+
+using Abstractions.Commands;
+
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using TagService.Infrastructure.Data;
 using TagService.Domain.Repositories;
 using TagService.Infrastructure.Repositories;
-using Contracts.Commands;
-using TagService.Application.DTO;
 using TagService.Application.Features.Tags.GetTagById;
 using FluentValidation;
 using TagService.Application.Features.Tags.CreateTag;
@@ -19,6 +20,9 @@ using TagService.Application.Features.WatchedTags.CreateWatchedTag;
 using TagService.Application.Features.WatchedTags.DeleteWatchedTag;
 using TagService.Application.Features.WatchedTags.DeleteUserWatchedTags;
 using Ardalis.Result;
+
+using Contracts.TagService;
+
 using TagService.Application.Features.Tags.GetTags;
 using TagService.Application.Features.Tags.UpdateTagCountQuestion;
 using TagService.Application.Features.Tags.UpdateTagWatchers;
@@ -31,7 +35,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
      .AddJsonOptions(o =>
-           o.JsonSerializerOptions.Converters //конвертер для «enum-как-строка».
+           o.JsonSerializerOptions.Converters //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅenum-пїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅ.
              .Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)));
 
 builder.Services.AddDbContext<TagServiceDbContext>(options => {
@@ -74,7 +78,7 @@ builder.Services.AddSwaggerGen(options => {
     options.SwaggerDoc("v1", new OpenApiInfo {
         Title = "Product API",
         Version = "v1",
-        Description = "Пример документации Swagger для TagService"
+        Description = "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Swagger пїЅпїЅпїЅ TagService"
     });
 
     options.EnableAnnotations();

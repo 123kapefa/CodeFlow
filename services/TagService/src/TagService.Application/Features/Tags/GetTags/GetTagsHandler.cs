@@ -1,6 +1,9 @@
-﻿using Ardalis.Result;
-using Contracts.Commands;
-using TagService.Application.DTO;
+﻿using Abstractions.Commands;
+
+using Ardalis.Result;
+using Contracts.TagService;
+
+using TagService.Domain.Entities;
 using TagService.Domain.Repositories;
 
 namespace TagService.Application.Features.Tags.GetTags;

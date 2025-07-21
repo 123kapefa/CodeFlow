@@ -19,8 +19,12 @@ public class Tag {
     public ICollection<UserTagParticipation> UserTagParticipations { get; set; } = new List<UserTagParticipation>();
     public ICollection<WatchedTag> WatchedTags { get; set; } = new List<WatchedTag>();
 
-
-
+    public Tag (int id, string name, string? description, DateTime createdAt) {
+        Id = id;
+        Name = name;
+        Description = description;
+        CreatedAt = createdAt;
+    }
     protected Tag() { }
 
     private Tag( string name, string? description ) {
