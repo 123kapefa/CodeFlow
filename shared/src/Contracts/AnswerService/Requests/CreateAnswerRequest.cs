@@ -1,3 +1,3 @@
-namespace AnswerService.Application.Requests;
+namespace Contracts.AnswerService.Requests;
 
 public record CreateAnswerRequest (Guid QuestionId, Guid UserId, string Content);
