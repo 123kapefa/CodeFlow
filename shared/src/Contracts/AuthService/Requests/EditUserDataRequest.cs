@@ -1,3 +1,3 @@
-namespace AuthService.Application.Requests;
+namespace Contracts.AuthService.Requests;
 
 public record EditUserDataRequest (string? Username, string? PhoneNumber);
