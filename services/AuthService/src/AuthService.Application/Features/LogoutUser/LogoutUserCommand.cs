@@ -1,4 +1,4 @@
-using Contracts.Commands;
+using Abstractions.Commands;
 
 namespace AuthService.Application.Features.LogoutUser;
 

@@ -1,8 +1,8 @@
+using Abstractions.Commands;
+
 using Ardalis.Result;
 
 using AuthService.Domain.Repositories;
-
-using Contracts.Commands;
 
 using Microsoft.Extensions.Logging;
 
