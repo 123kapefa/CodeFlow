@@ -24,11 +24,13 @@ public class CreateTagHandler : ICommandHandler<CreateTagCommand> {
         if(!validated.IsValid)
             return Result.Invalid(validated.AsErrors());
 
-        Tag tag = new Tag {
-            Name = command.TagCreateDto.Name,
-            Description = command.TagCreateDto.Description,
-            CreatedAt = DateTime.UtcNow
-        };
+        //Tag tag1 = new Tag {
+        //    Name = command.TagCreateDto.Name,
+        //    Description = command.TagCreateDto.Description,
+        //    CreatedAt = DateTime.UtcNow
+        //};
+
+        Tag tag = Tag.Create(command.TagCreateDto.Name, command.TagCreateDto.Description);
 
         Result result = await _tagRepository.CreateTagAsync(tag, token);
 
