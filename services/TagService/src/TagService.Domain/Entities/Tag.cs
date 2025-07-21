@@ -18,4 +18,18 @@ public class Tag {
     // Навигация
     public ICollection<UserTagParticipation> UserTagParticipations { get; set; } = new List<UserTagParticipation>();
     public ICollection<WatchedTag> WatchedTags { get; set; } = new List<WatchedTag>();
+
+
+
+    protected Tag() { }
+
+    private Tag( string name, string? description ) {
+        Name = name;
+        Description = description;
+        CreatedAt  = DateTime.UtcNow;
+    }
+
+    public static Tag Create( string name, string? description ) {
+        return new Tag(name, description);
+    }
 }

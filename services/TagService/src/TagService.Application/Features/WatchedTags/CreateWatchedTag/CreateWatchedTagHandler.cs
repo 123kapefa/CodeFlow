@@ -22,10 +22,12 @@ public class CreateWatchedTagHandler : ICommandHandler<CreateWatchedTagCommand> 
         if(command.TagId <= 0)
             return Result.Error("ID тэга некорректный");
 
-        WatchedTag watchedTag = new WatchedTag {
-            UserId = command.UserId,
-            TagId = command.TagId,
-        };
+        //WatchedTag watchedTag = new WatchedTag {
+        //    UserId = command.UserId,
+        //    TagId = command.TagId,
+        //};
+
+        WatchedTag watchedTag = WatchedTag.Create(command.UserId, command.TagId);
 
         Result result = await _watchedTagRepository.CreateAsync(watchedTag, token);
 
