@@ -1,6 +1,9 @@
-﻿using Ardalis.Result;
-using Contracts.Commands;
-using UserService.Application.DTO;
+﻿using Abstractions.Commands;
+
+using Ardalis.Result;
+
+using Contracts.UserService.DTOs;
+
 using UserService.Domain.Repositories;
 
 namespace UserService.Application.Features.GetUsers;
