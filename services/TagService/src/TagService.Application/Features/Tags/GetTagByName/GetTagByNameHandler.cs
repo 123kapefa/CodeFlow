@@ -1,11 +1,9 @@
 ﻿using Ardalis.Result;
-using Contracts.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TagService.Application.DTO;
+
+using Abstractions.Commands;
+
+using Contracts.TagService;
+
 using TagService.Domain.Repositories;
 
 namespace TagService.Application.Features.Tags.GetTagByName;

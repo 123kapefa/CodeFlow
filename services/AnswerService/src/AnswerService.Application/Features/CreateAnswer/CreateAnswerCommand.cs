@@ -1,8 +1,6 @@
+using Abstractions.Commands;
 
-
-using AnswerService.Application.Requests;
-
-using Contracts.Commands;
+using Contracts.AnswerService.Requests;
 
 namespace AnswerService.Application.Features.CreateAnswer;
 

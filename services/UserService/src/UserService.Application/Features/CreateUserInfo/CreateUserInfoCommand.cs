@@ -1,9 +1,4 @@
-﻿using Contracts.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Abstractions.Commands;
 
 namespace UserService.Application.Features.CreateUserInfo;
 

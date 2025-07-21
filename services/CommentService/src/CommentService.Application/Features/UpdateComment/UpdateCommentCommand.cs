@@ -1,4 +1,4 @@
-﻿using Contracts.Commands;
+﻿using Abstractions.Commands;
 
 namespace CommentService.Application.Features.UpdateComment;
 

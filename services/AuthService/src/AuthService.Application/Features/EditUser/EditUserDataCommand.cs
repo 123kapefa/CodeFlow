@@ -1,6 +1,5 @@
-using AuthService.Application.Requests;
-
-using Contracts.Commands;
+using Abstractions.Commands;
+using Contracts.AuthService.Requests;
 
 namespace AuthService.Application.Features.EditUser;
 

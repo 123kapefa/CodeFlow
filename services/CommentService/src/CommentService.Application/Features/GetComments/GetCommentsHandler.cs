@@ -1,10 +1,13 @@
-﻿using Ardalis.Result;
-using CommentService.Application.DTO;
+﻿using Abstractions.Commands;
+
+using Ardalis.Result;
+
 using CommentService.Domain.Entities;
 using CommentService.Domain.Repositories;
-using Contracts.Commands;
 
-namespace CommentService.Application.Features.GetQuestionComments;
+using Contracts.CommentService.DTOs;
+
+namespace CommentService.Application.Features.GetComments;
 
 public class GetCommentsHandler : ICommandHandler<IEnumerable<CommentDTO>, GetCommentsCommand> {
 
@@ -28,7 +31,7 @@ public class GetCommentsHandler : ICommandHandler<IEnumerable<CommentDTO>, GetCo
             AuthorId = r.AuthorId,
             Content = r.Content,
             CreatedAt = r.CreatedAt,
-            Type = r.Type,
+            Type = Enum.GetName(r.Type)!,
             TargetId = r.TargetId
         }).ToList();
 

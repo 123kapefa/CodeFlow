@@ -1,5 +1,6 @@
-﻿using Contracts.Commands;
-using UserService.Application.DTO;
+﻿using Abstractions.Commands;
+
+using Contracts.UserService.DTOs;
 
 namespace UserService.Application.Features.UpdateUserInfo;
 
