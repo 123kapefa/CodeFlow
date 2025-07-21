@@ -29,8 +29,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AnswerService.Application\AnswerService.Application.csproj" />
-      <ProjectReference Include="..\AnswerService.Infrastructure\AnswerService.Infrastructure.csproj" />
+        <ProjectReference Include="..\..\..\..\shared\src\Contracts\Contracts.csproj" />
+        <ProjectReference Include="..\..\..\..\shared\src\Abstractions\Abstractions.csproj" />
+        <ProjectReference Include="..\AnswerService.Application\AnswerService.Application.csproj" />
+        <ProjectReference Include="..\AnswerService.Infrastructure\AnswerService.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

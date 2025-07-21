@@ -4,9 +4,10 @@ using AnswerService.Application.Features.DeleteAnswer;
 using AnswerService.Application.Features.EditAnswer;
 using AnswerService.Application.Features.GetAnswersByQuestionId;
 using AnswerService.Application.Features.GetAnswersByUserId;
-using AnswerService.Application.Responses;
 
-using Contracts.Commands;
+using Abstractions.Commands;
+
+using Contracts.AnswerService.Responses;
 
 using FluentValidation;
 
