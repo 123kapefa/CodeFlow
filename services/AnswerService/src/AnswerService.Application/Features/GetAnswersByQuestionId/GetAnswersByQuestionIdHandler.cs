@@ -1,10 +1,11 @@
 using AnswerService.Application.Extensions;
-using AnswerService.Application.Responses;
 using AnswerService.Domain.Repositories;
 
 using Ardalis.Result;
 
-using Contracts.Commands;
+using Abstractions.Commands;
+
+using Contracts.AnswerService.Responses;
 
 namespace AnswerService.Application.Features.GetAnswersByQuestionId;
 

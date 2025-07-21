@@ -16,8 +16,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnswerService.Application",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnswerService.Api", "src\AnswerService.Api\AnswerService.Api.csproj", "{B04B714A-A871-4E43-A477-6DFA2914D8BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "..\..\shared\Contracts\Contracts.csproj", "{AC37668D-7390-4EBD-BB18-D57FD14F4306}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,7 +26,6 @@ Global
 		{6018731F-5B48-4EDA-A72D-21056E80D08A} = {B1BD4605-13BF-4046-B1E0-39564E522D9D}
 		{C8088770-9952-4468-9E1A-B38E1C9C588A} = {B1BD4605-13BF-4046-B1E0-39564E522D9D}
 		{B04B714A-A871-4E43-A477-6DFA2914D8BA} = {B1BD4605-13BF-4046-B1E0-39564E522D9D}
-		{AC37668D-7390-4EBD-BB18-D57FD14F4306} = {B1BD4605-13BF-4046-B1E0-39564E522D9D}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{C6AC7E20-49E6-4011-9CDB-6687F9A4BA92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -47,9 +44,5 @@ Global
 		{B04B714A-A871-4E43-A477-6DFA2914D8BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B04B714A-A871-4E43-A477-6DFA2914D8BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B04B714A-A871-4E43-A477-6DFA2914D8BA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AC37668D-7390-4EBD-BB18-D57FD14F4306}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AC37668D-7390-4EBD-BB18-D57FD14F4306}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AC37668D-7390-4EBD-BB18-D57FD14F4306}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AC37668D-7390-4EBD-BB18-D57FD14F4306}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
