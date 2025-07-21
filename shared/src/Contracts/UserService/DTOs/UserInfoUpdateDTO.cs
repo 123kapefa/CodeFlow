@@ -1,4 +1,4 @@
-﻿namespace UserService.Application.DTO;
+﻿namespace Contracts.UserService.DTOs;
 
 public class UserInfoUpdateDTO {
     public Guid UserId { get; set; }
