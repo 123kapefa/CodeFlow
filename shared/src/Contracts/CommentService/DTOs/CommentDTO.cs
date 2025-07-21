@@ -1,6 +1,4 @@
-﻿using CommentService.Domain.Enums;
-
-namespace CommentService.Application.DTO;
+﻿namespace Contracts.CommentService.DTOs;
 
 public class CommentDTO {
     public Guid Id { get; set; }
@@ -8,6 +6,6 @@ public class CommentDTO {
     public string Content { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public TypeTarget Type { get; set; }
+    public string Type { get; set; } = null!;
     public Guid TargetId { get; set; }
 }
