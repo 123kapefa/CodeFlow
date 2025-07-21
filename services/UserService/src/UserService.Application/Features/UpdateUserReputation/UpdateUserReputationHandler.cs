@@ -1,10 +1,11 @@
-﻿using Ardalis.Result;
-using Contracts.Commands;
-using UserService.Application.Features.UpdateUserReputation;
+﻿using Abstractions.Commands;
+
+using Ardalis.Result;
+
 using UserService.Domain.Entities;
 using UserService.Domain.Repositories;
 
-namespace UserService.Application.Features.UpdateUserReputationStatistic;
+namespace UserService.Application.Features.UpdateUserReputation;
 
 public class UpdateUserReputationHandler : ICommandHandler<UpdateUserReputationCommand> {
 

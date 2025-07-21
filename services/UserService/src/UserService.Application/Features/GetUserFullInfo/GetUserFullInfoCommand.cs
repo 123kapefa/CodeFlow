@@ -1,4 +1,4 @@
-﻿using Contracts.Commands;
+﻿using Abstractions.Commands;
 
 namespace UserService.Application.Features.GetUserFullInfo;
 

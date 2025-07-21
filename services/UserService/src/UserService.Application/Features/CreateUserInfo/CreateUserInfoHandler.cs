@@ -1,5 +1,6 @@
-﻿using Ardalis.Result;
-using Contracts.Commands;
+﻿using Abstractions.Commands;
+
+using Ardalis.Result;
 using UserService.Domain.Repositories;
 
 namespace UserService.Application.Features.CreateUserInfo;
