@@ -1,13 +1,17 @@
-﻿using Ardalis.Result;
+﻿using Abstractions.Commands;
+
+using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
-using CommentService.Application.DTO;
+
 using CommentService.Application.Features.CreateComment;
-using CommentService.Application.Features.DeleteCommentById;
+using CommentService.Application.Features.DeleteComment;
 using CommentService.Application.Features.GetCommentById;
-using CommentService.Application.Features.GetQuestionComments;
+using CommentService.Application.Features.GetComments;
 using CommentService.Application.Features.UpdateComment;
 using CommentService.Domain.Enums;
-using Contracts.Commands;
+
+using Contracts.CommentService.DTOs;
+
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
