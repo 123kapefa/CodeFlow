@@ -1,4 +1,4 @@
-﻿namespace TagService.Application.DTO;
+﻿namespace Contracts.TagService;
 
 public class TagCreateDTO {
     public string Name { get; set; } = string.Empty;

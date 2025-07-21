@@ -1,6 +1,4 @@
-﻿using TagService.Domain.Entities;
-
-namespace TagService.Application.DTO;
+﻿namespace Contracts.TagService;
 
 public class TagDTO {
     public int Id { get; set; }
@@ -43,5 +41,4 @@ public class TagDTO {
         int dailyRequestCount,
         int weeklyRequestCount ) =>
         new TagDTO(tagId, tagName, description, createdAt, countQuestion, countWotchers, dailyRequestCount, weeklyRequestCount);
-    }
 }
