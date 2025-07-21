@@ -1,4 +1,5 @@
-﻿using Contracts.Commands;
+﻿using Abstractions.Commands;
+
 using UserService.Domain.Filters;
 
 namespace UserService.Application.Features.GetUsers;

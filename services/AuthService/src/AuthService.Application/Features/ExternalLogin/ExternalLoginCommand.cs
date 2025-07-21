@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-using Contracts.Commands;
+using Abstractions.Commands;
 
 namespace AuthService.Application.Features.ExternalLogin;
 

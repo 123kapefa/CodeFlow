@@ -1,9 +1,12 @@
-﻿using Ardalis.Result;
+﻿using Abstractions.Commands;
+
+using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
-using Contracts.Commands;
+
+using Contracts.UserService.DTOs;
+
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using UserService.Application.DTO;
 using UserService.Application.Features.CreateUserInfo;
 using UserService.Application.Features.DeleteUser;
 using UserService.Application.Features.GetUsers;

@@ -1,7 +1,7 @@
-using AuthService.Application.Requests;
+using Abstractions.Commands;
 
-using Contracts.Commands;
+using Contracts.AuthService.Requests;
 
-namespace AuthService.Application.Features.RequestEmailChange;
+namespace AuthService.Application.Features.EmailChange;
 
 public record EmailChangeCommand(Guid UserId, EmailChangeRequest Request) : ICommand;

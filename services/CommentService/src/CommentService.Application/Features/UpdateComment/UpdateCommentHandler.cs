@@ -1,7 +1,8 @@
-﻿using Ardalis.Result;
+﻿using Abstractions.Commands;
+
+using Ardalis.Result;
 using CommentService.Domain.Entities;
 using CommentService.Domain.Repositories;
-using Contracts.Commands;
 
 namespace CommentService.Application.Features.UpdateComment;
 

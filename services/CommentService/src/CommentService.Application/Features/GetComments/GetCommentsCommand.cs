@@ -1,6 +1,7 @@
-﻿using CommentService.Domain.Enums;
-using Contracts.Commands;
+﻿using Abstractions.Commands;
 
-namespace CommentService.Application.Features.GetQuestionComments;
+using CommentService.Domain.Enums;
+
+namespace CommentService.Application.Features.GetComments;
 
 public record GetCommentsCommand(TypeTarget Type, Guid TargetId) : ICommand;

@@ -1,9 +1,12 @@
-﻿using Ardalis.Result;
+﻿using Abstractions.Commands;
+
+using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
-using Contracts.Commands;
+
+using Contracts.TagService;
+
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using TagService.Application.DTO;
 using TagService.Application.Features.ParticipationTags.CreateTags;
 using TagService.Application.Features.ParticipationTags.DeleteUserTags;
 using TagService.Application.Features.ParticipationTags.GetUserTags;

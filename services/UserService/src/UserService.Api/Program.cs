@@ -1,17 +1,19 @@
+using Abstractions.Commands;
+
 using Microsoft.EntityFrameworkCore;
 using UserService.Infrastructure.Data;
 using Microsoft.OpenApi.Models;
 using UserService.Domain.Repositories;
 using UserService.Infrastructure.Repositories;
-using Contracts.Commands;
 using UserService.Application.Features.UpdateUserInfo;
 using Ardalis.Result;
-using UserService.Application.DTO;
+
+using Contracts.UserService.DTOs;
+
 using UserService.Application.Features.GetUsers;
 using FluentValidation;
 using UserService.Application.Features.DeleteUser;
 using UserService.Application.Features.UpdateUserReputation;
-using UserService.Application.Features.UpdateUserReputationStatistic;
 using UserService.Application.Features.UpdateUserVisit;
 using UserService.Application.Features.GetUserFullInfo;
 using UserService.Application.Features.CreateUserInfo;
@@ -41,7 +43,7 @@ builder.Services.AddSwaggerGen (options => {
     options.SwaggerDoc ("v1", new OpenApiInfo {
         Title = "Product API",
         Version = "v1",
-        Description = "Пример документации Swagger для UsertService"
+        Description = "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Swagger пїЅпїЅпїЅ UsertService"
     });
 
     options.EnableAnnotations();
@@ -51,7 +53,7 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-//TODO подумать как разрулить это (docker стартует в Production, а swagger запускается из Development)
+//TODO пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ (docker пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ Production, пїЅ swagger пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ Development)
 
 //if (app.Environment.IsDevelopment ()) {
 //    app.UseSwagger ();

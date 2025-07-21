@@ -1,11 +1,12 @@
-using AnswerService.Application.Responses;
 using AnswerService.Domain.Entities;
 using AnswerService.Domain.Repositories;
 
 using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 
-using Contracts.Commands;
+using Abstractions.Commands;
+
+using Contracts.AnswerService.Responses;
 
 using FluentValidation;
 

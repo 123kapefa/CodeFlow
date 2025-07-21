@@ -4,14 +4,14 @@ using AnswerService.Application.Features.DeleteAnswer;
 using AnswerService.Application.Features.EditAnswer;
 using AnswerService.Application.Features.GetAnswersByQuestionId;
 using AnswerService.Application.Features.GetAnswersByUserId;
-using AnswerService.Application.Requests;
-using AnswerService.Application.Responses;
-using AnswerService.Domain.Entities;
 
 using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 
-using Contracts.Commands;
+using Abstractions.Commands;
+
+using Contracts.AnswerService.Requests;
+using Contracts.AnswerService.Responses;
 
 using Microsoft.AspNetCore.Mvc;
 

@@ -4,7 +4,7 @@ using AnswerService.Domain.Repositories;
 using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 
-using Contracts.Commands;
+using Abstractions.Commands;
 
 using FluentValidation;
 

@@ -2,24 +2,26 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+
+using Abstractions.Commands;
+
 using CommentService.Infrastructure.Data;
 using CommentService.Domain.Repositories;
 using CommentService.Infrastructure.Repositories;
-using Contracts.Commands;
 using CommentService.Application.Features.CreateComment;
 using CommentService.Domain.Enums;
-using CommentService.Application.DTO;
+using CommentService.Application.Features.DeleteComment;
 using CommentService.Application.Features.GetCommentById;
-using CommentService.Application.Features.DeleteCommentById;
+using CommentService.Application.Features.GetComments;
 using CommentService.Application.Features.UpdateComment;
-using CommentService.Application.Features.GetQuestionComments;
 
+using Contracts.CommentService.DTOs;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
      .AddJsonOptions(o =>
-           o.JsonSerializerOptions.Converters //конвертер для «enum-как-строка».
+           o.JsonSerializerOptions.Converters //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅenum-пїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅ.
              .Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase))); ;
 
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
@@ -36,7 +38,7 @@ builder.Services.AddSwaggerGen(options => {
     options.SwaggerDoc("v1", new OpenApiInfo {
         Title = "Product API",
         Version = "v1",
-        Description = "Пример документации Swagger для CommentService"
+        Description = "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Swagger пїЅпїЅпїЅ CommentService"
     });
 
     options.EnableAnnotations();

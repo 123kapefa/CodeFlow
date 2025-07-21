@@ -1,6 +1,7 @@
-﻿using Ardalis.Result;
+﻿using Abstractions.Commands;
+
+using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
-using Contracts.Commands;
 using FluentValidation;
 using TagService.Domain.Entities;
 using TagService.Domain.Repositories;
