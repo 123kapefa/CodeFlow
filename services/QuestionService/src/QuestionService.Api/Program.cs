@@ -1,9 +1,7 @@
 using Ardalis.Result;
-using Contracts.Commands;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using QuestionService.Application.DTO;
 using QuestionService.Application.Features.CreateQuestion;
 using QuestionService.Application.Features.DeleteQuestion;
 using QuestionService.Application.Features.GetQuestion;
@@ -23,6 +21,10 @@ using QuestionService.Infrastructure.Data;
 using QuestionService.Infrastructure.Repositories;
 using System.Collections.Generic;
 using System.Reflection;
+
+using Abstractions.Commands;
+
+using Contracts.QuestionService.DTOs;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -58,7 +60,7 @@ builder.Services.AddSwaggerGen (options => {
     options.SwaggerDoc ("v1", new OpenApiInfo {
         Title = "Product API",
         Version = "v1",
-        Description = "Пример документации Swagger для QuestionService"
+        Description = "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Swagger пїЅпїЅпїЅ QuestionService"
     });
 
     options.EnableAnnotations();
@@ -68,7 +70,7 @@ builder.Services.AddControllers();
 
 WebApplication app = builder.Build();
 
-//TODO подумать как разрулить это (docker стартует в Production, а swagger запускается из Development)
+//TODO пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ (docker пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ Production, пїЅ swagger пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ Development)
 
 //if (app.Environment.IsDevelopment ()) {
 //    app.UseSwagger ();
