@@ -1,3 +1,5 @@
+using AuthService.Application.Features.EmailChange;
+
 using FluentValidation;
 
 namespace AuthService.Application.Features.RequestEmailChange;

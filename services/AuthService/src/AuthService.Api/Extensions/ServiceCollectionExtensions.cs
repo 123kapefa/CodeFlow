@@ -1,5 +1,8 @@
+using Abstractions.Commands;
+
 using AuthService.Application.Abstractions;
 using AuthService.Application.Features.EditUser;
+using AuthService.Application.Features.EmailChange;
 using AuthService.Application.Features.EmailChangeConfirm;
 using AuthService.Application.Features.LoginUser;
 using AuthService.Application.Features.LogoutUser;
@@ -9,13 +12,12 @@ using AuthService.Application.Features.RefreshToken;
 using AuthService.Application.Features.RegisterUser;
 using AuthService.Application.Features.RemoveUser;
 using AuthService.Application.Features.RequestEmailChange;
-using AuthService.Application.Responses;
 using AuthService.Domain.Repositories;
 using AuthService.Infrastructure.Repositories;
 using AuthService.Infrastructure.Security;
 using AuthService.Infrastructure.Settings;
 
-using Contracts.Commands;
+using Contracts.AuthService.Responses;
 
 using FluentValidation;
 

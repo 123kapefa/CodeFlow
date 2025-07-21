@@ -1,8 +1,6 @@
+using Abstractions.Commands;
 
-
-using AuthService.Application.Requests;
-
-using Contracts.Commands;
+using Contracts.AuthService.Requests;
 
 namespace AuthService.Application.Features.PasswordChange;
 
