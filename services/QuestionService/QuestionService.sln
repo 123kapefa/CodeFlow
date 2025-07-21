@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuestionService.Domain", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuestionService.Infrastructure", "src\QuestionService.Infrastructure\QuestionService.Infrastructure.csproj", "{98957C4C-4D0C-4006-90E5-F2E3B4E4A7F1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "..\..\shared\src\Contracts\Contracts.csproj", "{7AAF2166-D06D-401E-B6C2-697E27023443}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions", "..\..\shared\src\Abstractions\Abstractions.csproj", "{87CCE35C-280A-4817-B719-E780948537F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +39,14 @@ Global
 		{98957C4C-4D0C-4006-90E5-F2E3B4E4A7F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98957C4C-4D0C-4006-90E5-F2E3B4E4A7F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98957C4C-4D0C-4006-90E5-F2E3B4E4A7F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AAF2166-D06D-401E-B6C2-697E27023443}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AAF2166-D06D-401E-B6C2-697E27023443}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AAF2166-D06D-401E-B6C2-697E27023443}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AAF2166-D06D-401E-B6C2-697E27023443}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87CCE35C-280A-4817-B719-E780948537F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87CCE35C-280A-4817-B719-E780948537F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87CCE35C-280A-4817-B719-E780948537F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87CCE35C-280A-4817-B719-E780948537F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,5 +56,7 @@ Global
 		{2964E9F0-9BD1-470C-86A3-797E7FBC4A08} = {DDE71260-6C1E-4284-AB2C-58B8C0789B59}
 		{10CE014E-33F9-492E-A7DC-94A488C54607} = {DDE71260-6C1E-4284-AB2C-58B8C0789B59}
 		{98957C4C-4D0C-4006-90E5-F2E3B4E4A7F1} = {DDE71260-6C1E-4284-AB2C-58B8C0789B59}
+		{7AAF2166-D06D-401E-B6C2-697E27023443} = {DDE71260-6C1E-4284-AB2C-58B8C0789B59}
+		{87CCE35C-280A-4817-B719-E780948537F1} = {DDE71260-6C1E-4284-AB2C-58B8C0789B59}
 	EndGlobalSection
 EndGlobal

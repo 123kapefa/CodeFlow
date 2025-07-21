@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Abstractions.Commands;
+
+using Microsoft.AspNetCore.Mvc;
 using Ardalis.Result;
-using Ardalis.Result.AspNetCore;
-using QuestionService.Domain.Entities;
+
+using Contracts.QuestionService.DTOs;
+
 using QuestionService.Application.Features.GetQuestion;
-using Contracts.Commands;
-using QuestionService.Application.DTO;
 using QuestionService.Application.Features.GetQuestionShort;
 using QuestionService.Application.Features.GetQuestionHistory;
 using QuestionService.Application.Features.CreateQuestion;
