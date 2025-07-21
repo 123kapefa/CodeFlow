@@ -10,7 +10,6 @@
       <Folder Include="AuthService\DTOs\" />
       <Folder Include="CommentService\DTOs\" />
       <Folder Include="QuestionService\DTOs\" />
-      <Folder Include="UserService\DTOs\" />
     </ItemGroup>
 
 </Project>
