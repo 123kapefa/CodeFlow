@@ -26,66 +26,22 @@ using Abstractions.Commands;
 
 using Contracts.QuestionService.DTOs;
 
+using QuestionService.Api.Extensions;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<QuestionServiceDbContext>(options => {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("Main"))
-     .EnableSensitiveDataLogging()                   
-           .LogTo(Console.WriteLine, LogLevel.Information);
-});
-
-builder.Services.AddScoped<IQuestionServiceRepository, QuestionServiceRepository>();
-builder.Services.AddScoped<IValidator<CreateQuestionCommand>, CreateQuestionValidator>();
-builder.Services.AddScoped<IValidator<UpdateQuestionCommand>, UpdateQuestionValidator>();
-
-builder.Services.AddScoped<ICommandHandler<QuestionDTO, GetQuestionCommand>, GetQuestionHandler>();
-builder.Services.AddScoped<ICommandHandler<QuestionShortDTO, GetQuestionShortCommand>, GetQuestionShortHandler>();
-builder.Services.AddScoped<ICommandHandler<IEnumerable<QuestionHistoryDTO>, GetQuestionHistoryCommand>, GetQuestionHistoryHandler>();
-builder.Services.AddScoped<ICommandHandler<IEnumerable<QuestionTagDTO>, GetQuestionTagsCommand>, GetQuestionTagsHandler>();
-builder.Services.AddScoped<ICommandHandler<CreateQuestionCommand>, CreateQuestionHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateQuestionCommand>, UpdateQuestionHandler>();
-builder.Services.AddScoped<ICommandHandler<DeleteQuestionCommand>, DeleteQuestionHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateQuestionAcceptCommand>, UpdateQuestionAcceptHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateQuestionViewCommand>, UpdateQuestionViewHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateQuestionVoteCommand>, UpdateQuestionVoteHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateQuestionAnswersCommand>, UpdateQuestionAnswersHandler>();
-builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetQuestionsCommand>, GetQuestionsHandler>();
-builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetUserQuestionsCommand>, GetUserQuestionsHandler>();
-
-
-// Swagger
-builder.Services.AddEndpointsApiExplorer ();
-builder.Services.AddSwaggerGen (options => {   
-          
-    options.SwaggerDoc ("v1", new OpenApiInfo {
-        Title = "Product API",
-        Version = "v1",
-        Description = "������ ������������ Swagger ��� QuestionService"
-    });
-
-    options.EnableAnnotations();
-});
+builder.AddBase ();
+builder.UseCustomSwagger ();
+builder.AddDatabase ();
+builder.AddCustomSerilog ();
+builder.AddHandlers ();
 
 builder.Services.AddControllers();
 
-WebApplication app = builder.Build();
+var app = builder.Build();
 
-//TODO �������� ��� ��������� ��� (docker �������� � Production, � swagger ����������� �� Development)
-
-//if (app.Environment.IsDevelopment ()) {
-//    app.UseSwagger ();
-//    app.UseSwaggerUI (options => {
-//        options.SwaggerEndpoint ("/swagger/v1/swagger.json", "Product API v1");
-//    });
-//}
-
-app.UseSwagger ();
-app.UseSwaggerUI (options => {
-    options.SwaggerEndpoint ("/swagger/v1/swagger.json", "Product API v1");
-});
-app.UseDeveloperExceptionPage();
-
+app.UseCustomSwagger ();
+app.UseBase ();
 app.MapControllers ();
-
 
 app.Run();

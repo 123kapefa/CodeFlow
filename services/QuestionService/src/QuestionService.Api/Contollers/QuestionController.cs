@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
 
 using Contracts.QuestionService.DTOs;
 
