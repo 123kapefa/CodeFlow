@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder (args);
 
 builder.AddBase ();
 builder.AddHandlers ();
-builder.UseDatabase ();
+builder.AddDatabase ();
 builder.AddCustomSerilog ();
 builder.AddCustomSwagger ();
 

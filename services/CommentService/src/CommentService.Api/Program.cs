@@ -3,7 +3,7 @@ using CommentService.Api.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddBase ();
-builder.UseCustomSwagger ();
+builder.AddCustomSwagger ();
 builder.AddDatabase ();
 builder.AddCustomSerilog ();
 builder.AddHandlers ();
