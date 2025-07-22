@@ -4,7 +4,7 @@ namespace UserService.Api.Extensions;
 
 public static class SwaggerExtensions {
 
-  public static WebApplicationBuilder UseCustomSwagger (this WebApplicationBuilder builder) {
+  public static WebApplicationBuilder AddCustomSwagger (this WebApplicationBuilder builder) {
     
     builder.Services.AddSwaggerGen (options => {
       options.SwaggerDoc ("v1", new OpenApiInfo {
