@@ -9,9 +9,9 @@ namespace CommentService.Infrastructure.Repositories;
 
 public class CommentRepository : ICommentRepository {
 
-    private readonly CommentDbContext _commentDbContext;
+    private readonly CommentServiceDbContext _commentDbContext;
 
-    public CommentRepository( CommentDbContext commentDbContext ) {
+    public CommentRepository( CommentServiceDbContext commentDbContext ) {
         _commentDbContext = commentDbContext;
     }
 

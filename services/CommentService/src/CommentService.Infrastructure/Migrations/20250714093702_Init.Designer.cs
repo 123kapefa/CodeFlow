@@ -11,7 +11,7 @@ using CommentService.Infrastructure.Data;
 
 namespace CommentService.Infrastructure.Migrations
 {
-    [DbContext(typeof(CommentDbContext))]
+    [DbContext(typeof(CommentServiceDbContext))]
     [Migration("20250714093702_Init")]
     partial class Init
     {
