@@ -4,31 +4,16 @@ using AnswerService.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder (args);
 
-builder.UseCustomSerilog ();
-builder.UseBase ();
+builder.AddBase ();
+builder.AddHandlers ();
 builder.UseDatabase ();
-
-builder.Services.AddScoped<IAnswerRepository, AnswerRepository> ();
-builder.Services.AddScoped<IAnswerChangingHistoryRepository, AnswerChangingHistoryRepository> ();
-
-builder.UseHandlers ();
-
-builder.Services.AddControllers ();
-
-builder.Services.AddOpenApi ();
+builder.AddCustomSerilog ();
+builder.AddCustomSwagger ();
 
 var app = builder.Build ();
 
-app.UseCors("AllowAll");
-app.UseSwagger ();
-app.UseSwaggerUI (options => {
-  options.SwaggerEndpoint ("/swagger/v1/swagger.json", "AnswerService API v1");
-});
-
-app.UseHttpsRedirection ();
-
-app.UseAuthorization ();
-
+app.UseCustomSwagger ();
+app.UseBase ();
 app.MapControllers ();
 
 app.Run ();
