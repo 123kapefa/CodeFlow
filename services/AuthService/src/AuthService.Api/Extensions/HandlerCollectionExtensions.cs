@@ -23,9 +23,9 @@ using FluentValidation;
 
 namespace AuthService.Api.Extensions;
 
-public static class ServiceCollectionExtensions {
+public static class HandlerCollectionExtensions {
 
-  public static WebApplicationBuilder UseCustomServices(this WebApplicationBuilder builder)
+  public static WebApplicationBuilder AddHandlers (this WebApplicationBuilder builder)
   {
     builder.Services.AddScoped<IUserDataRepository, UserDataRepository>();
     builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
