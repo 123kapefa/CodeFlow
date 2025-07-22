@@ -11,6 +11,33 @@ services:
       - "5672:5672"      # AMQP
       - "15672:15672"    # Web-UI
     networks: [ clonenet ]
+    
+  # ────────── ApiGateway ──────────
+  apigateway:
+    build:
+      context: .
+      dockerfile: services/ApiGateway/docker/Dockerfile
+      args:
+        PROJECT_NAME: ApiGateway
+        DOTNET_VERSION: 9.0-preview
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      Services__Auth: http://authservice:5000
+      Services__User: http://userservice:5000
+      Services__Question: http://questionservice:5000
+      Services__Answer: http://answerservice:5000
+      Services__Comment: http://commentservice:5000
+      Services__Tag: http://tagservice:5000
+    depends_on:
+      - authservice
+      - userservice
+      - questionservice
+      - answerservice
+      - commentservice
+      - tagservice
+    ports:
+      - "5000:5000"
+    networks: [ clonenet ]
 
   # ────────── AuthService + БД ──────────
   postgres-auth:
@@ -42,8 +69,8 @@ services:
     depends_on:
       - rabbitmq
       - postgres-auth
-    ports:
-      - "5001:5000"
+#    ports:
+#      - "5001:5000"
     networks: [ clonenet ]
 
   # ────────── UserService + БД ──────────
@@ -76,8 +103,8 @@ services:
     depends_on:
       - rabbitmq
       - user-db
-    ports:
-      - "5002:5000"
+#    ports:
+#      - "5002:5000"
     networks: [ clonenet ]
 
   # ────────── QuestionService + БД ──────────
@@ -110,8 +137,8 @@ services:
     depends_on:
       - rabbitmq
       - question-db
-    ports:
-      - "5003:5000"
+#    ports:
+#      - "5003:5000"
     networks: [ clonenet ]
     
   # ────────── AnswerService + БД ──────────
@@ -144,8 +171,8 @@ services:
     depends_on:
       - rabbitmq
       - answer-db
-    ports:
-      - "5004:5000"
+#    ports:
+#      - "5004:5000"
     networks: [ clonenet ]
     
   # ────────── CommentService + БД ──────────
@@ -178,8 +205,8 @@ services:
     depends_on:
       - rabbitmq
       - comment-db
-    ports:
-      - "5005:5000"
+#    ports:
+#      - "5005:5000"
     networks: [ clonenet ]
     
   # ────────── TagService + БД ──────────
@@ -212,8 +239,8 @@ services:
     depends_on:
       - rabbitmq
       - tag-db
-    ports:
-      - "5006:5000"
+#    ports:
+#      - "5006:5000"
     networks: [ clonenet ]
 
 # ────────── тома для персистентных БД ──────────
