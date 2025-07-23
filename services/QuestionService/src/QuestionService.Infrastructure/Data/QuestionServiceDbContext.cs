@@ -1,21 +1,28 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuestionService.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using Microsoft.Extensions.Logging;
 
 namespace QuestionService.Infrastructure.Data;
 
 public class QuestionServiceDbContext : DbContext {
 
-    public QuestionServiceDbContext( DbContextOptions<QuestionServiceDbContext> options ) : base(options) { }
+    private readonly string _connectionString;
+    
+    public QuestionServiceDbContext (string connectionString) {
+        _connectionString = connectionString;
+    }
 
     public DbSet<Question> Questions { get; set; }
     public DbSet<QuestionChangingHistory> QuestionChangingHistories { get; set; }
     public DbSet<QuestionTag> QuestionTags { get; set; }
 
+    protected override void OnConfiguring (DbContextOptionsBuilder options) {
+        options.UseNpgsql (_connectionString);
+        options.EnableSensitiveDataLogging();
+        options.UseLoggerFactory (CreateLoggerFactory());
+    }
+    
     protected override void OnModelCreating( ModelBuilder modelBuilder ){
         modelBuilder.Entity<Question>()
             .HasMany(q => q.QuestionChangingHistories)
@@ -30,5 +37,8 @@ public class QuestionServiceDbContext : DbContext {
             .OnDelete(DeleteBehavior.Cascade);
 
     }
+    
+    private ILoggerFactory CreateLoggerFactory () =>
+        LoggerFactory.Create(builder => { builder.AddConsole(); });
 
 }

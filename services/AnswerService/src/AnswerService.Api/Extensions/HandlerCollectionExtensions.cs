@@ -7,6 +7,9 @@ using AnswerService.Application.Features.GetAnswersByUserId;
 
 using Abstractions.Commands;
 
+using AnswerService.Domain.Repositories;
+using AnswerService.Infrastructure.Repositories;
+
 using Contracts.AnswerService.Responses;
 
 using FluentValidation;
@@ -15,7 +18,10 @@ namespace AnswerService.Api.Extensions;
 
 public static class HandlerCollectionExtensions {
 
-  public static WebApplicationBuilder UseHandlers (this WebApplicationBuilder builder) {
+  public static WebApplicationBuilder AddHandlers (this WebApplicationBuilder builder) {
+    
+    builder.Services.AddScoped<IAnswerRepository, AnswerRepository> ();
+    builder.Services.AddScoped<IAnswerChangingHistoryRepository, AnswerChangingHistoryRepository> ();
     
     builder.Services.AddScoped<ICommandHandler<CreateAnswerResponse, CreateAnswerCommand>, CreateAnswerHandler> ();
     builder.Services.AddScoped<ICommandHandler<EditAnswerCommand>, EditAnswerHandler> ();

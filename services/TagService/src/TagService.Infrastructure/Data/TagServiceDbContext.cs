@@ -5,12 +5,16 @@ namespace TagService.Infrastructure.Data;
 
 public class TagServiceDbContext : DbContext {
 
+    private readonly string _connectionString;
+    
     public DbSet<Tag> Tags { get; set; }
     public DbSet<WatchedTag> WatchedTags { get; set; }
     public DbSet<UserTagParticipation> UserTagParticipations { get; set; }
     public DbSet<UserTagParticipationQuestion> UserTagParticipationQuestions { get; set; }
 
-    public TagServiceDbContext( DbContextOptions<TagServiceDbContext> options ) : base(options) {}
+    public TagServiceDbContext (string connectionString) {
+        _connectionString = connectionString;
+    }
 
     protected override void OnModelCreating (ModelBuilder modelBuilder) {
         modelBuilder.Entity<Tag> ().HasMany (t => t.UserTagParticipations).WithOne (utp => utp.Tag)
