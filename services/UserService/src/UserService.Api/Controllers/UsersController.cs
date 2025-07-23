@@ -1,122 +1,92 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using UserService.Application.DTO;
-using UserService.Application.Interfaces;
+﻿using Abstractions.Commands;
+
+using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
+
+using Contracts.UserService.DTOs;
+
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+using UserService.Application.Features.CreateUserInfo;
+using UserService.Application.Features.DeleteUser;
+using UserService.Application.Features.GetUsers;
+using UserService.Application.Features.UpdateUserInfo;
+using UserService.Application.Features.UpdateUserReputation;
+using UserService.Application.Features.UpdateUserVisit;
+using UserService.Domain.Filters;
 
 namespace UserService.Api.Controllers;
 
 [ApiController]
 [Route ("users")]
-public class UsersController : ControllerBase {
+[TranslateResultToActionResult]
+public class UsersController : ControllerBase {    
 
-    private readonly IUserInfoService _userInfoService;
-    private readonly int _pageSize; // ???? ПОМЕНЯТЬ или ПОЛУЧАТЬ ОТ UI ????
+    [HttpGet]
+    [SwaggerOperation(
+    Summary = "Получить список пользователей.",
+    Description = "Получает список пользователей для указанной страницы.",
+    OperationId = "Comment_Get")]
+    public async Task<Result<PagedResult<IEnumerable<UserShortDTO>>>> GetUsersAsync(
+        [FromQuery] PageParams pageParams,
+        [FromQuery] SortParams sortParams,
+        [FromServices] ICommandHandler<PagedResult<IEnumerable<UserShortDTO>>, GetUsersCommand> handler ) => 
+        await handler.Handle(new GetUsersCommand(pageParams,sortParams), new CancellationToken(false));
+  
 
-    public UsersController (IUserInfoService userInfoService, IConfiguration configuration) {
-        _userInfoService = userInfoService;
-        _pageSize = configuration.GetValue<int> ("PaginationSettings:PageSize");
-    }
+    [HttpPost("create/{userId}/{userName}")] //TODO нужен для проверки
+    [SwaggerOperation(
+    Summary = "Создать пользователя.",
+    Description = "Создает пользователя.",
+    OperationId = "Comment_Post")]
+    public async Task<Result> CreateUserInfoAsync(
+        Guid userId, 
+        string userName,
+        [FromServices]ICommandHandler<CreateUserInfoCommand> handler) =>
+        await handler.Handle(new CreateUserInfoCommand(userId, userName), new CancellationToken(false));
 
-    [HttpGet ("{pageNumber:int}")]
-    public async Task<IActionResult> GetUsersByRatingAsync (int pageNumber) {
-        if (pageNumber <= 0)
-            return BadRequest (new { message = "Page number must be greater than zero." });
-
-        try {
-            IEnumerable<UserShortDTO> users = await _userInfoService.GetUsersByRatingAsync (pageNumber, _pageSize);
-            return Ok (users);
-        }
-        catch (Exception ex) {
-            return StatusCode (500, new { message = "Internal server error.", details = ex.Message });
-        }
-    }
-
-    [HttpGet ("date/{pageNumber:int}")]
-    public async Task<IActionResult> GetUsersByDateAsync (int pageNumber) {
-        if (pageNumber <= 0)
-            return BadRequest (new { message = "Page number must be greater than zero." });
-
-        try {
-            IEnumerable<UserShortDTO> users = await _userInfoService.GetUsersByDateAsync (pageNumber, _pageSize);
-            return Ok (users);
-        }
-        catch (Exception ex) {
-            return StatusCode (500, new { message = "Internal server error.", details = ex.Message });
-        }
-
-        
-    }
-
-    [HttpPost("info")]
-    public async Task<IActionResult> CreateUserInfoAsync ([FromBody] UserInfoCreateDTO userDto) {
-        try {
-            bool created = await _userInfoService.CreateUserInfoAsync (userDto);
-            return created ? Ok (created) : Conflict (new { message = "User already exists." });
-        }
-        catch (ArgumentException ex) {
-            return BadRequest (new { message = ex.Message });
-        }
-        catch (Exception ex) {
-            return StatusCode (500, new { message = "Internal server error.", details = ex.Message });
-        }
-    }
 
     [HttpPut("info")]
-    public async Task<IActionResult> UpdateUserInfoAsync ([FromBody]UserInfoUpdateDTO userDto) {
-        try {
-            bool updated = await _userInfoService.UpdateUserInfoAsync (userDto);
-            return updated ? Ok (updated) : NotFound ();
-        }
-        catch (ArgumentException ex) {
-            return BadRequest (new { message = ex.Message });
-        }
-        catch (Exception ex) {
-            return StatusCode (500, new { message = "Internal server error.", details = ex.Message });
-        }
-    }
+    [SwaggerOperation(
+    Summary = "Обновить пользователя.",
+    Description = "Обновляет информацию о пользователе.",
+    OperationId = "Comment_Put")]
+    public async Task<Result> UpdateUserInfoAsync(
+      [FromBody] UserInfoUpdateDTO userDto,
+      [FromServices] ICommandHandler<UpdateUserInfoCommand> handler ) =>
+      await handler.Handle(new UpdateUserInfoCommand(userDto), new CancellationToken(false));
 
-    [HttpPost("statistic")]
-    public async Task<IActionResult> CreateUserStatisticAsync ([FromBody]UserStatisticUpdateDto userDto) {
-        try {
-            bool created = await _userInfoService.CreateUserStatisticAsync (userDto);
-            return created ? Ok (created) : Conflict (new { message = "Statistic already exist" });
-        }
-        catch (ArgumentException ex) {
-            return BadRequest (new { message = ex.Message });
-        }
-        catch (Exception ex) {
-            return StatusCode (500, new { message = "Internal server error.", details = ex.Message });
-        }
-    }
 
-    [HttpPut("statistic")]
-    public async Task<IActionResult> UpdateUserStatisticAsync ([FromBody]UserStatisticUpdateDto userDto) {
-        try {
-            bool updated = await _userInfoService.UpdateUserStatisticAsync (userDto);
-            return updated ? Ok (updated) : NotFound ();
-        }
-        catch (ArgumentException ex) {
-            return BadRequest (new { message = ex.Message });
-        }
-        catch (Exception ex) {
-            return StatusCode (500, new { message = "Internal server error.", details = ex.Message });
-        }
-    }
+    [HttpPut("reputation/{userId}/{reputation}")] //TODO нужен для проверки
+    [SwaggerOperation(
+    Summary = "Обновить репутацию пользователя.",
+    Description = "Обновляет репутацию пользователя.",
+    OperationId = "Comment_Put")]
+    public async Task<Result> UpdateUserReputation(
+        Guid userId,
+        int reputation,
+        [FromServices] ICommandHandler<UpdateUserReputationCommand> handler ) =>
+        await handler.Handle(new UpdateUserReputationCommand(userId, reputation), new CancellationToken(false));
+
+    [HttpPut("visit/{userId}")] //TODO нужен для проверки
+    [SwaggerOperation(
+    Summary = "Обновить количество визитов пользователя.",
+    Description = "Обновляет количество визитов пользователя.",
+    OperationId = "Comment_Put")]
+    public async Task<Result> UpdateUserVisitAsync(
+        Guid userId,
+        [FromServices] ICommandHandler<UpdateUserVisitCommand> handler ) =>
+        await handler.Handle(new UpdateUserVisitCommand(userId), new CancellationToken(false));
+
 
     [HttpDelete("{userId}")]
-    public async Task<IActionResult> DeleteUserInfoAsync (Guid userId) {
-        if (userId == Guid.Empty)
-            return BadRequest (new { message = "User ID cannot be empty." });
-
-        try {
-            bool deleted = await _userInfoService.DeleteUserInfoAsync (userId);
-            return deleted ? Ok (deleted) : NotFound (new { message = "User not found." });
-        }
-        catch (ArgumentException ex) {
-            return BadRequest (new { message = ex.Message });
-        }
-        catch (Exception ex) {
-            return StatusCode (500, new { message = "Internal server error.", details = ex.Message });
-        }
-    }
+    [SwaggerOperation(
+    Summary = "Удалить пользователя.",
+    Description = "Удаляет запись из таблиц UserIfo и UserStatistic(каскадно).",
+    OperationId = "Comment_Delete")]
+    public async Task<Result> DeleteUserInfoAsync(
+        Guid userId,
+        [FromServices] ICommandHandler<DeleteUserCommand> handler ) =>
+        await handler.Handle(new DeleteUserCommand(userId), new CancellationToken(false));
 
 }

@@ -1,6 +1,5 @@
-using AuthService.Application.Abstractions;
-using AuthService.Application.DTOs;
+using Abstractions.Commands;
 
 namespace AuthService.Application.Features.LoginUser;
 
-public record LoginUserCommand (LoginUserDto Request) : ICommand;
+public record LoginUserCommand (string Email, string Password) : ICommand;

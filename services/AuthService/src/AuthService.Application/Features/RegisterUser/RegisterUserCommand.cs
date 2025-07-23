@@ -1,6 +1,6 @@
-using AuthService.Application.Abstractions;
-using AuthService.Application.DTOs;
+using Abstractions.Commands;
 
 namespace AuthService.Application.Features.RegisterUser;
 
-public record RegisterUserCommand (RegisterUserDto Request) : ICommand;
+public record RegisterUserCommand (string Username, string Email, string Password) : ICommand;
+
