@@ -1,15 +1,27 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
 using UserService.Domain.Entities;
 
 namespace UserService.Infrastructure.Data;
 
 public class UserServiceDbContext : DbContext {
 
-    public UserServiceDbContext (DbContextOptions<UserServiceDbContext> options) : base(options) {}
-
+    private readonly string _connectionString;
+    
     public DbSet<UserInfo> UsersInfos { get; set; } // TODO ПЕРЕИМЕНОВАТЬ В UsersInfo
     public DbSet<UserStatistic> UsersStatistic { get; set; }
 
+    public UserServiceDbContext (string connectionString) {
+      _connectionString = connectionString;
+    }
+
+    protected override void OnConfiguring (DbContextOptionsBuilder options) {
+      options.UseNpgsql (_connectionString);
+      options.EnableSensitiveDataLogging();
+      options.UseLoggerFactory (CreateLoggerFactory());
+    }
+    
     protected override void OnModelCreating (ModelBuilder modelBuilder) {
 
         modelBuilder.Entity<UserInfo>().HasOne(u => u.UserStatistic);       
@@ -30,5 +42,9 @@ public class UserServiceDbContext : DbContext {
                     .HasIndex(s => s.UserId)
                     .IsUnique();
     }
+    
+    private ILoggerFactory CreateLoggerFactory () =>
+      LoggerFactory.Create(builder => { builder.AddConsole(); });
+
 
 }

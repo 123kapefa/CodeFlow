@@ -1,7 +1,7 @@
 using Serilog;
 using Serilog.Events;
 
-namespace AnswerService.Api.Extensions;
+namespace QuestionService.Api.Extensions;
 
 public static class SerilogExtensions {
 
