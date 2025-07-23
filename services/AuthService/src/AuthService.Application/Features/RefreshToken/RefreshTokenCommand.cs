@@ -1,4 +1,4 @@
-using AuthService.Application.Abstractions;
+using Abstractions.Commands;
 
 namespace AuthService.Application.Features.RefreshToken;
 

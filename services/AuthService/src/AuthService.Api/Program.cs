@@ -1,25 +1,20 @@
-using AuthService.Infrastructure;
+using AuthService.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder (args);
 
-builder.Services.AddControllers ();
-
-builder.Services.AddOpenApi ();
-builder.Services.AddScoped<AuthServiceDbContext> (_ =>
-  new AuthServiceDbContext (builder.Configuration.GetConnectionString (nameof(AuthServiceDbContext))!));
+builder.AddBase ();
+builder.AddAuth ();
+builder.AddMail ();
+builder.AddDatabase ();
+builder.AddHandlers ();
+builder.AddCustomSwagger ();
+builder.AddCustomSerilog ();
 
 var app = builder.Build ();
 
-if (app.Environment.IsDevelopment())
-{
-  app.MapOpenApi();
-  app.UseSwaggerUI (options => options.SwaggerEndpoint ("/openapi/v1.json", "AuthService"));
-}
-
-app.UseHttpsRedirection ();
-
-app.UseAuthorization ();
-
+app.UseCustomSwagger ();
+app.UseBase ();
+app.UseAuth ();
 app.MapControllers ();
 
 app.Run ();

@@ -1,39 +1,258 @@
-networks:
-  backend: {}
-
-volumes:
-  pg-auth-data:
-
 services:
-  ##########################################################
-  # Database
-  ##########################################################
+  # ────────── инфраструктура ──────────
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    hostname: rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"      # AMQP
+      - "15672:15672"    # Web-UI
+    networks: [ clonenet ]
+    
+  # ────────── ApiGateway ──────────
+  apigateway:
+    build:
+      context: .
+      dockerfile: services/ApiGateway/docker/Dockerfile
+      args:
+        PROJECT_NAME: ApiGateway
+        DOTNET_VERSION: 9.0-preview
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      Services__Auth: http://authservice:5000
+      Services__User: http://userservice:5000
+      Services__Question: http://questionservice:5000
+      Services__Answer: http://answerservice:5000
+      Services__Comment: http://commentservice:5000
+      Services__Tag: http://tagservice:5000
+    depends_on:
+      - authservice
+      - userservice
+      - questionservice
+      - answerservice
+      - commentservice
+      - tagservice
+    ports:
+      - "5000:5000"
+    networks: [ clonenet ]
+
+  # ────────── AuthService + БД ──────────
   postgres-auth:
     image: postgres:16
-    container_name: postgres-auth
+    ports:
+    - "5101:5432"
+    restart: unless-stopped
     environment:
+      POSTGRES_DB: authdb
       POSTGRES_USER: auth
       POSTGRES_PASSWORD: secret
-      POSTGRES_DB: authdb
     volumes:
-      - pg-auth-data:/var/lib/postgresql/data
-    ports:
-      - "5434:5432"
-    networks: [backend]
+      - auth-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
 
-  ##########################################################
-  # AuthService
-  ##########################################################
-#  authservice:
-#    build:
-#      context: ./services/AuthService/src
-#      dockerfile: ../docker/Dockerfile
-#    container_name: auth-service
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#      - ConnectionStrings__Default=Host=postgres-auth;Database=authdb;Username=auth;Password=secret
-#    depends_on:
-#      - postgres-auth
+  authservice:
+    build:
+      context: .
+      dockerfile: services/AuthService/docker/Dockerfile
+      args:
+        PROJECT_NAME: AuthService
+        DOTNET_VERSION: 9.0-preview
+    environment:
+      ASPNETCORE_URLS:          http://+:5000
+      ConnectionStrings__AuthServiceDbContext: 'Host=postgres-auth;Port=5432;Database=authdb;Username=auth;Password=secret'
+      Rabbit__Host:             rabbitmq
+      Rabbit__User:             guest
+      Rabbit__Pass:             guest
+    depends_on:
+      - rabbitmq
+      - postgres-auth
 #    ports:
-#      - "5001:8080"
-#    networks: [backend]
+#      - "5001:5000"
+    networks: [ clonenet ]
+
+  # ────────── UserService + БД ──────────
+  user-db:
+    image: postgres:16
+    ports:
+    - "5102:5432"
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: userdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  userservice:
+    build:
+      context: .
+      dockerfile: services/UserService/docker/Dockerfile
+      args:
+        PROJECT_NAME: UserService
+        DOTNET_VERSION: 9.0-preview
+    environment:
+      ASPNETCORE_URLS:          http://+:5000
+      ConnectionStrings__UserServiceDbContext: 'Host=user-db;Port=5432;Database=userdb;Username=user;Password=secret'
+      Rabbit__Host:             rabbitmq
+      Rabbit__User:             guest
+      Rabbit__Pass:             guest
+    depends_on:
+      - rabbitmq
+      - user-db
+#    ports:
+#      - "5002:5000"
+    networks: [ clonenet ]
+
+  # ────────── QuestionService + БД ──────────
+  question-db:
+    image: postgres:16
+    ports:
+    - "5103:5432"
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: questiondb
+      POSTGRES_USER: question
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - question-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  questionservice:
+    build:
+      context: .
+      dockerfile: services/QuestionService/docker/Dockerfile
+      args:
+        PROJECT_NAME: QuestionService
+        DOTNET_VERSION: 9.0-preview
+    environment:
+      ASPNETCORE_URLS:          http://+:5000
+      ConnectionStrings__QuestionServiceDbContext: 'Host=question-db;Port=5432;Database=questiondb;Username=question;Password=secret'
+      Rabbit__Host:             rabbitmq
+      Rabbit__User:             guest
+      Rabbit__Pass:             guest
+    depends_on:
+      - rabbitmq
+      - question-db
+#    ports:
+#      - "5003:5000"
+    networks: [ clonenet ]
+    
+  # ────────── AnswerService + БД ──────────
+  answer-db:
+    image: postgres:16
+    ports:
+      - "5104:5432"
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: answerdb
+      POSTGRES_USER: answer
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - answer-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  answerservice:
+    build:
+      context: .
+      dockerfile: services/AnswerService/docker/Dockerfile
+      args:
+        PROJECT_NAME: AnswerService
+        DOTNET_VERSION: 9.0-preview
+    environment:
+      ASPNETCORE_URLS:          http://+:5000
+      ConnectionStrings__AnswerServiceDbContext: 'Host=localhost;Port=5433;Database=answerdb;Username=answer;Password=secret'
+      Rabbit__Host:             rabbitmq
+      Rabbit__User:             guest
+      Rabbit__Pass:             guest
+    depends_on:
+      - rabbitmq
+      - answer-db
+#    ports:
+#      - "5004:5000"
+    networks: [ clonenet ]
+    
+  # ────────── CommentService + БД ──────────
+  comment-db:
+    image: postgres:16
+    ports:
+      - "5105:5432"
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: commentdb
+      POSTGRES_USER: comment
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - comment-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  commentservice:
+    build:
+      context: .
+      dockerfile: services/CommentService/docker/Dockerfile
+      args:
+        PROJECT_NAME: CommentService
+        DOTNET_VERSION: 9.0-preview
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__CommentServiceDbContext: 'Host=localhost;Port=5433;Database=commentdb;Username=comment;Password=secret'
+      Rabbit__Host: rabbitmq
+      Rabbit__User: guest
+      Rabbit__Pass: guest
+    depends_on:
+      - rabbitmq
+      - comment-db
+#    ports:
+#      - "5005:5000"
+    networks: [ clonenet ]
+    
+  # ────────── TagService + БД ──────────
+  tag-db:
+    image: postgres:16
+    ports:
+      - "5106:5432"
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tagdb
+      POSTGRES_USER: tag
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - tag-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  tagservice:
+    build:
+      context: .
+      dockerfile: services/TagService/docker/Dockerfile
+      args:
+        PROJECT_NAME: TagService
+        DOTNET_VERSION: 9.0-preview
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__TagServiceDbContext: 'Host=localhost;Port=5433;Database=tagdb;Username=tag;Password=secret'
+      Rabbit__Host: rabbitmq
+      Rabbit__User: guest
+      Rabbit__Pass: guest
+    depends_on:
+      - rabbitmq
+      - tag-db
+#    ports:
+#      - "5006:5000"
+    networks: [ clonenet ]
+
+# ────────── тома для персистентных БД ──────────
+volumes:
+  auth-db-data:
+  user-db-data:
+  question-db-data:
+  answer-db-data:
+  comment-db-data:
+  tag-db-data:
+
+# ────────── общая bridge-сеть ──────────
+networks:
+  clonenet:
+    driver: bridge

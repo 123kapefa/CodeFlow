@@ -4,19 +4,24 @@ using AuthService.Domain.Entities;
 using AuthService.Domain.Repositories;
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace AuthService.Infrastructure.Repositories;
 
 public class UserDataRepository : IUserDataRepository {
 
+  private readonly IRefreshTokenRepository _refreshTokenRepository;
   private readonly UserManager<UserData> _userManager;
   private readonly AuthServiceDbContext _context;
 
-  public UserDataRepository (UserManager<UserData> userManager, AuthServiceDbContext context) {
+  public UserDataRepository (UserManager<UserData> userManager, AuthServiceDbContext context
+    , IRefreshTokenRepository refreshTokenRepository) {
     _userManager = userManager;
     _context = context;
+    _refreshTokenRepository = refreshTokenRepository;
   }
 
+  /// <summary> Получение пользователя по ID </summary>
   public async Task<Result<UserData>> GetByIdAsync (Guid userId) {
     var userData = await _userManager.FindByIdAsync (userId.ToString ());
 
@@ -27,6 +32,7 @@ public class UserDataRepository : IUserDataRepository {
     return Result<UserData>.Success (userData!);
   }
 
+  /// <summary> Получение пользователя по Email </summary>
   public async Task<Result<UserData>> GetByEmailAsync (string email) {
     var userData = await _userManager.FindByEmailAsync (email);
 
@@ -37,6 +43,7 @@ public class UserDataRepository : IUserDataRepository {
     return Result<UserData>.Success (userData!);
   }
 
+  /// <summary> Создание пользователя </summary>
   public async Task<Result<Guid>> CreateAsync (UserData user, string? password = null) {
     IdentityResult result = password is null
       ? await _userManager.CreateAsync (user)
@@ -50,10 +57,23 @@ public class UserDataRepository : IUserDataRepository {
     return Result<Guid>.Success (user.Id, "Пользователь успешно создан.");
   }
 
-  public async Task<Result<bool>> CheckPasswordAsync (UserData user, string password) {
-    return Result<bool>.Success (await _userManager.CheckPasswordAsync (user, password));
+  /// <summary> Проверка пароля пользователя </summary>
+  public async Task<Result> CheckPasswordAsync (UserData user, string password) {
+    var result = await _userManager.CheckPasswordAsync (user, password);
+    if (!result)
+      return Result.Error ("Пароль не правильный.");
+    
+    return Result.Success ();
   }
 
+  /// <summary> Смена пароля пользователя </summary>
+  public async Task<Result> ResetPasswordAsync (UserData user, string token, string newPassword) {
+    var result = await _userManager.ResetPasswordAsync (user, token, newPassword);
+    
+    return Result.Success ();
+  }
+
+  /// <summary> Добавления роли пользователю </summary>
   public async Task<Result<string>> AddToRoleAsync (UserData user, string role) {
     var result = await _userManager.AddToRoleAsync (user, role);
     if (!result.Succeeded) {
@@ -63,30 +83,33 @@ public class UserDataRepository : IUserDataRepository {
     return Result<string>.Success ("Роль успешно добавлена.");
   }
 
+  /// <summary> Получение всех ролей пользователя </summary>
   public async Task<Result<IList<string>>> GetRolesAsync (UserData user) {
     return Result<IList<string>>.Success (await _userManager.GetRolesAsync (user));
   }
 
-  public Task<Result<UserData>> GetByRefreshTokenAsync (string refreshToken) {
-    throw new NotImplementedException ();
+  /// <summary> Получение пользователя по токену </summary>
+  public async Task<Result<UserData>> GetByRefreshTokenAsync (string refreshToken) {
+    var refreshTokenResult = await _refreshTokenRepository.GetValidAsync (refreshToken);
+    if (!refreshTokenResult.IsSuccess)
+      return Result<UserData>.Error ("Токен обновления не найден.");
+
+    var user = await _userManager.FindByIdAsync (refreshTokenResult.Value.UserId.ToString ());
+    
+    return user is null
+      ? Result<UserData>.NotFound ("User not found") 
+      : Result<UserData>.Success (user);
   }
 
-  public Task<Result> RevokeRefreshTokenAsync (string refreshToken) {
-    throw new NotImplementedException ();
-  }
-
-  public Task<Result> AddRefreshTokenAsync (Guid userId, string refreshToken) {
-    throw new NotImplementedException ();
-  }
-
+  /// <summary> Создание токена для сброса пароля </summary>
   public Task<string> GeneratePasswordResetTokenAsync (UserData user) =>
     _userManager.GeneratePasswordResetTokenAsync (user);
 
-  public async Task<bool> ResetPasswordAsync (UserData user, string token, string newPassword) {
-    var result = await _userManager.ResetPasswordAsync (user, token, newPassword);
-    return result.Succeeded;
+  public async Task<Result> DeleteAsync (UserData userData) {
+    await _userManager.DeleteAsync(userData);
+    return Result.Success ();
   }
-
+  
   public async Task SaveChangesAsync () {
     await _context.SaveChangesAsync ();
   }
