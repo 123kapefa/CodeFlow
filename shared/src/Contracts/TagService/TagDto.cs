@@ -21,7 +21,7 @@ public class TagDTO {
         int countWotchers, 
         int dailyRequestCount, 
         int weeklyRequestCount ) {
-
+        Id = tagId;
         Name = tagName;
         Description = description; 
         CreatedAt = createdAt;
