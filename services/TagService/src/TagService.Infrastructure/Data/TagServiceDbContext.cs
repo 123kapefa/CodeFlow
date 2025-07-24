@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
 using TagService.Domain.Entities;
 
 namespace TagService.Infrastructure.Data;
@@ -16,6 +18,12 @@ public class TagServiceDbContext : DbContext {
         _connectionString = connectionString;
     }
 
+    protected override void OnConfiguring (DbContextOptionsBuilder options) {
+        options.UseNpgsql (_connectionString);
+        options.EnableSensitiveDataLogging();
+        options.UseLoggerFactory (CreateLoggerFactory());
+    }
+    
     protected override void OnModelCreating (ModelBuilder modelBuilder) {
         modelBuilder.Entity<Tag> ().HasMany (t => t.UserTagParticipations).WithOne (utp => utp.Tag)
            .HasForeignKey (utp => utp.TagId);
@@ -45,5 +53,8 @@ public class TagServiceDbContext : DbContext {
                 , createdAt: new DateTime (2025, 7, 17, 0, 0, 0, DateTimeKind.Utc)));
 
     }
+    
+    private ILoggerFactory CreateLoggerFactory () =>
+        LoggerFactory.Create(builder => { builder.AddConsole(); });
 
 }
