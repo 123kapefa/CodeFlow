@@ -41,8 +41,9 @@ public static class AuthExtensions {
   }
 
   public static IApplicationBuilder UseAuth (this IApplicationBuilder app) {
-    app.UseAuthorization ();
 
+    app.UseAuthorization ();
+    
     return app;
   }
 
