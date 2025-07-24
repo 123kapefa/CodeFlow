@@ -66,6 +66,7 @@ services:
       - .env
     environment:
       ASPNETCORE_URLS:          http://+:5000
+      ConnectionStrings__AuthServiceDbContext: 'Host=postgres-auth;Port=5432;Database=authdb;Username=auth;Password=secret'
       Rabbit__Host:             rabbitmq
       Rabbit__User:             guest
       Rabbit__Pass:             guest
