@@ -20,6 +20,8 @@ services:
       args:
         PROJECT_NAME: ApiGateway
         DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env
     environment:
       ASPNETCORE_URLS: http://+:5000
       Services__Auth: http://authservice:5000
@@ -60,9 +62,10 @@ services:
       args:
         PROJECT_NAME: AuthService
         DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env
     environment:
       ASPNETCORE_URLS:          http://+:5000
-      ConnectionStrings__AuthServiceDbContext: 'Host=postgres-auth;Port=5432;Database=authdb;Username=auth;Password=secret'
       Rabbit__Host:             rabbitmq
       Rabbit__User:             guest
       Rabbit__Pass:             guest
@@ -232,7 +235,7 @@ services:
         DOTNET_VERSION: 9.0-preview
     environment:
       ASPNETCORE_URLS: http://+:5000
-      ConnectionStrings__TagServiceDbContext: 'Host=localhost;Port=5433;Database=tagdb;Username=tag;Password=secret'
+      ConnectionStrings__TagServiceDbContext: 'Host=tag-db;Port=5432;Database=tagdb;Username=tag;Password=secret'
       Rabbit__Host: rabbitmq
       Rabbit__User: guest
       Rabbit__Pass: guest

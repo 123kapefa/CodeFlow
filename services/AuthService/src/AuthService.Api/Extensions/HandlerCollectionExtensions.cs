@@ -31,10 +31,6 @@ public static class HandlerCollectionExtensions {
     builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
     builder.Services.AddScoped<IPasswordChangeRepository, PasswordChangeRepository> ();
     
-    
-    builder.Services.Configure<JwtSettings>(
-      builder.Configuration.GetSection("JwtSettings"));
-    
     builder.Services.Configure<GoogleAuthSettings>(
       builder.Configuration.GetSection(GoogleAuthSettings.SectionName));
     
