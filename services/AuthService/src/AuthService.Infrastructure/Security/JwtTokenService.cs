@@ -25,11 +25,14 @@ public class JwtTokenService : ITokenService {
 
   public (string AccessToken, int ExpiresInSeconds) GenerateTokens (Guid userId, string email) {
     var now = DateTime.UtcNow;
+    Log.Information
     var tokenDescriptor = new SecurityTokenDescriptor {
       Subject = new ClaimsIdentity (new[] {
           new Claim (JwtRegisteredClaimNames.Sub, userId.ToString ()), 
           new Claim (JwtRegisteredClaimNames.Email, email)
         }),
+      Issuer = _settings.Issuer, 
+      Audience = _settings.Audience,
       Expires = now.AddSeconds (_settings.ExpiresInMinutes), 
       SigningCredentials = new SigningCredentials (
         new SymmetricSecurityKey (_key), 

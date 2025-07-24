@@ -21,7 +21,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AuthService.Api.Controllers;
 
 [ApiController]
-[Route ("api/[controller]")]
+[Route ("[controller]")]
 [TranslateResultToActionResult]
 public class AuthController : ControllerBase {
 
