@@ -10,25 +10,5 @@ public static class DatabaseExtensions {
 
     return builder;
   }
-  
-  // public static IApplicationBuilder UseDatabase (this IApplicationBuilder app) {
-  //   
-  //   using (var scope = app.Services.CreateScope())
-  //   {
-  //     var services = scope.ServiceProvider;
-  //     try
-  //     {
-  //       var context = services.GetRequiredService<TagServiceDbContext>();
-  //       context.Database.Migrate();
-  //     }
-  //     catch (Exception ex)
-  //     {
-  //       Console.WriteLine($"Ошибка при выполнении миграций: {ex.Message}");
-  //       throw;
-  //     }
-  //   }
-  //   
-  //   return app;
-  // }
 
 }
