@@ -33,7 +33,6 @@ using (var scope = app.Services.CreateScope())
   }
 }
 
-// app.UseDatabase ();
 app.MapControllers ();
 
 app.Run();
