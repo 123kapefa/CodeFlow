@@ -29,10 +29,4 @@
     <ProjectReference Include="..\TagService.Domain\TagService.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Contracts">
-      <HintPath>..\..\..\..\shared\Contracts\bin\Debug\net9.0\Contracts.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
