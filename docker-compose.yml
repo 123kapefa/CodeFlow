@@ -168,7 +168,7 @@ services:
         DOTNET_VERSION: 9.0-preview
     environment:
       ASPNETCORE_URLS:          http://+:5000
-      ConnectionStrings__AnswerServiceDbContext: 'Host=localhost;Port=5433;Database=answerdb;Username=answer;Password=secret'
+      ConnectionStrings__AnswerServiceDbContext: 'Host=answer-db;Port=5432;Database=answerdb;Username=answer;Password=secret'
       Rabbit__Host:             rabbitmq
       Rabbit__User:             guest
       Rabbit__Pass:             guest
@@ -202,7 +202,7 @@ services:
         DOTNET_VERSION: 9.0-preview
     environment:
       ASPNETCORE_URLS: http://+:5000
-      ConnectionStrings__CommentServiceDbContext: 'Host=localhost;Port=5433;Database=commentdb;Username=comment;Password=secret'
+      ConnectionStrings__CommentServiceDbContext: 'Host=comment-db;Port=5432;Database=commentdb;Username=comment;Password=secret'
       Rabbit__Host: rabbitmq
       Rabbit__User: guest
       Rabbit__Pass: guest
