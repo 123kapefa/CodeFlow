@@ -5,7 +5,6 @@ using UserService.Infrastructure.Data;
 namespace UserService.Api.Extensions;
 
 public static class MassTransitExtensions {
-    
     public static WebApplicationBuilder AddUserMessaging (this WebApplicationBuilder builder) {
     
         builder.Services.AddMassTransit (x =>
@@ -54,5 +53,4 @@ public static class MassTransitExtensions {
         
         return builder;
     }
-  
 }
