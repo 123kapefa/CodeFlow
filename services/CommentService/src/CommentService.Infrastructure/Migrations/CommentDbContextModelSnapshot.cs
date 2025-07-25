@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace CommentService.Infrastructure.Migrations
 {
-    [DbContext(typeof(CommentDbContext))]
+    [DbContext(typeof(CommentServiceDbContext))]
     partial class CommentDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

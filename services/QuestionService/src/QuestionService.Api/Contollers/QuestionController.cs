@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
 
 using Contracts.QuestionService.DTOs;
 
@@ -24,7 +25,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace QuestionService.Api.Contollers;
 
 [ApiController]
-[Route("question")]
+[Route("questions")]
 [TranslateResultToActionResult]
 public class QuestionController : ControllerBase {
 

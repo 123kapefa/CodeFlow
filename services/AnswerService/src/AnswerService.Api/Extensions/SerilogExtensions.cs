@@ -5,7 +5,7 @@ namespace AnswerService.Api.Extensions;
 
 public static class SerilogExtensions {
 
-  public static WebApplicationBuilder UseCustomSerilog (this WebApplicationBuilder builder) {
+  public static WebApplicationBuilder AddCustomSerilog (this WebApplicationBuilder builder) {
     
     Log.Logger = new LoggerConfiguration()
      .MinimumLevel.Debug()

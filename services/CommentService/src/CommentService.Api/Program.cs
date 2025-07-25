@@ -1,61 +1,34 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-
-using Abstractions.Commands;
-
+using CommentService.Api.Extensions;
 using CommentService.Infrastructure.Data;
-using CommentService.Domain.Repositories;
-using CommentService.Infrastructure.Repositories;
-using CommentService.Application.Features.CreateComment;
-using CommentService.Domain.Enums;
-using CommentService.Application.Features.DeleteComment;
-using CommentService.Application.Features.GetCommentById;
-using CommentService.Application.Features.GetComments;
-using CommentService.Application.Features.UpdateComment;
+using Microsoft.EntityFrameworkCore;
 
-using Contracts.CommentService.DTOs;
+var builder = WebApplication.CreateBuilder(args);
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.AddBase ();
+builder.AddCustomSwagger ();
+builder.AddDatabase ();
+builder.AddCustomSerilog ();
+builder.AddHandlers ();
 
-builder.Services.AddControllers()
-     .AddJsonOptions(o =>
-           o.JsonSerializerOptions.Converters //��������� ��� �enum-���-������.
-             .Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase))); ;
+builder.Services.AddControllers();
 
-builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+var app = builder.Build();
 
-builder.Services.AddScoped<ICommandHandler<CreateCommentCommand>, CreateCommentHandler>();
-builder.Services.AddScoped<ICommandHandler<CommentDTO, GetCommentByIdCommand>, GetCommentByIdHandler>();
-builder.Services.AddScoped<ICommandHandler<DeleteCommentCommand>, DeleteCommentHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateCommentCommand>, UpdateCommentHandler>();
-builder.Services.AddScoped<ICommandHandler<IEnumerable<CommentDTO>, GetCommentsCommand>, GetCommentsHandler>();
+app.UseCustomSwagger ();
+app.UseBase ();
 
-// Swagger
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options => {
-    options.SwaggerDoc("v1", new OpenApiInfo {
-        Title = "Product API",
-        Version = "v1",
-        Description = "������ ������������ Swagger ��� CommentService"
-    });
+using(var scope = app.Services.CreateScope()) {
+    var services = scope.ServiceProvider;
+    try {
+        var context = services.GetRequiredService<CommentServiceDbContext>();
+        context.Database.Migrate();
+    }
+    catch(Exception ex) {
+        Console.WriteLine($"������ ��� ���������� ��������: {ex.Message}");
+        throw;
+    }
+}
 
-    options.EnableAnnotations();
-});
-
-builder.Services.AddDbContext<CommentDbContext>(opt =>
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("Main"),
-                  npg => npg.MapEnum<TypeTarget>("type_target")));
-
-WebApplication app = builder.Build();
-
-app.UseSwagger();
-app.UseSwaggerUI(options => {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Product API v1");
-});
-app.UseDeveloperExceptionPage();
-
-app.MapControllers();
+app.MapControllers ();
 
 app.Run();
