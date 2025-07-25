@@ -34,6 +34,7 @@ public class UsersController : ControllerBase {
         await handler.Handle(new GetUsersCommand(pageParams,sortParams), new CancellationToken(false));
   
 
+    public async Task<Result<UserFullInfoDTO>> GetUserFullInfoAsync(
     [HttpPost("create/{userId}/{userName}")] //TODO нужен для проверки
     [SwaggerOperation(
     Summary = "Создать пользователя.",
