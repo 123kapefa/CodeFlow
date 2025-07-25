@@ -185,13 +185,13 @@ public class TagServiceController : ControllerBase{
 
 
 
-    [HttpGet("participation")]
+    [HttpGet("tags/user/{userId}/participation\r\n")]
     [SwaggerOperation(
     Summary = "Получить обсуждаемые тэги для пользователя по userID.",
     Description = "Получает список тэгов для указанной страницы.",
     OperationId = "Tag_Get")]
-    public async Task<Result<PagedResult<IEnumerable<ParticipationDTO>>>> GetUserParticipationTAgsAsync(
-        [FromQuery]Guid userId,
+    public async Task<Result<PagedResult<IEnumerable<ParticipationDTO>>>> GetUserParticipationTagsAsync(
+        Guid userId,
         [FromQuery] PageParams pageParams,
         [FromQuery] SortParams sortParams,
         [FromServices] ICommandHandler<PagedResult<IEnumerable<ParticipationDTO>>, GetUserTagsCommand> handler ) =>
