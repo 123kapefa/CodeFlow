@@ -25,6 +25,7 @@ public class JwtTokenService : ITokenService {
 
   public (string AccessToken, int ExpiresInSeconds) GenerateTokens (Guid userId, string email) {
     var now = DateTime.UtcNow;
+ 
     var tokenDescriptor = new SecurityTokenDescriptor {
       Subject = new ClaimsIdentity (new[] {
           new Claim (JwtRegisteredClaimNames.Sub, userId.ToString ()), 

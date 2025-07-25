@@ -29,7 +29,7 @@ public static class HandlerCollectionExtensions {
     builder.Services.AddScoped<ICommandHandler<DeleteUserCommand>, DeleteUserHandler>();
     builder.Services.AddScoped<ICommandHandler<UpdateUserReputationCommand>, UpdateUserReputationHandler>();
     builder.Services.AddScoped<ICommandHandler<UpdateUserVisitCommand>, UpdateUserVisitHandler>();
-    builder.Services.AddScoped<ICommandHandler<Result<UserFullInfoDTO>, GetUserFullInfoCommand>, GetUserFullInfoHandler>();
+    builder.Services.AddScoped<ICommandHandler<UserFullInfoDTO, GetUserFullInfoCommand>, GetUserFullInfoHandler>();
     builder.Services.AddScoped<ICommandHandler<CreateUserInfoCommand>, CreateUserInfoHandler>();
 
     builder.Services.AddScoped<IValidator<UpdateUserInfoCommand>, UpdateUserInfoValidator>();
