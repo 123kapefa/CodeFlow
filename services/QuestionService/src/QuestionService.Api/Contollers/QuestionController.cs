@@ -25,7 +25,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace QuestionService.Api.Contollers;
 
 [ApiController]
-[Route("question")]
+[Route("questions")]
 [TranslateResultToActionResult]
 public class QuestionController : ControllerBase {
 

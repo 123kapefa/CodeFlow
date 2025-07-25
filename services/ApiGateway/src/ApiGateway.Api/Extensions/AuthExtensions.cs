@@ -37,8 +37,20 @@ public static class AuthExtensions {
           ValidAudience = jwtSettings.Audience,
           IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(jwtSettings.Secret)
-          )
+          ),
+          ClockSkew = TimeSpan.Zero
         };
+        options.Events = new JwtBearerEvents {
+          OnAuthenticationFailed = context => {
+            if (context.Exception is SecurityTokenExpiredException) {
+              Console.WriteLine("Токен истёк!");
+            } else {
+              Console.WriteLine($"Ошибка аутентификации: {context.Exception.Message}");
+            }
+            return Task.CompletedTask;
+          }
+        };
+
       });
     builder.Services.AddAuthorization(options => {
       options.AddPolicy("AuthenticatedPolicy", policy => {
