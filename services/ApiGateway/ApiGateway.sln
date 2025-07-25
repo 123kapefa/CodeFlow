@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway.Domain", "src\ApiGateway.Domain\ApiGateway.Domain.csproj", "{F1A28F2E-17B1-48FE-96F0-F9F09DA7CA8E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BB73B10D-756D-4DCC-84E6-88E3490103D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway.Application", "src\ApiGateway.Application\ApiGateway.Application.csproj", "{0D3198D1-C09C-4BA5-B08A-E84F97739B5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway.Infrastructure", "src\ApiGateway.Infrastructure\ApiGateway.Infrastructure.csproj", "{FAED491A-15F2-4F70-B48D-BA4E22CABBE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway.Api", "src\ApiGateway.Api\ApiGateway.Api.csproj", "{7FD8689A-BC1F-4720-B20D-7900A3DFDF6F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{03128991-86FE-4F1B-9143-BE1D9E3E9F19}"
+	ProjectSection(SolutionItems) = preProject
+		docker\.dockerignore = docker\.dockerignore
+		docker\Dockerfile = docker\Dockerfile
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "..\..\shared\src\Contracts\Contracts.csproj", "{6C4F2F15-871C-4A3A-AC9A-A3107DFB294B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions", "..\..\shared\src\Abstractions\Abstractions.csproj", "{6BB127FF-83E8-4611-99D2-A8A4D4739117}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F1A28F2E-17B1-48FE-96F0-F9F09DA7CA8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1A28F2E-17B1-48FE-96F0-F9F09DA7CA8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1A28F2E-17B1-48FE-96F0-F9F09DA7CA8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1A28F2E-17B1-48FE-96F0-F9F09DA7CA8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D3198D1-C09C-4BA5-B08A-E84F97739B5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D3198D1-C09C-4BA5-B08A-E84F97739B5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D3198D1-C09C-4BA5-B08A-E84F97739B5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D3198D1-C09C-4BA5-B08A-E84F97739B5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAED491A-15F2-4F70-B48D-BA4E22CABBE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAED491A-15F2-4F70-B48D-BA4E22CABBE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAED491A-15F2-4F70-B48D-BA4E22CABBE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAED491A-15F2-4F70-B48D-BA4E22CABBE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FD8689A-BC1F-4720-B20D-7900A3DFDF6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FD8689A-BC1F-4720-B20D-7900A3DFDF6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FD8689A-BC1F-4720-B20D-7900A3DFDF6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FD8689A-BC1F-4720-B20D-7900A3DFDF6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C4F2F15-871C-4A3A-AC9A-A3107DFB294B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C4F2F15-871C-4A3A-AC9A-A3107DFB294B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C4F2F15-871C-4A3A-AC9A-A3107DFB294B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C4F2F15-871C-4A3A-AC9A-A3107DFB294B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BB127FF-83E8-4611-99D2-A8A4D4739117}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BB127FF-83E8-4611-99D2-A8A4D4739117}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BB127FF-83E8-4611-99D2-A8A4D4739117}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BB127FF-83E8-4611-99D2-A8A4D4739117}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F1A28F2E-17B1-48FE-96F0-F9F09DA7CA8E} = {BB73B10D-756D-4DCC-84E6-88E3490103D2}
+		{0D3198D1-C09C-4BA5-B08A-E84F97739B5E} = {BB73B10D-756D-4DCC-84E6-88E3490103D2}
+		{7FD8689A-BC1F-4720-B20D-7900A3DFDF6F} = {BB73B10D-756D-4DCC-84E6-88E3490103D2}
+		{FAED491A-15F2-4F70-B48D-BA4E22CABBE3} = {BB73B10D-756D-4DCC-84E6-88E3490103D2}
+		{6C4F2F15-871C-4A3A-AC9A-A3107DFB294B} = {BB73B10D-756D-4DCC-84E6-88E3490103D2}
+		{6BB127FF-83E8-4611-99D2-A8A4D4739117} = {BB73B10D-756D-4DCC-84E6-88E3490103D2}
+	EndGlobalSection
+EndGlobal
