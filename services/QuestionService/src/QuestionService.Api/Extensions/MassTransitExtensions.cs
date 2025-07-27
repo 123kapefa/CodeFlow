@@ -1,4 +1,6 @@
 ﻿using MassTransit;
+
+using QuestionService.Application.Consumers;
 using QuestionService.Infrastructure.Data;
 
 namespace QuestionService.Api.Extensions;
@@ -14,6 +16,8 @@ public static class MassTransitExtensions {
                 o.UsePostgres();
                 o.UseBusOutbox();
             });
+            
+            x.AddConsumer<AnswerCreatedConsumer> ();
 
             x.UsingRabbitMq(( ctx, cfg ) => {
                 cfg.Host("rabbitmq", "/", h => {
@@ -21,7 +25,11 @@ public static class MassTransitExtensions {
                     h.Password("guest");
                 });
 
-                cfg.ConfigureEndpoints(ctx);
+                cfg.ReceiveEndpoint("question-service.answer-created", e => {
+
+                    e.ConfigureConsumer<AnswerCreatedConsumer>(ctx);
+                    e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+                });
             });
         });
 
