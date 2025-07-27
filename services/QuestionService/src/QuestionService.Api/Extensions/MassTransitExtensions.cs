@@ -16,6 +16,8 @@ public static class MassTransitExtensions {
                 o.UsePostgres();
                 o.UseBusOutbox();
             });
+            
+            x.AddConsumer<AnswerCreatedConsumer> ();
 
             x.AddConsumer<AnswerCreatedConsumer> ();
 
