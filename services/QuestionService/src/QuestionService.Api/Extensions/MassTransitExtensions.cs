@@ -16,7 +16,7 @@ public static class MassTransitExtensions {
                 o.UsePostgres();
                 o.UseBusOutbox();
             });
-            
+
             x.AddConsumer<AnswerCreatedConsumer> ();
 
             x.UsingRabbitMq(( ctx, cfg ) => {
