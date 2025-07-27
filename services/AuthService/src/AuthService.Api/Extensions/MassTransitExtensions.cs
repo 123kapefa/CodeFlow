@@ -11,12 +11,12 @@ public static class MassTransitExtensions {
     builder.Services.AddMassTransit (x => {
       x.SetKebabCaseEndpointNameFormatter ();
 
-      x.AddEntityFrameworkOutbox<AuthServiceDbContext> (o => {
-        o.UsePostgres ();
-        o.UseBusOutbox ();
-      });
+        x.AddEntityFrameworkOutbox<AuthServiceDbContext>(o => {
+            o.UsePostgres();
+            o.UseBusOutbox();
+        });
 
-      x.UsingRabbitMq ((ctx, cfg) => {
+        x.UsingRabbitMq ((ctx, cfg) => {
         cfg.Host ("rabbitmq", "/", h => {
           h.Username ("guest");
           h.Password ("guest");

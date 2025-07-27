@@ -5,12 +5,12 @@ using UserService.Infrastructure.Data;
 namespace UserService.Api.Extensions;
 
 public static class MassTransitExtensions {
+    
     public static WebApplicationBuilder AddUserMessaging (this WebApplicationBuilder builder) {
     
         builder.Services.AddMassTransit (x =>
         {
             x.SetKebabCaseEndpointNameFormatter ();
-
 
             x.AddEntityFrameworkOutbox<UserServiceDbContext>(o => {
                 o.UsePostgres();
@@ -25,10 +25,10 @@ public static class MassTransitExtensions {
             {
                 cfg.Host ("rabbitmq", "/", h =>
                 {
-                h.Username ("guest");
+                    h.Username ("guest");
                     h.Password ("guest");
-                });    
-              
+                });          
+                               
                 cfg.ReceiveEndpoint("user-service.user-registered", e => {
                     
                     e.ConfigureConsumer<UserRegisteredConsumer>(ctx);                    
@@ -46,8 +46,6 @@ public static class MassTransitExtensions {
                     e.ConfigureConsumer<QuestionVotedConsumer>(ctx);
                     e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
                 });
-
-
             });
         });
         

@@ -8,7 +8,7 @@ namespace UserService.Application.Consumers;
 public class QuestionVotedConsumer : IConsumer<QuestionVoted> {
 
     private readonly ICommandHandler<UpdateUserReputationCommand> _handler;
-    
+
     public QuestionVotedConsumer( ICommandHandler<UpdateUserReputationCommand> handler ) {
         _handler = handler;
     }
