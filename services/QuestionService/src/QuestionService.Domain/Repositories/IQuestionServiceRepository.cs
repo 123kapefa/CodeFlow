@@ -1,11 +1,6 @@
 ﻿using Ardalis.Result;
 using QuestionService.Domain.Entities;
 using QuestionService.Domain.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuestionService.Domain.Repositories;
 
@@ -34,4 +29,5 @@ public interface IQuestionServiceRepository {
     Task<Result> UpdateQuestionAsync( Question question, CancellationToken token );
     Task<Result> UpdateQuestionTagsAsync( Guid questionId, List<QuestionTag> questionTags, CancellationToken token );
     Task<Result> DeleteQuestionAsync( Guid questionId, CancellationToken token );
+    Task SaveChangesAsync(CancellationToken token);
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DDE71260-6C1E-4284-AB2C-58B8C0789B59}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "..\..\shared\src\Contracts\Contracts.csproj", "{7AAF2166-D06D-401E-B6C2-697E27023443}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions", "..\..\shared\src\Abstractions\Abstractions.csproj", "{87CCE35C-280A-4817-B719-E780948537F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging", "..\..\shared\src\Messaging\Messaging.csproj", "{F50E4A2D-ECFF-4139-AA6D-4857D827AA7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{87CCE35C-280A-4817-B719-E780948537F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87CCE35C-280A-4817-B719-E780948537F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87CCE35C-280A-4817-B719-E780948537F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F50E4A2D-ECFF-4139-AA6D-4857D827AA7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F50E4A2D-ECFF-4139-AA6D-4857D827AA7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F50E4A2D-ECFF-4139-AA6D-4857D827AA7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F50E4A2D-ECFF-4139-AA6D-4857D827AA7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

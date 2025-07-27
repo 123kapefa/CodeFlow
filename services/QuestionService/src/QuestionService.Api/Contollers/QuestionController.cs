@@ -116,6 +116,7 @@ public class QuestionController : ControllerBase {
         [FromServices] ICommandHandler<UpdateQuestionAcceptCommand> handler ) =>
         await handler.Handle(new UpdateQuestionAcceptCommand(questionId, acceptedAnswerId), new CancellationToken(false));
 
+
     [HttpPut("{questionId}/views")]
     [SwaggerOperation(
     Summary = "Обновить поле ViewsCount.",
@@ -125,6 +126,7 @@ public class QuestionController : ControllerBase {
         Guid questionId,        
         [FromServices] ICommandHandler<UpdateQuestionViewCommand> handler ) =>
         await handler.Handle(new UpdateQuestionViewCommand(questionId), new CancellationToken(false));
+
 
     [HttpPut("{questionId}/vote/{value}")]
     [SwaggerOperation(

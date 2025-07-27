@@ -1,10 +1,7 @@
 ﻿using Abstractions.Commands;
-
 using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
-
 using Contracts.UserService.DTOs;
-
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using UserService.Application.Features.CreateUserInfo;
@@ -47,16 +44,17 @@ public class UsersController : ControllerBase {
         await handler.Handle(new GetUserFullInfoCommand(userId), new CancellationToken(false));
 
 
-    [HttpPost("create/{userId}/{userName}")] //TODO нужен для проверки
-    [SwaggerOperation(
-    Summary = "Создать пользователя.",
-    Description = "Создает пользователя.",
-    OperationId = "User_Post")]
-    public async Task<Result> CreateUserInfoAsync(
-        Guid userId, 
-        string userName,
-        [FromServices]ICommandHandler<CreateUserInfoCommand> handler) =>
-        await handler.Handle(new CreateUserInfoCommand(userId, userName), new CancellationToken(false));
+    //TODO УДАЛИТЬ
+    //[HttpPost("create/{userId}/{userName}")] 
+    //[SwaggerOperation(
+    //Summary = "Создать пользователя.",
+    //Description = "Создает пользователя.",
+    //OperationId = "User_Post")]
+    //public async Task<Result> CreateUserInfoAsync(
+    //    Guid userId, 
+    //    string userName,
+    //    [FromServices]ICommandHandler<CreateUserInfoCommand> handler) =>
+    //    await handler.Handle(new CreateUserInfoCommand(userId, userName), new CancellationToken(false));
 
 
     [HttpPut("info")]
@@ -69,27 +67,29 @@ public class UsersController : ControllerBase {
       [FromServices] ICommandHandler<UpdateUserInfoCommand> handler ) =>
       await handler.Handle(new UpdateUserInfoCommand(userDto), new CancellationToken(false));
 
+    // TODO УДАЛИТЬ
+    //[HttpPut("reputation/{userId}/{reputation}")] 
+    //[SwaggerOperation(
+    //Summary = "Обновить репутацию пользователя.",
+    //Description = "Обновляет репутацию пользователя.",
+    //OperationId = "User_Put")]
+    //public async Task<Result> UpdateUserReputation(
+    //    Guid userId,
+    //    int reputation,
+    //    [FromServices] ICommandHandler<UpdateUserReputationCommand> handler ) =>
+    //    await handler.Handle(new UpdateUserReputationCommand(userId, reputation), new CancellationToken(false));
 
-    [HttpPut("reputation/{userId}/{reputation}")] //TODO нужен для проверки
-    [SwaggerOperation(
-    Summary = "Обновить репутацию пользователя.",
-    Description = "Обновляет репутацию пользователя.",
-    OperationId = "User_Put")]
-    public async Task<Result> UpdateUserReputation(
-        Guid userId,
-        int reputation,
-        [FromServices] ICommandHandler<UpdateUserReputationCommand> handler ) =>
-        await handler.Handle(new UpdateUserReputationCommand(userId, reputation), new CancellationToken(false));
 
-    [HttpPut("visit/{userId}")] //TODO нужен для проверки
-    [SwaggerOperation(
-    Summary = "Обновить количество визитов пользователя.",
-    Description = "Обновляет количество визитов пользователя.",
-    OperationId = "User_Put")]
-    public async Task<Result> UpdateUserVisitAsync(
-        Guid userId,
-        [FromServices] ICommandHandler<UpdateUserVisitCommand> handler ) =>
-        await handler.Handle(new UpdateUserVisitCommand(userId), new CancellationToken(false));
+    // TODO УДАЛИТЬ
+    //[HttpPut("visit/{userId}")] 
+    //[SwaggerOperation(
+    //Summary = "Обновить количество визитов пользователя.",
+    //Description = "Обновляет количество визитов пользователя.",
+    //OperationId = "User_Put")]
+    //public async Task<Result> UpdateUserVisitAsync(
+    //    Guid userId,
+    //    [FromServices] ICommandHandler<UpdateUserVisitCommand> handler ) =>
+    //    await handler.Handle(new UpdateUserVisitCommand(userId), new CancellationToken(false));
 
 
     [HttpDelete("{userId}")]
