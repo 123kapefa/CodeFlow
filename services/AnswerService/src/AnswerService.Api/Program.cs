@@ -1,6 +1,5 @@
 using AnswerService.Api.Extensions;
-using AnswerService.Domain.Repositories;
-using AnswerService.Infrastructure.Repositories;
+using Messaging.Extensions;
 
 var builder = WebApplication.CreateBuilder (args);
 
@@ -9,6 +8,8 @@ builder.AddHandlers ();
 builder.AddDatabase ();
 builder.AddCustomSerilog ();
 builder.AddCustomSwagger ();
+builder.AddAnswerMessaging();
+builder.Services.AddMessaging();
 
 var app = builder.Build ();
 

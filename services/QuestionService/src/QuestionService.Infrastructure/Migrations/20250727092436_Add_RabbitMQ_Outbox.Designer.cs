@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using QuestionService.Infrastructure.Data;
@@ -11,9 +12,11 @@ using QuestionService.Infrastructure.Data;
 namespace QuestionService.Infrastructure.Migrations
 {
     [DbContext(typeof(QuestionServiceDbContext))]
-    partial class QuestionServiceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250727092436_Add_RabbitMQ_Outbox")]
+    partial class Add_RabbitMQ_Outbox
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

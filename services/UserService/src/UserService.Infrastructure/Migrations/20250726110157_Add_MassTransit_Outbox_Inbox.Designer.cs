@@ -2,22 +2,25 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using QuestionService.Infrastructure.Data;
+using UserService.Infrastructure.Data;
 
 #nullable disable
 
-namespace QuestionService.Infrastructure.Migrations
+namespace UserService.Infrastructure.Migrations
 {
-    [DbContext(typeof(QuestionServiceDbContext))]
-    partial class QuestionServiceDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(UserServiceDbContext))]
+    [Migration("20250726110157_Add_MassTransit_Outbox_Inbox")]
+    partial class Add_MassTransit_Outbox_Inbox
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.7")
+                .HasAnnotation("ProductVersion", "9.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -190,101 +193,78 @@ namespace QuestionService.Infrastructure.Migrations
                     b.ToTable("OutboxStates");
                 });
 
-            modelBuilder.Entity("QuestionService.Domain.Entities.Question", b =>
+            modelBuilder.Entity("UserService.Domain.Entities.UserInfo", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AcceptedAnswerId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("AboutMe")
+                        .HasColumnType("text");
 
-                    b.Property<int>("AnswersCount")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
+                    b.Property<string>("AvatarUrl")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Downvotes")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsClosed")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
+                    b.Property<string>("GitHubUrl")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Upvotes")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid?>("UserEditorId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Location")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("ViewsCount")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserStatisticId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("UserStatisticId1")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("WebsiteUrl")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Questions");
+                    b.HasIndex("UserStatisticId")
+                        .IsUnique();
+
+                    b.HasIndex("UserStatisticId1")
+                        .IsUnique();
+
+                    b.ToTable("UsersInfos");
                 });
 
-            modelBuilder.Entity("QuestionService.Domain.Entities.QuestionChangingHistory", b =>
+            modelBuilder.Entity("UserService.Domain.Entities.UserStatistic", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime>("LastVisitAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Reputation")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuestionId");
-
-                    b.ToTable("QuestionChangingHistories");
-                });
-
-            modelBuilder.Entity("QuestionService.Domain.Entities.QuestionTag", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("TagId")
+                    b.Property<int>("VisitCount")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("WatchedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("QuestionId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
-                    b.ToTable("QuestionTags");
+                    b.ToTable("UsersStatistic");
                 });
 
             modelBuilder.Entity("MassTransit.EntityFrameworkCoreIntegration.OutboxMessage", b =>
@@ -299,33 +279,25 @@ namespace QuestionService.Infrastructure.Migrations
                         .HasPrincipalKey("MessageId", "ConsumerId");
                 });
 
-            modelBuilder.Entity("QuestionService.Domain.Entities.QuestionChangingHistory", b =>
+            modelBuilder.Entity("UserService.Domain.Entities.UserInfo", b =>
                 {
-                    b.HasOne("QuestionService.Domain.Entities.Question", "Question")
-                        .WithMany("QuestionChangingHistories")
-                        .HasForeignKey("QuestionId")
+                    b.HasOne("UserService.Domain.Entities.UserStatistic", "UserStatistic")
+                        .WithOne()
+                        .HasForeignKey("UserService.Domain.Entities.UserInfo", "UserStatisticId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Question");
+                    b.HasOne("UserService.Domain.Entities.UserStatistic", null)
+                        .WithOne("UserInfo")
+                        .HasForeignKey("UserService.Domain.Entities.UserInfo", "UserStatisticId1");
+
+                    b.Navigation("UserStatistic");
                 });
 
-            modelBuilder.Entity("QuestionService.Domain.Entities.QuestionTag", b =>
+            modelBuilder.Entity("UserService.Domain.Entities.UserStatistic", b =>
                 {
-                    b.HasOne("QuestionService.Domain.Entities.Question", "Question")
-                        .WithMany("QuestionTags")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.Navigation("UserInfo")
                         .IsRequired();
-
-                    b.Navigation("Question");
-                });
-
-            modelBuilder.Entity("QuestionService.Domain.Entities.Question", b =>
-                {
-                    b.Navigation("QuestionChangingHistories");
-
-                    b.Navigation("QuestionTags");
                 });
 #pragma warning restore 612, 618
         }

@@ -8,7 +8,10 @@
 
     <ItemGroup>
         <PackageReference Include="Ardalis.Result.AspNetCore" Version="10.1.0" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6"/>
+        <PackageReference Include="MassTransit" Version="8.5.1" />
+        <PackageReference Include="MassTransit.EntityFrameworkCore" Version="8.5.1" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.1" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -31,6 +34,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\..\..\shared\src\Contracts\Contracts.csproj" />
         <ProjectReference Include="..\..\..\..\shared\src\Abstractions\Abstractions.csproj" />
+        <ProjectReference Include="..\..\..\..\shared\src\Messaging\Messaging.csproj" />
         <ProjectReference Include="..\AnswerService.Application\AnswerService.Application.csproj" />
         <ProjectReference Include="..\AnswerService.Infrastructure\AnswerService.Infrastructure.csproj" />
     </ItemGroup>
