@@ -75,12 +75,18 @@ public class AnswerRepository : IAnswerRepository {
     }
   }
 
-  public async Task<Result> AddAsync (Answer answer, CancellationToken ct) {
+  public async Task<Result> CreateAsync (Answer answer, AnswerChangingHistory answerChangingHistory, CancellationToken ct) {
     try {
       _logger.LogInformation ("Добавление ответа");
+      
+      _context.Attach(answerChangingHistory);
+      _context.Entry(answerChangingHistory).State = EntityState.Added;
+
+      answer.AnswerChangingHistoriesChanges.Add(answerChangingHistory);
       answer.CreatedAt = DateTime.UtcNow;
+      
       await _context.Answers.AddAsync (answer, ct);
-      await _context.SaveChangesAsync (ct);
+      //await _context.SaveChangesAsync (ct);
       
       _logger.LogInformation ("Ответ успешно добавлен.");
       return Result.Success ();
