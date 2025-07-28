@@ -1,5 +1,6 @@
 ﻿using Ardalis.Result;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using TagService.Domain.Entities;
 using TagService.Domain.Filters;
@@ -205,5 +206,11 @@ public class UserTagParticipationRepository : IUserTagParticipationRepository {
 
     public async Task AddQuestionsRangeAsync( IEnumerable<UserTagParticipationQuestion> items, CancellationToken ct )
        => await _dbContext.UserTagParticipationQuestions.AddRangeAsync(items, ct);
+
+    public async Task<IDbContextTransaction> BeginTransactionAsync( CancellationToken token ) =>
+        await _dbContext.Database.BeginTransactionAsync(token);
+
+    public async Task SaveChangesAsync( CancellationToken token )
+        => await _dbContext.SaveChangesAsync(token);
 
 }
