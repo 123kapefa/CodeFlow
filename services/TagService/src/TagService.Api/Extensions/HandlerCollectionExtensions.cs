@@ -9,6 +9,7 @@ using FluentValidation;
 using TagService.Application.Features.ParticipationTags.CreateTags;
 using TagService.Application.Features.ParticipationTags.DeleteUserTags;
 using TagService.Application.Features.ParticipationTags.GetUserTags;
+using TagService.Application.Features.ParticipationTags.UpdateParticipationAnswer;
 using TagService.Application.Features.ParticipationTags.UpdateTags;
 using TagService.Application.Features.Tags.CreateTag;
 using TagService.Application.Features.Tags.DeleteTag;
@@ -44,7 +45,7 @@ public static class HandlerCollectionExtensions {
     builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<TagDTO>>, GetTagsCommand>, GetTagsHandler> ();
     builder.Services.AddScoped<ICommandHandler<CreateTagCommand>, CreateTagHandler> ();
     builder.Services.AddScoped<ICommandHandler<UpdateTagCommand>, UpdateTagHandler> ();
-    builder.Services.AddScoped<ICommandHandler<UpdateTagRequestCommand>, UpdateTagRequestHandler> ();
+    //builder.Services.AddScoped<ICommandHandler<UpdateTagRequestCommand>, UpdateTagRequestHandler> ();
     builder.Services.AddScoped<ICommandHandler<UpdateTagCountQuestionCommand>, UpdateTagCountQuestionHandler> ();
     builder.Services.AddScoped<ICommandHandler<UpdateTagWatchersCommand>, UpdateTagWatchersHandler> ();
     builder.Services.AddScoped<ICommandHandler<DeleteTagCommand>, DeleteTagHandler> ();
@@ -60,8 +61,9 @@ public static class HandlerCollectionExtensions {
     builder.Services.AddScoped<ICommandHandler<DeleteUserTagsCommand>, DeleteUserTagsHandler> ();
     builder.Services
      .AddScoped<ICommandHandler<PagedResult<IEnumerable<ParticipationDTO>>, GetUserTagsCommand>, GetUserTagsHandler> ();
+        builder.Services.AddScoped<ICommandHandler<UpdateParticipationAnswerCommand>, UpdateParticipationAnswerHandler>();
 
-    return builder;
+        return builder;
   }
 
 }

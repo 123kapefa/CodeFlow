@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result;
+using Microsoft.EntityFrameworkCore.Storage;
 using TagService.Domain.Entities;
 using TagService.Domain.Filters;
 
@@ -21,4 +22,6 @@ public interface IUserTagParticipationRepository {
         Guid userId, IEnumerable<int> tagIds, CancellationToken ct );
     Task AddRangeAsync( IEnumerable<UserTagParticipation> items, CancellationToken token );
     Task AddQuestionsRangeAsync( IEnumerable<UserTagParticipationQuestion> items, CancellationToken ct );
+    Task<IDbContextTransaction> BeginTransactionAsync( CancellationToken token );
+    Task SaveChangesAsync( CancellationToken token );
 }
