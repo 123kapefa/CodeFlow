@@ -18,12 +18,12 @@ public class UpdateParticipationAnswerHandler : ICommandHandler<UpdateParticipat
 
         DateTime now = DateTime.UtcNow;
 
-        var tagIds = command.TagDTOs.Select(t => t.TagId).ToList();
-        var participationMap = await _repository
+        List<int> tagIds = command.TagDTOs.Select(t => t.TagId).ToList();
+        Dictionary<int, UserTagParticipation> participationMap = await _repository
                 .GetByUserAndTagIdsAsync(command.UserId, tagIds, token);
 
-        var participationsToCreate = new List<UserTagParticipation>();
-        var links = new List<UserTagParticipationQuestion>(tagIds.Count);
+        List<UserTagParticipation> participationsToCreate = new List<UserTagParticipation>();
+        List<UserTagParticipationQuestion> links = new List<UserTagParticipationQuestion>(tagIds.Count);
 
         await using IDbContextTransaction tx = await _repository.BeginTransactionAsync(token);
         try {
@@ -50,9 +50,9 @@ public class UpdateParticipationAnswerHandler : ICommandHandler<UpdateParticipat
 
             // формируем ссылки вопрос-участие
             foreach(var tagId in tagIds) {
-                var p = participationMap[tagId];
+                UserTagParticipation p = participationMap[tagId];
 
-                var link = UserTagParticipationQuestion.Create(command.QuestionId);
+                UserTagParticipationQuestion link = UserTagParticipationQuestion.Create(command.QuestionId);
                 link.UserTagParticipationId = p.Id;
 
                 links.Add(link);

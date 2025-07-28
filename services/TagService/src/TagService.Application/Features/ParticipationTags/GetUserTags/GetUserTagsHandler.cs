@@ -23,14 +23,6 @@ public class GetUserTagsHandler : ICommandHandler<PagedResult<IEnumerable<Partic
         if(!resultTags.IsSuccess)
             return Result<PagedResult<IEnumerable<ParticipationDTO>>>.Error(new ErrorList(resultTags.Errors));
 
-        //IEnumerable<ParticipationDTO> tags = resultTags.Value.items.Select(x => new ParticipationDTO { 
-        //    UserId = x.Id,
-        //    TagId = x.TagId,
-        //    LastActiveAt = x.LastActiveAt,
-        //    QuestionsCreated = x.QuestionsCreated,
-        //    AnswersWritten = x.AnswersWritten,
-        //    TagName = x.Tag.Name
-        //});
 
         IEnumerable<ParticipationDTO> tags = resultTags.Value.items.Select(x => ParticipationDTO.Create(
             x.Id, x.TagId, x.LastActiveAt, x.QuestionsCreated, x.AnswersWritten, x.Tag.Name
