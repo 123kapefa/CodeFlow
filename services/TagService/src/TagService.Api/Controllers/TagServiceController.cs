@@ -4,7 +4,7 @@ using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 
 using Contracts.TagService;
-
+using Contracts.TagService.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TagService.Application.Features.ParticipationTags.CreateTags;
@@ -100,16 +100,16 @@ public class TagServiceController : ControllerBase{
         await handler.Handle(new UpdateTagRequestCommand(tagName), new CancellationToken(false));
 
 
-    [HttpPut("request/{tagName}/{count}")]
+    [HttpPost("request")]
     [SwaggerOperation(
-    Summary = "Обновить тэг(количество вопросов).",
+    Summary = "Обновить или добавить новые тэги при создании вопроса.",
     Description = "Обновляет запись в таблице tags.",
-    OperationId = "Tag_Put")]
+    OperationId = "Tag_Post")]
     public async Task<Result> UpdateTagCountQuestionAsync(
-        string tagName, 
-        int count, 
+        [FromBody]UpdateTagCountsRequest request,
         [FromServices]ICommandHandler<UpdateTagCountQuestionCommand> handler) =>
-        await handler.Handle(new UpdateTagCountQuestionCommand(tagName, count), new CancellationToken(false));
+        await handler.Handle(
+            new UpdateTagCountQuestionCommand(request.Tags, request.UserId, request.QuestionId), new CancellationToken(false));
 
 
     [HttpPut("request/{tagId}/watcher/{count}")]

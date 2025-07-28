@@ -1,5 +1,6 @@
 ﻿using Ardalis.Result;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using TagService.Domain.Entities;
 using TagService.Domain.Filters;
@@ -51,6 +52,20 @@ public class TagRepository : ITagRepository {
 
         _logger.LogInformation("GetTagByNameAsync: тэг {TagName} успешно найден", name);
         return Result<Tag>.Success(tag);
+    }
+    
+    
+    public async Task<Result<List<Tag>>> GetTagsByIdAsync(List<int?> ids, CancellationToken token) {
+
+        List<int> idInts = ids.Where(i => i.HasValue).Select(i => i!.Value).Distinct().ToList();
+        if(idInts.Count == 0)
+            return Result<List<Tag>>.Success(new List<Tag>());
+
+        List<Tag> tags = await _dbContext.Tags
+            .Where(t => idInts.Contains(t.Id))
+            .ToListAsync(token);
+
+        return Result<List<Tag>>.Success(tags);
     }
 
 
@@ -161,5 +176,14 @@ public class TagRepository : ITagRepository {
             return Result.Error("Ошибка БД");
         }
     }
+
+    public async Task AddRangeAsync( IEnumerable<Tag> tags, CancellationToken token )
+        => await _dbContext.Tags.AddRangeAsync(tags, token);
+
+    public async Task SaveChangesAsync( CancellationToken token )
+        => await _dbContext.SaveChangesAsync(token);
+
+    public async Task<IDbContextTransaction> BeginTransactionAsync( CancellationToken token ) =>
+        await _dbContext.Database.BeginTransactionAsync(token);
 
 }
