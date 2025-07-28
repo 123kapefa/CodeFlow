@@ -1,4 +1,6 @@
 ﻿using Ardalis.Result;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
 using TagService.Domain.Entities;
 using TagService.Domain.Filters;
 
@@ -16,4 +18,9 @@ public interface ITagRepository {
     Task<Result> CreateTagAsync(Tag tag, CancellationToken token );
     Task<Result> UpdateTagAsync(Tag tag, CancellationToken token );
     Task<Result> DeleteTagAsync(Tag tag, CancellationToken token );
+
+    Task<Result<List<Tag>>> GetTagsByIdAsync( List<int?> ids, CancellationToken token );
+    Task AddRangeAsync( IEnumerable<Tag> tags, CancellationToken token );
+    Task SaveChangesAsync( CancellationToken token );
+    Task<IDbContextTransaction> BeginTransactionAsync( CancellationToken token );
 }

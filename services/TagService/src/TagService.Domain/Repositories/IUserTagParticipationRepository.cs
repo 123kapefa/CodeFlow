@@ -16,4 +16,9 @@ public interface IUserTagParticipationRepository {
     Task<Result> CreateAsync( UserTagParticipation tagParticipation, CancellationToken token );
     Task<Result> UpdateAsync( UserTagParticipation tagParticipation, CancellationToken token );
     Task<Result> DeleteUserTagsAsync(Guid userId, CancellationToken token);
+
+    Task<Dictionary<int, UserTagParticipation>> GetByUserAndTagIdsAsync(
+        Guid userId, IEnumerable<int> tagIds, CancellationToken ct );
+    Task AddRangeAsync( IEnumerable<UserTagParticipation> items, CancellationToken token );
+    Task AddQuestionsRangeAsync( IEnumerable<UserTagParticipationQuestion> items, CancellationToken ct );
 }

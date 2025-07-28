@@ -8,6 +8,7 @@ using TagService.Domain.Repositories;
 
 namespace TagService.Application.Features.Tags.UpdateTagRequest;
 
+//TODO НЕ НУЖЕН !!!! !!! !!!
 public class UpdateTagRequestHandler : ICommandHandler<UpdateTagRequestCommand> {
 
     private readonly ITagRepository _tagRepository;
@@ -15,9 +16,7 @@ public class UpdateTagRequestHandler : ICommandHandler<UpdateTagRequestCommand> 
     public UpdateTagRequestHandler( ITagRepository tagRepository ) {
         _tagRepository = tagRepository;
     }
-
-
-    //TODO ВНИМАТЕЛЬНЕЙ ПРОВЕРИТЬ !!!! ))
+  
     public async Task<Result> Handle( UpdateTagRequestCommand command, CancellationToken token ) {
 
         if(string.IsNullOrEmpty(command.Name))

@@ -189,4 +189,21 @@ public class UserTagParticipationRepository : IUserTagParticipationRepository {
         }
     }
 
+
+    public async Task<Dictionary<int, UserTagParticipation>> GetByUserAndTagIdsAsync(
+        Guid userId, IEnumerable<int> tagIds, CancellationToken ct ) {
+        var ids = tagIds.Distinct().ToList();
+        var items = await _dbContext.UserTagParticipations
+            .Where(p => p.UserId == userId && ids.Contains(p.TagId))
+            .ToListAsync(ct);
+
+        return items.ToDictionary(p => p.TagId);
+    }
+
+    public async Task AddRangeAsync( IEnumerable<UserTagParticipation> items, CancellationToken ct )
+        => await _dbContext.UserTagParticipations.AddRangeAsync(items, ct);
+
+    public async Task AddQuestionsRangeAsync( IEnumerable<UserTagParticipationQuestion> items, CancellationToken ct )
+       => await _dbContext.UserTagParticipationQuestions.AddRangeAsync(items, ct);
+
 }
