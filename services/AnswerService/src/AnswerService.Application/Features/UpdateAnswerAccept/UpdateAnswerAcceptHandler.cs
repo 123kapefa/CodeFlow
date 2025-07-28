@@ -1,20 +1,20 @@
+using Abstractions.Commands;
+
 using AnswerService.Domain.Repositories;
 
 using Ardalis.Result;
 
-using Abstractions.Commands;
+namespace AnswerService.Application.Features.UpdateAnswerAccept;
 
-namespace AnswerService.Application.Features.AcceptAnswer;
-
-public class AcceptAnswerHandler : ICommandHandler<AcceptAnswerCommand> {
+public class UpdateAnswerAcceptHandler : ICommandHandler<UpdateAnswerAcceptCommand> {
 
     private readonly IAnswerRepository _answerRepository;
 
-    public AcceptAnswerHandler( IAnswerRepository answerRepository ) {
+    public UpdateAnswerAcceptHandler( IAnswerRepository answerRepository ) {
         _answerRepository = answerRepository;
     }
 
-    public async Task<Result> Handle( AcceptAnswerCommand command, CancellationToken cancellationToken ) {
+    public async Task<Result> Handle( UpdateAnswerAcceptCommand command, CancellationToken cancellationToken ) {
         // var answer = await _answerRepository.GetByIdAsync(command.Id, cancellationToken);
         //
         // if (!answer.IsSuccess)
@@ -40,15 +40,7 @@ public class AcceptAnswerHandler : ICommandHandler<AcceptAnswerCommand> {
 
         if(!answers.IsSuccess)
             return Result.Error(new ErrorList(answers.Errors));
-
-        // var acceptedAnswerResult = await _answerRepository
-        //  .AcceptAsync (answers.Value, answer.Value.Id, cancellationToken);
-        //
-        // if (!acceptedAnswerResult.IsSuccess)
-        //   return Result.Error (new ErrorList(acceptedAnswerResult.Errors));
-
-
-
+        
         await _answerRepository.SaveAsync(cancellationToken);
 
         return Result.Success();
