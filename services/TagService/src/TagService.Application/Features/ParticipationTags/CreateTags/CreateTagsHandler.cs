@@ -6,6 +6,7 @@ using TagService.Domain.Repositories;
 
 namespace TagService.Application.Features.ParticipationTags.CreateTags;
 
+// TODO НЕ НУЖЕН !!! !!! УДАЛИТЬ
 public class CreateTagsHandler : ICommandHandler<CreateTagsCommand> {
 
     private readonly IUserTagParticipationRepository _repository;
@@ -21,24 +22,12 @@ public class CreateTagsHandler : ICommandHandler<CreateTagsCommand> {
             || command.CreateParticipationDto.UserId == Guid.Empty 
             || command.CreateParticipationDto.TagId <= 0)
             return Result.Error("Некорректный аргумент запроса");
-
-        //UserTagParticipation tagParticipation = new UserTagParticipation {
-        //    UserId = command.CreateParticipationDto.UserId,
-        //    TagId = command.CreateParticipationDto.TagId,
-        //    LastActiveAt = DateTime.UtcNow,
-        //    QuestionsCreated = command.CreateParticipationDto.IsAnswer ? 0 : 1,
-        //    AnswersWritten = command.CreateParticipationDto.IsAnswer ? 1 : 0
-            
-        //};
-
+      
         UserTagParticipation tagParticipation = UserTagParticipation.Create(
             command.CreateParticipationDto.UserId,
             command.CreateParticipationDto.TagId,
             command.CreateParticipationDto.IsAnswer);
-
-        //tagParticipation.UserTagParticipationQuestions.Add(new UserTagParticipationQuestion {
-        //    QuestionId = command.CreateParticipationDto.QuestionId
-        //});
+              
 
         tagParticipation.UserTagParticipationQuestions.Add(
             UserTagParticipationQuestion.Create(command.CreateParticipationDto.QuestionId));
@@ -55,10 +44,7 @@ public class CreateTagsHandler : ICommandHandler<CreateTagsCommand> {
                 tag.Value!.AnswersWritten += 1;
             else
                 tag.Value!.QuestionsCreated += 1;
-
-            //tag.Value.UserTagParticipationQuestions.Add(new UserTagParticipationQuestion {
-            //    QuestionId = command.CreateParticipationDto.QuestionId
-            //});
+          
 
             tag.Value.UserTagParticipationQuestions.Add(
                 UserTagParticipationQuestion.Create(command.CreateParticipationDto.QuestionId));

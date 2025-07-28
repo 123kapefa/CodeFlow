@@ -6,6 +6,7 @@ using TagService.Domain.Repositories;
 
 namespace TagService.Application.Features.WatchedTags.DeleteUserWatchedTags;
 
+//TODO НЕ НУЖЕН !!!! !!! !!!
 public class DeleteUserWatchedTagsHandler : ICommandHandler<DeleteUserWatchedTagsCommand> {
 
     private readonly IWatchedTagRepository _repository;

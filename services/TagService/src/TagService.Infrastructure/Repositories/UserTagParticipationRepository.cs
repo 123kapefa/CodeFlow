@@ -213,4 +213,12 @@ public class UserTagParticipationRepository : IUserTagParticipationRepository {
     public async Task SaveChangesAsync( CancellationToken token )
         => await _dbContext.SaveChangesAsync(token);
 
+    public async Task<List<UserTagParticipation>> GetByUserAsync( Guid userId, CancellationToken ct ) =>
+    await _dbContext.UserTagParticipations
+        .Where(t => t.UserId == userId)
+        .ToListAsync(ct);
+
+    public void RemoveRange( IEnumerable<UserTagParticipation> items ) =>
+        _dbContext.UserTagParticipations.RemoveRange(items);
+
 }
