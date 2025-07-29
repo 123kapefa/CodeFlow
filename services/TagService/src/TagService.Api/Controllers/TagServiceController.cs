@@ -8,6 +8,7 @@ using Contracts.TagService.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TagService.Application.Features.ParticipationTags.CreateTags;
+using TagService.Application.Features.ParticipationTags.DeleteAnswerTags;
 using TagService.Application.Features.ParticipationTags.DeleteUserTags;
 using TagService.Application.Features.ParticipationTags.GetUserTags;
 using TagService.Application.Features.ParticipationTags.UpdateParticipationAnswer;
@@ -247,4 +248,14 @@ public class TagServiceController : ControllerBase{
         [FromServices] ICommandHandler<DeleteUserTagsCommand> handler ) =>
         await handler.Handle(new DeleteUserTagsCommand(userId), new CancellationToken(false));
 
+    [HttpDelete("participation/answer")]
+    [SwaggerOperation(
+    Summary = "Откат тегов ответа при удалении ответа.",
+    Description = "Уменьшает AnswersWritten и удаляет связи UserTagParticipation‑Question при удалении ответа.",
+    OperationId = "Tag_Delete")]
+    public async Task<Result> DeleteAnswerTagsParticipationAsync(
+        [FromBody] DeleteAnswerTagRequest request,
+        [FromServices] ICommandHandler<DeleteAnswerTagsCommand> handler ) =>
+        await handler.Handle(
+            new DeleteAnswerTagsCommand(request.UserId, request.QuestionId, request.TagIds), new CancellationToken(false));
 }
