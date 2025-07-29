@@ -9,7 +9,7 @@ builder.AddCustomSwagger ();
 builder.AddDatabase ();
 builder.AddCustomSerilog ();
 builder.AddHandlers ();
-
+builder.AddUserMessaging ();
 builder.Services.AddControllers();
 
 var app = builder.Build();
@@ -24,7 +24,7 @@ using(var scope = app.Services.CreateScope()) {
         context.Database.Migrate();
     }
     catch(Exception ex) {
-        Console.WriteLine($"Ошибка при выполнении миграций: {ex.Message}");
+        Console.WriteLine($"пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: {ex.Message}");
         throw;
     }
 }

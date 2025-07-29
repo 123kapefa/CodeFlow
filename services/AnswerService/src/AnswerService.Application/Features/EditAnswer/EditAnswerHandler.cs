@@ -39,16 +39,6 @@ public class EditAnswerHandler : ICommandHandler<EditAnswerCommand> {
 
     var newAnswerChangingHistory = AnswerChangingHistory
      .Create (command.Id, command.Request.EditedUserId, command.Request.Content);
-    // TODO проверить на правильность добавления такой записи в бд
-    // var resultAdd = await _answerHistoryRepository.CreateAsync (newAnswerChangingHistory, ct);
-    //
-    // if (!resultAdd.IsSuccess)
-    //   return Result.Error (new ErrorList(resultAdd.Errors));
-    //
-    // answer.Value.Content = newAnswerChangingHistory.Content;
-    
-    // answer.Value.AnswerChangingHistoriesChanges.Add (newAnswerChangingHistory);
-    // answer.Value.Content = newAnswerChangingHistory.Content;
     
     var resultUpdate = await _answerRepository.UpdateAsync(answer.Value, newAnswerChangingHistory, ct);
     

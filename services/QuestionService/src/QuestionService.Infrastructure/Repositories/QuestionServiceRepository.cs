@@ -303,4 +303,8 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
         }
     }
 
+    public async Task SaveChangesAsync( CancellationToken token ) {
+        await _dbContext.SaveChangesAsync();
+    }
+
 }
