@@ -19,8 +19,6 @@ public static class MassTransitExtensions {
             
             x.AddConsumer<AnswerCreatedConsumer> ();
 
-            x.AddConsumer<AnswerCreatedConsumer> ();
-
             x.UsingRabbitMq(( ctx, cfg ) => {
                 cfg.Host("rabbitmq", "/", h => {
                     h.Username("guest");
