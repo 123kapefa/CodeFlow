@@ -180,4 +180,17 @@ public class CommentRepository : ICommentRepository {
         }
     }
 
+
+    /// <summary> Удалить комментарии для вопроса. </summary>
+    public async Task<Result> DeleteAnswerCommentsAsync( IEnumerable<Comment> comments , CancellationToken token) {
+
+        _logger.LogInformation("DeleteAnswerCommentsAsync started. Count: {Count}", comments.Count());
+
+        _commentDbContext.Comments.RemoveRange(comments);
+        await _commentDbContext.SaveChangesAsync(token);
+
+        _logger.LogInformation("DeleteAnswerCommentsAsync: комментарии для ответа успешно удалены");
+        return Result.Success();
+    }
+
 }
