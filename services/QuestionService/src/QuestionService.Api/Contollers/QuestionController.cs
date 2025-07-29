@@ -21,7 +21,7 @@ using QuestionService.Application.Features.GetQuestions;
 using QuestionService.Application.Features.UpdateQuestionAnswers;
 using QuestionService.Application.Features.GetUserQuestions;
 using Swashbuckle.AspNetCore.Annotations;
-using Ardalis.Result.AspNetCore;
+using QuestionService.Application.Features.ReduceQuestionAnswers;
 
 namespace QuestionService.Api.Contollers;
 
@@ -172,5 +172,15 @@ public class QuestionController : ControllerBase {
       [FromQuery] SortParams sortParams,
       [FromServices] ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetUserQuestionsCommand> handler ) =>
       await handler.Handle(new GetUserQuestionsCommand(userId, pageParams, sortParams), new CancellationToken(false));
+
+    [HttpPut("{questionId}/answer/reduce")]
+    [SwaggerOperation(
+    Summary = "Изменить AnswersCount в Questions при удлении ответа.",
+    Description = "Возвращает PagedResult<IEnumerable<QuestionShortDTO>>> .",
+    OperationId = "Questions_Put")]
+    public async Task<Result> ReduceQuestionAnswersAsync(
+        Guid questionId, 
+        [FromServices]ICommandHandler<ReduceQuestionAnswersCommand> handler) =>
+        await handler.Handle(new ReduceQuestionAnswersCommand(questionId), new CancellationToken(false));
 
 }
