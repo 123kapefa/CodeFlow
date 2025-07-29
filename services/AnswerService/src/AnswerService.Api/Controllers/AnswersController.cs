@@ -1,4 +1,3 @@
-using AnswerService.Application.Features.AcceptAnswer;
 using AnswerService.Application.Features.CreateAnswer;
 using AnswerService.Application.Features.DeleteAnswer;
 using AnswerService.Application.Features.EditAnswer;
@@ -10,6 +9,8 @@ using Ardalis.Result.AspNetCore;
 
 using Abstractions.Commands;
 
+using AnswerService.Application.Features.UpdateAnswerAccept;
+
 using Contracts.AnswerService.Requests;
 using Contracts.AnswerService.Responses;
 
@@ -20,9 +21,9 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace AnswerService.Api.Controllers;
 
 [ApiController]
-[Route ("api/[controller]")]
+[Route ("[controller]")]
 [TranslateResultToActionResult]
-public class AnswerController : ControllerBase {
+public class AnswersController : ControllerBase {
 
   [HttpPost]
   [SwaggerOperation(
@@ -98,7 +99,7 @@ public class AnswerController : ControllerBase {
   public async Task<Result> AcceptAnswer (
     [FromRoute] Guid answerId
     , [FromRoute] Guid questionId
-    , [FromServices] ICommandHandler<AcceptAnswerCommand> handler) =>
-  await handler.Handle (new AcceptAnswerCommand(answerId, questionId), new CancellationToken (false));
+    , [FromServices] ICommandHandler<UpdateAnswerAcceptCommand> handler) =>
+  await handler.Handle (new UpdateAnswerAcceptCommand(answerId, questionId), new CancellationToken (false));
   
 }

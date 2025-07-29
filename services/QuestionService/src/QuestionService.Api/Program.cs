@@ -1,3 +1,4 @@
+using Messaging.Extensions;
 using Microsoft.EntityFrameworkCore;
 using QuestionService.Api.Extensions;
 using QuestionService.Infrastructure.Data;
@@ -9,6 +10,8 @@ builder.AddCustomSwagger ();
 builder.AddDatabase ();
 builder.AddCustomSerilog ();
 builder.AddHandlers ();
+builder.AddQuestionMessaging ();
+builder.Services.AddMessaging();
 
 builder.Services.AddControllers();
 
