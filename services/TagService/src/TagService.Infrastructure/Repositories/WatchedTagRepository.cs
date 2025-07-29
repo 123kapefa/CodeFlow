@@ -1,5 +1,6 @@
 ﻿using Ardalis.Result;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using TagService.Domain.Entities;
 using TagService.Domain.Repositories;
@@ -145,5 +146,36 @@ public class WatchedTagRepository : IWatchedTagRepository {
             return Result.Error("Ошибка БД");
         }
     }
+
+    
+
+
+    public async Task<bool> ExistsAsync( Guid userId, int tagId, CancellationToken token ) =>
+       await _dbContext.WatchedTags
+           .AsNoTracking()
+           .AnyAsync(wt => wt.UserId == userId && wt.TagId == tagId, token);
+  
+
+
+    public async Task AddAsync( WatchedTag entity, CancellationToken token ) =>
+        await _dbContext.WatchedTags.AddAsync(entity, token);
+  
+
+    public async Task SaveChangesAsync( CancellationToken token ) =>
+        await _dbContext.SaveChangesAsync(token);
+
+
+    public async Task<IDbContextTransaction> BeginTransactionAsync( CancellationToken token ) =>
+        await _dbContext.Database.BeginTransactionAsync(token);
+
+
+    public async Task<List<WatchedTag>> GetUserWatchedTagsListAsync( Guid userId, CancellationToken ct ) =>
+    await _dbContext.WatchedTags
+        .Where(t => t.UserId == userId)
+        .ToListAsync(ct);
+
+
+    public void RemoveRange( IEnumerable<WatchedTag> items ) =>
+    _dbContext.WatchedTags.RemoveRange(items);
 
 }
