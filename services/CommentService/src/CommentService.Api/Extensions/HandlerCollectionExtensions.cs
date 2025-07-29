@@ -2,6 +2,7 @@ using Abstractions.Commands;
 
 using CommentService.Application.Features.CreateComment;
 using CommentService.Application.Features.DeleteAllUserComments;
+using CommentService.Application.Features.DeleteByAnswerId;
 using CommentService.Application.Features.DeleteComment;
 using CommentService.Application.Features.GetCommentById;
 using CommentService.Application.Features.GetComments;
@@ -25,6 +26,7 @@ public static class HandlerCollectionExtensions {
         builder.Services.AddScoped<ICommandHandler<UpdateCommentCommand>, UpdateCommentHandler>();
         builder.Services.AddScoped<ICommandHandler<IEnumerable<CommentDTO>, GetCommentsCommand>, GetCommentsHandler>();
         builder.Services.AddScoped<ICommandHandler<DeleteAllUserCommentsCommand>, DeleteAllUserCommentsHandler>();
+        builder.Services.AddScoped<ICommandHandler<DeleteByAnswerIdCommand>, DeleteByAnswerIdHandler>();
 
         return builder;
     }

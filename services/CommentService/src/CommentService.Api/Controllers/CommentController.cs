@@ -5,6 +5,7 @@ using Ardalis.Result.AspNetCore;
 
 using CommentService.Application.Features.CreateComment;
 using CommentService.Application.Features.DeleteAllUserComments;
+using CommentService.Application.Features.DeleteByAnswerId;
 using CommentService.Application.Features.DeleteComment;
 using CommentService.Application.Features.GetCommentById;
 using CommentService.Application.Features.GetComments;
@@ -89,6 +90,7 @@ public class CommentController : ControllerBase {
         [FromServices] ICommandHandler<DeleteCommentCommand> handler ) =>
         await handler.Handle(new DeleteCommentCommand(commentId), new CancellationToken(false));
 
+
     [HttpDelete("{userId}/user")]
     [SwaggerOperation(
     Summary = "Удалить все комментарии пользователя по UserId.",
@@ -98,5 +100,15 @@ public class CommentController : ControllerBase {
         Guid userId, 
         [FromServices]ICommandHandler<DeleteAllUserCommentsCommand> handler) =>
         await handler.Handle(new DeleteAllUserCommentsCommand(userId), new CancellationToken(false));
+
+    [HttpDelete("remove/{answerId}/answer")]
+    [SwaggerOperation(
+    Summary = "Удалить все комментарии ответа по AnswerId.",
+    Description = "Удаляет все записи из таблицы Comments для ответа.",
+    OperationId = "Comment_Delete")]
+    public async Task<Result> DeleteByAnswerIdAsync(
+        Guid answerId,
+        [FromServices] ICommandHandler<DeleteByAnswerIdCommand> handler ) =>
+        await handler.Handle(new DeleteByAnswerIdCommand(answerId), new CancellationToken(false));
 
 }

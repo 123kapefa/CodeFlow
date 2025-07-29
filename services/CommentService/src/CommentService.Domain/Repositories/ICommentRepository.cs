@@ -15,4 +15,5 @@ public interface ICommentRepository {
 
     Task<Result> DeleteCommentByIdAsync( Guid commentId, CancellationToken token );
     Task<Result> DeleteAllUserCommentsAsync( Guid userId, CancellationToken token );
+    Task<Result> DeleteAnswerCommentsAsync( IEnumerable<Comment> comments, CancellationToken token );
 }
