@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 using TagService.Domain.Entities;
 using TagService.Domain.Filters;
 using TagService.Domain.Repositories;
@@ -59,6 +60,16 @@ public class UserTagParticipationRepository : IUserTagParticipationRepository {
         _logger.LogInformation("GetUserTagsAsync: найдено {Count} тэгов участия для пользователя {UserId}",
             tags.Count, userId);
         return tags;
+    }
+
+    public async Task<IEnumerable<UserTagParticipation>> GetUserTagsAsync( 
+        Guid userId, IEnumerable<int> tagIds, CancellationToken token ) {
+
+        var parts = await _dbContext.UserTagParticipations
+            .Where(p => p.UserId == userId && tagIds.Contains(p.TagId))
+            .ToListAsync(token);
+        
+        return parts;
     }
 
 
@@ -191,6 +202,24 @@ public class UserTagParticipationRepository : IUserTagParticipationRepository {
     }
 
 
+    /// <summary> Удалить записи из UserTagParticipationQuestions для определенных тэгов. </summary>
+    public async Task<Result> DeleteUserParticipationTags( Guid questionId, IEnumerable<Guid> participationIds, CancellationToken token ) {
+
+        var forDel = await _dbContext.UserTagParticipationQuestions
+            .Where(q => q.QuestionId == questionId)
+            .Take(participationIds.Count()).ToListAsync(token);
+
+        _dbContext.RemoveRange(forDel);
+
+        return Result.Success();        
+    }
+
+
+    public void DeleteTagParticipation(UserTagParticipation userTag) => 
+        _dbContext.UserTagParticipations.Remove(userTag);
+
+
+    /// <summary> Получить словарь UserTagParticipations по UserId и IEnumerable<int> TagIds. </summary>
     public async Task<Dictionary<int, UserTagParticipation>> GetByUserAndTagIdsAsync(
         Guid userId, IEnumerable<int> tagIds, CancellationToken ct ) {
         var ids = tagIds.Distinct().ToList();
@@ -201,22 +230,28 @@ public class UserTagParticipationRepository : IUserTagParticipationRepository {
         return items.ToDictionary(p => p.TagId);
     }
 
+
     public async Task AddRangeAsync( IEnumerable<UserTagParticipation> items, CancellationToken ct )
         => await _dbContext.UserTagParticipations.AddRangeAsync(items, ct);
+
 
     public async Task AddQuestionsRangeAsync( IEnumerable<UserTagParticipationQuestion> items, CancellationToken ct )
        => await _dbContext.UserTagParticipationQuestions.AddRangeAsync(items, ct);
 
+
     public async Task<IDbContextTransaction> BeginTransactionAsync( CancellationToken token ) =>
         await _dbContext.Database.BeginTransactionAsync(token);
 
+
     public async Task SaveChangesAsync( CancellationToken token )
         => await _dbContext.SaveChangesAsync(token);
+
 
     public async Task<List<UserTagParticipation>> GetByUserAsync( Guid userId, CancellationToken ct ) =>
     await _dbContext.UserTagParticipations
         .Where(t => t.UserId == userId)
         .ToListAsync(ct);
+
 
     public void RemoveRange( IEnumerable<UserTagParticipation> items ) =>
         _dbContext.UserTagParticipations.RemoveRange(items);
