@@ -17,6 +17,7 @@ public static class MassTransitExtensions {
         });
 
         x.UsingRabbitMq ((ctx, cfg) => {
+
         cfg.Host ("rabbitmq", "/", h => {
           h.Username ("guest");
           h.Password ("guest");

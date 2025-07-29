@@ -5,6 +5,7 @@ using CommentService.Domain.Repositories;
 using CommentService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel.Design;
 
 namespace CommentService.Infrastructure.Repositories;
 
@@ -144,6 +145,52 @@ public class CommentRepository : ICommentRepository {
             _logger.LogError(ex, "DeleteCommentByIdAsync: ошибка БД при удалении комментария {CommentId}", commentId);
             return Result.Error("Ошибка БД");
         }
+    }
+
+
+    /// <summary> Удалить всех комментариев пользователя по UserId. </summary>
+    public async Task<Result> DeleteAllUserCommentsAsync( Guid userId, CancellationToken token ) {
+
+        _logger.LogInformation("DeleteAllUserCommentsAsync started. UserId: {userId}", userId);
+
+        List<Comment> comments = await _commentDbContext.Comments
+            .Where(c => c.AuthorId == userId)
+            .ToListAsync(token);
+
+        try {
+            _commentDbContext.Comments.RemoveRange(comments);
+            await _commentDbContext.SaveChangesAsync(token);
+
+            _logger.LogInformation("DeleteAllUserCommentsAsync: комментарии пользователя {userId} успешно удалены", userId);
+            return Result.Success();
+        }
+        catch(DbUpdateConcurrencyException ex) {
+            _logger.LogError(
+                ex, 
+                "DeleteAllUserCommentsAsync: комментарии пользователя {userId} были изменены или удалены другим пользователем", 
+                userId);
+            return Result.Error("Контент был изменён или удалён другим пользователем");
+        }
+        catch(DbUpdateException ex) {
+            _logger.LogError(
+                ex,
+                "DeleteAllUserCommentsAsync: ошибка БД при удалении комментариев {userId}", 
+                userId);
+            return Result.Error("Ошибка БД");
+        }
+    }
+
+
+    /// <summary> Удалить комментарии для вопроса. </summary>
+    public async Task<Result> DeleteAnswerCommentsAsync( IEnumerable<Comment> comments , CancellationToken token) {
+
+        _logger.LogInformation("DeleteAnswerCommentsAsync started. Count: {Count}", comments.Count());
+
+        _commentDbContext.Comments.RemoveRange(comments);
+        await _commentDbContext.SaveChangesAsync(token);
+
+        _logger.LogInformation("DeleteAnswerCommentsAsync: комментарии для ответа успешно удалены");
+        return Result.Success();
     }
 
 }
