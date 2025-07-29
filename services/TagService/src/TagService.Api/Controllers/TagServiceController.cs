@@ -4,12 +4,14 @@ using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 
 using Contracts.TagService;
-
+using Contracts.TagService.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TagService.Application.Features.ParticipationTags.CreateTags;
+using TagService.Application.Features.ParticipationTags.DeleteAnswerTags;
 using TagService.Application.Features.ParticipationTags.DeleteUserTags;
 using TagService.Application.Features.ParticipationTags.GetUserTags;
+using TagService.Application.Features.ParticipationTags.UpdateParticipationAnswer;
 using TagService.Application.Features.ParticipationTags.UpdateTags;
 using TagService.Application.Features.Tags.CreateTag;
 using TagService.Application.Features.Tags.DeleteTag;
@@ -89,39 +91,41 @@ public class TagServiceController : ControllerBase{
         await handler.Handle(new UpdateTagCommand(tagId, tagUpdateDTO), new CancellationToken(false));
 
 
-    [HttpPut("request/{tagName}/daily")]
-    [SwaggerOperation(
-    Summary = "Обновить тэг(количество запросов за день).",
-    Description = "Обновляет запись в таблице tags.",
-    OperationId = "Tag_Put")]
-    public async Task<Result> UpdateTagDailyRequestAsync(
-        string tagName,
-        [FromServices] ICommandHandler<UpdateTagRequestCommand> handler ) =>
-        await handler.Handle(new UpdateTagRequestCommand(tagName), new CancellationToken(false));
+    // TODO УДАЛИТЬ !!! НЕ НУЖЕН
+    //[HttpPut("request/{tagName}/daily")]
+    //[SwaggerOperation(
+    //Summary = "Обновить тэг(количество запросов за день).",
+    //Description = "Обновляет запись в таблице tags.",
+    //OperationId = "Tag_Put")]
+    //public async Task<Result> UpdateTagDailyRequestAsync(
+    //    string tagName,
+    //    [FromServices] ICommandHandler<UpdateTagRequestCommand> handler ) =>
+    //    await handler.Handle(new UpdateTagRequestCommand(tagName), new CancellationToken(false));
 
 
-    [HttpPut("request/{tagName}/{count}")]
+    [HttpPost("request")]
     [SwaggerOperation(
-    Summary = "Обновить тэг(количество вопросов).",
-    Description = "Обновляет запись в таблице tags.",
-    OperationId = "Tag_Put")]
+    Summary = "Обновить или добавить новые тэги при создании вопроса.",
+    Description = "Обновляет/добавляет записи в таблице tags,userTagParticipation, userTagParticipationQuestion .",
+    OperationId = "Tag_Post")]
     public async Task<Result> UpdateTagCountQuestionAsync(
-        string tagName, 
-        int count, 
+        [FromBody]TagParticipationQuestionRequest request,
         [FromServices]ICommandHandler<UpdateTagCountQuestionCommand> handler) =>
-        await handler.Handle(new UpdateTagCountQuestionCommand(tagName, count), new CancellationToken(false));
+        await handler.Handle(
+            new UpdateTagCountQuestionCommand(request.Tags, request.UserId, request.QuestionId), new CancellationToken(false));
 
 
-    [HttpPut("request/{tagId}/watcher/{count}")]
-    [SwaggerOperation(
-     Summary = "Обновить тэг(количество наблюдателей).",
-     Description = "Обновляет запись в таблице tags.",
-     OperationId = "Tag_Put")]
-    public async Task<Result> UpdateTagWatchersAsync(
-     int tagId,
-     int count,
-     [FromServices] ICommandHandler<UpdateTagWatchersCommand> handler ) =>
-     await handler.Handle(new UpdateTagWatchersCommand(tagId, count), new CancellationToken(false));
+    // TODO НЕ НУЖЕН !!! !!! УДАЛИТЬ
+    //[HttpPut("request/{tagId}/watcher/{count}")]
+    //[SwaggerOperation(
+    // Summary = "Обновить тэг(количество наблюдателей).",
+    // Description = "Обновляет запись в таблице tags.",
+    // OperationId = "Tag_Put")]
+    //public async Task<Result> UpdateTagWatchersAsync(
+    // int tagId,
+    // int count,
+    // [FromServices] ICommandHandler<UpdateTagWatchersCommand> handler ) =>
+    // await handler.Handle(new UpdateTagWatchersCommand(tagId, count), new CancellationToken(false));
 
 
     [HttpDelete("{tagId}")]
@@ -172,15 +176,16 @@ public class TagServiceController : ControllerBase{
         await handler.Handle(new DeleteWatchedTagCommand(tagId, userId), new CancellationToken(false));
 
 
-    [HttpDelete("watched/{userId}")]
-    [SwaggerOperation(
-    Summary = "Удалить все отслеживаемые тэги пользователя по userID.",
-    Description = "Удаляет записи в таблице WatchedTags для определенного пользователя.",
-    OperationId = "Tag_Delete")]
-    public async Task<Result> DeleteUserWatchedTagsAsync(
-        Guid userId,
-        [FromServices] ICommandHandler<DeleteUserWatchedTagsCommand> handler ) =>
-        await handler.Handle(new DeleteUserWatchedTagsCommand(userId), new CancellationToken(false));
+    // TODO НЕ НУЖЕН !!! !!! УДАЛИТЬ
+    //[HttpDelete("watched/{userId}")]
+    //[SwaggerOperation(
+    //Summary = "Удалить все отслеживаемые тэги пользователя по userID.",
+    //Description = "Удаляет записи в таблице WatchedTags для определенного пользователя.",
+    //OperationId = "Tag_Delete")]
+    //public async Task<Result> DeleteUserWatchedTagsAsync(
+    //    Guid userId,
+    //    [FromServices] ICommandHandler<DeleteUserWatchedTagsCommand> handler ) =>
+    //    await handler.Handle(new DeleteUserWatchedTagsCommand(userId), new CancellationToken(false));
 
 
 
@@ -198,36 +203,59 @@ public class TagServiceController : ControllerBase{
         await handler.Handle(new GetUserTagsCommand(userId, pageParams, sortParams), new CancellationToken(false));
 
 
-    [HttpPost("participation")]
+    // TODO НЕ НУЖЕН !!! !!! УДАЛИТЬ
+    //[HttpPost("participation")]
+    //[SwaggerOperation(
+    //Summary = "Создать обсуждаемый тэг.",
+    //Description = "Создает запись в таблицах UserTagParticipation и UserTagParticipationQuestion.",
+    //OperationId = "Tag_Post")]
+    //public async Task<Result> CreateUserTagParticipationAsync(
+    //    [FromBody] CreateParticipationDto createParticipationDto,
+    //    [FromServices] ICommandHandler<CreateTagsCommand> handler ) =>
+    //    await handler.Handle(new CreateTagsCommand(createParticipationDto), new CancellationToken(false));
+
+
+    // TODO НЕ НУЖЕН !!! !!! УДАЛИТЬ
+    //[HttpPut("participation")]
+    //[SwaggerOperation(
+    //Summary = "Обновить обсуждаемый тэг.",
+    //Description = "Обновляет запись в таблицах UserTagParticipation и UserTagParticipationQuestion.",
+    //OperationId = "Tag_Put")]
+    //public async Task<Result> UpdateTagParticipationAsync(
+    //    [FromBody] UpdateParticipationDto participationDto,
+    //    [FromServices] ICommandHandler<UpdateTagsCommand> handler ) =>
+    //    await handler.Handle(new UpdateTagsCommand(participationDto), new CancellationToken(false));
+
+    [HttpPost("participation/answer")]
     [SwaggerOperation(
-    Summary = "Создать обсуждаемый тэг.",
-    Description = "Создает запись в таблицах UserTagParticipation и UserTagParticipationQuestion.",
+    Summary = "Обновить/добавить записи в таблице userTagParticipation, userTagParticipationQuestion при создании ответа.",
+    Description = "Обновляет/добавляет записи в таблице userTagParticipation, userTagParticipationQuestion .",
     OperationId = "Tag_Post")]
-    public async Task<Result> CreateUserTagParticipationAsync(
-        [FromBody] CreateParticipationDto createParticipationDto,
-        [FromServices] ICommandHandler<CreateTagsCommand> handler ) =>
-        await handler.Handle(new CreateTagsCommand(createParticipationDto), new CancellationToken(false));
-
-
-    [HttpPut("participation")]
-    [SwaggerOperation(
-    Summary = "Обновить обсуждаемый тэг.",
-    Description = "Обновляет запись в таблицах UserTagParticipation и UserTagParticipationQuestion.",
-    OperationId = "Tag_Put")]
-    public async Task<Result> UpdateTagParticipationAsync(
-        [FromBody] UpdateParticipationDto participationDto,
-        [FromServices] ICommandHandler<UpdateTagsCommand> handler ) =>
-        await handler.Handle(new UpdateTagsCommand(participationDto), new CancellationToken(false));
+    public async Task<Result> UpdateParticipationAnswerAsync( 
+        [FromBody] TagParticipationAnswerRequest request,
+        [FromServices]ICommandHandler<UpdateParticipationAnswerCommand> handler) =>
+        await handler.Handle(new UpdateParticipationAnswerCommand(
+            request.Tags, request.UserId, request.QuestionId), new CancellationToken(false));
 
 
     [HttpDelete("participation/{userId}")]
     [SwaggerOperation(
-    Summary = "Удаляет обсуждаемые тэги пользователя по userID.",
-    Description = "Удаляет записи в таблицах UserTagParticipation и UserTagParticipationQuestion.",
+    Summary = "Удаляет все записи из таблиц  WatchedTag,UserTagParticipation и UserTagParticipationQuestion для пользователя.",
+    Description = "Удаляет записи в таблицах WatchedTag,UserTagParticipation и UserTagParticipationQuestion.",
     OperationId = "Tag_Delete")]
     public async Task<Result> DeleteUserTagsParticipationAsync(
         Guid userId,
         [FromServices] ICommandHandler<DeleteUserTagsCommand> handler ) =>
         await handler.Handle(new DeleteUserTagsCommand(userId), new CancellationToken(false));
 
+    [HttpDelete("participation/answer")]
+    [SwaggerOperation(
+    Summary = "Откат тегов ответа при удалении ответа.",
+    Description = "Уменьшает AnswersWritten и удаляет связи UserTagParticipation‑Question при удалении ответа.",
+    OperationId = "Tag_Delete")]
+    public async Task<Result> DeleteAnswerTagsParticipationAsync(
+        [FromBody] DeleteAnswerTagRequest request,
+        [FromServices] ICommandHandler<DeleteAnswerTagsCommand> handler ) =>
+        await handler.Handle(
+            new DeleteAnswerTagsCommand(request.UserId, request.QuestionId, request.TagIds), new CancellationToken(false));
 }

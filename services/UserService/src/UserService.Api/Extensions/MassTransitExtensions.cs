@@ -12,6 +12,7 @@ public static class MassTransitExtensions {
         {
             x.SetKebabCaseEndpointNameFormatter ();
 
+
             x.AddEntityFrameworkOutbox<UserServiceDbContext>(o => {
                 o.UsePostgres();
                 o.UseBusOutbox();
@@ -27,9 +28,8 @@ public static class MassTransitExtensions {
                 {
                 h.Username ("guest");
                     h.Password ("guest");
-                });        
-                               
-
+                });    
+              
                 cfg.ReceiveEndpoint("user-service.user-registered", e => {
                     
                     e.ConfigureConsumer<UserRegisteredConsumer>(ctx);                    
@@ -48,11 +48,11 @@ public static class MassTransitExtensions {
                     e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
                 });
 
+
             });
         });
         
         return builder;
     }
-
-
+  
 }
