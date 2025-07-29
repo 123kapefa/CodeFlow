@@ -16,7 +16,12 @@ public class CommentServiceDbContext : DbContext {
     }
 
     protected override void OnConfiguring (DbContextOptionsBuilder options) {
-        options.UseNpgsql (_connectionString);
+        //options.UseNpgsql (_connectionString);
+
+        options.UseNpgsql( _connectionString,o => o.MapEnum<TypeTarget>("type_target"));
+
+        options.EnableSensitiveDataLogging();
+        options.UseLoggerFactory(CreateLoggerFactory());
         options.EnableSensitiveDataLogging();
         options.UseLoggerFactory (CreateLoggerFactory());
     }
