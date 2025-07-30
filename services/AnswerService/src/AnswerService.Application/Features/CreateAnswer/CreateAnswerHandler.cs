@@ -49,7 +49,7 @@ public class CreateAnswerHandler : ICommandHandler<CreateAnswerResponse, CreateA
     if (!result.IsSuccess)
       return Result<CreateAnswerResponse>.Error (new ErrorList (result.Errors));
 
-    await _messageBroker.PublishAsync (new AnswerCreated (newAnswer.QuestionId), cancellationToken);
+    await _messageBroker.PublishAsync (new AnswerCreated (newAnswer.QuestionId, newAnswer.UserId, command.Request.Tags), cancellationToken);
     await _answerRepository.SaveAsync (cancellationToken);
     
     return Result<CreateAnswerResponse>.Success (new CreateAnswerResponse ());
