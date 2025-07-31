@@ -12,13 +12,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\..\shared\src\Messaging\Messaging.csproj" />
       <ProjectReference Include="..\AnswerService.Domain\AnswerService.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\..\..\shared\src\Contracts\Contracts.csproj" />
         <ProjectReference Include="..\..\..\..\shared\src\Abstractions\Abstractions.csproj" />
+        <ProjectReference Include="..\..\..\..\shared\src\Messaging\Messaging.csproj" />
     </ItemGroup>
 
 </Project>

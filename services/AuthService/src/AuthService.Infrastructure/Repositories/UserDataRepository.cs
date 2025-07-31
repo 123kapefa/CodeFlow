@@ -110,8 +110,8 @@ public class UserDataRepository : IUserDataRepository {
     return Result.Success ();
   }
   
-  public async Task SaveChangesAsync () {
-    await _context.SaveChangesAsync ();
+  public async Task SaveChangesAsync (CancellationToken cancellationToken) {
+    await _context.SaveChangesAsync (cancellationToken);
   }
 
 }
