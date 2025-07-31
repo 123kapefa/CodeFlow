@@ -61,7 +61,7 @@ public class LoginUserHandler : ICommandHandler<LoginResponse, LoginUserCommand>
         var response = new LoginResponse(access, refresh, expiresInSeconds);
 
         await _messageBroker.PublishAsync(new UserLogged(user.Id), cancellationToken);
-        await _userDataRepository.SaveChangesAsync();
+        await _userDataRepository.SaveChangesAsync(cancellationToken);
 
         return Result<LoginResponse>.Success(response);
     }
