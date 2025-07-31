@@ -5,6 +5,7 @@ using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 
 using Contracts.QuestionService.DTOs;
+using Contracts.QuestionService.Request;
 
 using QuestionService.Application.Features.GetQuestion;
 using QuestionService.Application.Features.GetQuestionShort;
@@ -106,16 +107,16 @@ public class QuestionController : ControllerBase {
         [FromServices] ICommandHandler<DeleteQuestionCommand> handler ) =>
         await handler.Handle(new DeleteQuestionCommand(questionId), new CancellationToken(false));
 
-    [HttpPut("{questionId}/answers/{acceptedAnswerId}/accept")]
+    [HttpPut("{questionId}/answer-accept")]
     [SwaggerOperation(
     Summary = "Обновить поле IsClosed и AcceptedAnswerId.",
     Description = "Обновляет данные в таблице Questions.",
     OperationId = "Question_Put")]
     public async Task<Result> UpdateQuestionAcceptAsync(
-        Guid questionId,
-        Guid acceptedAnswerId,
+        [FromRoute] Guid questionId,
+        [FromBody] UpdateQuestionAcceptRequest request,
         [FromServices] ICommandHandler<UpdateQuestionAcceptCommand> handler ) =>
-        await handler.Handle(new UpdateQuestionAcceptCommand(questionId, acceptedAnswerId), new CancellationToken(false));
+        await handler.Handle(new UpdateQuestionAcceptCommand(questionId, request.AcceptAnswerId, request.UserAnswerId), new CancellationToken(false));
 
 
     [HttpPut("{questionId}/views")]
@@ -184,3 +185,6 @@ public class QuestionController : ControllerBase {
         await handler.Handle(new ReduceQuestionAnswersCommand(questionId), new CancellationToken(false));
 
 }
+
+// user 1 01985fd7-f48d-79c5-ba32-5b2c14cb7d02  testrabbitmq@gmail.com
+// user 2 01985fdb-9b87-7e8d-91da-bcebf52c9687  user2@gmail.com
