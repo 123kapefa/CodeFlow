@@ -34,7 +34,7 @@ public static class GithubAuthExtensions {
           if (!userRes.IsSuccess) {
             var user = UserData.Create (email);
             await repo.CreateAsync (user, password: null);
-            await repo.SaveChangesAsync ();
+            await repo.SaveChangesAsync (new CancellationToken(false));
           }
         }
       };
