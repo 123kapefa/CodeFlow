@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MassTransit;
+using MassTransit.EntityFrameworkCoreIntegration;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using TagService.Domain.Entities;
@@ -14,6 +17,10 @@ public class TagServiceDbContext : DbContext {
     public DbSet<UserTagParticipation> UserTagParticipations { get; set; }
     public DbSet<UserTagParticipationQuestion> UserTagParticipationQuestions { get; set; }
 
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+    public DbSet<OutboxState> OutboxStates => Set<OutboxState>();
+    public DbSet<InboxState> InboxStates => Set<InboxState>();
+    
     public TagServiceDbContext (string connectionString) {
         _connectionString = connectionString;
     }
@@ -25,6 +32,11 @@ public class TagServiceDbContext : DbContext {
     }
     
     protected override void OnModelCreating (ModelBuilder modelBuilder) {
+        
+        modelBuilder.AddInboxStateEntity();
+        modelBuilder.AddOutboxMessageEntity();
+        modelBuilder.AddOutboxStateEntity();
+        
         modelBuilder.Entity<Tag> ().HasMany (t => t.UserTagParticipations).WithOne (utp => utp.Tag)
            .HasForeignKey (utp => utp.TagId);
 

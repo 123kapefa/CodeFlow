@@ -1,5 +1,9 @@
 ﻿using CommentService.Domain.Entities;
 using CommentService.Domain.Enums;
+
+using MassTransit;
+using MassTransit.EntityFrameworkCoreIntegration;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -10,6 +14,10 @@ public class CommentServiceDbContext : DbContext {
     private readonly string _connectionString;
     
     public DbSet<Comment> Comments { get; set; }
+    
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+    public DbSet<OutboxState> OutboxStates => Set<OutboxState>();
+    public DbSet<InboxState> InboxStates => Set<InboxState>();
 
     public CommentServiceDbContext( string connectionString ) {
         _connectionString = connectionString;
@@ -28,6 +36,10 @@ public class CommentServiceDbContext : DbContext {
     
     protected override void OnModelCreating( ModelBuilder modelBuilder ) {
 
+        modelBuilder.AddInboxStateEntity();
+        modelBuilder.AddOutboxMessageEntity();
+        modelBuilder.AddOutboxStateEntity();
+        
         modelBuilder.HasPostgresEnum<TypeTarget>();
 
         modelBuilder.Entity<Comment>(mb => {

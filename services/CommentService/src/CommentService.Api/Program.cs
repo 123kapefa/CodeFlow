@@ -1,5 +1,8 @@
 using CommentService.Api.Extensions;
 using CommentService.Infrastructure.Data;
+
+using Messaging.Extensions;
+
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +12,8 @@ builder.AddCustomSwagger ();
 builder.AddDatabase ();
 builder.AddCustomSerilog ();
 builder.AddHandlers ();
+builder.AddCommentMessaging ();
+builder.Services.AddMessaging ();
 
 builder.Services.AddControllers();
 
