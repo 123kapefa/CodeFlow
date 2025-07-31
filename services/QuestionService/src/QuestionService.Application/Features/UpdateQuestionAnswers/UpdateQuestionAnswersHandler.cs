@@ -27,7 +27,7 @@ public class UpdateQuestionAnswersHandler : ICommandHandler<UpdateQuestionAnswer
             return Result.Error(new ErrorList(questionResult.Errors));
 
         questionResult.Value.AnswersCount += 1;
-        
+        await _questionServiceRepository.SaveChangesAsync (cancellationToken);
         _logger.LogInformation("Answers count updated");
 
         Result updateResult = 

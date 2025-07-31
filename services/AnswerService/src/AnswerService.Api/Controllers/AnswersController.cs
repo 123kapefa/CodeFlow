@@ -61,8 +61,9 @@ public class AnswersController : ControllerBase {
   [SwaggerResponse(404, "Ответ не найден")]
   public async Task<Result> DeleteAnswer (
     [FromRoute] Guid answerId,
+    [FromBody] DeleteAnswerRequest request,
     [FromServices] ICommandHandler<DeleteAnswerCommand> handler) =>
-  await handler.Handle (new DeleteAnswerCommand(answerId), new CancellationToken (false));
+  await handler.Handle (new DeleteAnswerCommand(answerId, request), new CancellationToken (false));
 
   [HttpGet ("question/{questionId:guid}")]
   [SwaggerOperation(

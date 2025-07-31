@@ -9,7 +9,7 @@ using Abstractions.Commands;
 namespace QuestionService.Application.Features.UpdateQuestion;
 
 public class UpdateQuestionHandler : ICommandHandler<UpdateQuestionCommand> {
-
+    
     private readonly IQuestionServiceRepository _questionServiceRepository;
     private readonly IValidator<UpdateQuestionCommand> _validator;
 
@@ -39,7 +39,8 @@ public class UpdateQuestionHandler : ICommandHandler<UpdateQuestionCommand> {
         question.Value.UserEditorId = command.UpdateQuestionDTO.UserEditorId;
 
         Result questionResult = await _questionServiceRepository.UpdateQuestionAsync(question.Value, token);
-
+        
+        await _questionServiceRepository.SaveChangesAsync (token);
         if(!questionResult.IsSuccess)
             return Result.Error(new ErrorList(questionResult.Errors));
 
