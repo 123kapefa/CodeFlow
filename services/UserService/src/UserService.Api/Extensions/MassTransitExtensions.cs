@@ -32,7 +32,7 @@ public static class MassTransitExtensions {
           h.Username ("guest");
           h.Password ("guest");
         });
-        
+
         cfg.ReceiveEndpoint ("user-service.user-registered", e =>
         {
           e.ConfigureConsumer<UserRegisteredConsumer> (ctx);
