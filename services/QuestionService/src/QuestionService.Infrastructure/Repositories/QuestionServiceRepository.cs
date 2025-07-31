@@ -225,7 +225,6 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
 
         try {
             _dbContext.Questions.Update(question);
-            await _dbContext.SaveChangesAsync(token);
 
             _logger.LogInformation("UpdateQuestionAsync: вопрос {QuestionId} успешно обновлён", question.Id);
             return Result.Success();
@@ -304,7 +303,7 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
     }
 
     public async Task SaveChangesAsync( CancellationToken token ) {
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(token);
     }
 
 }
