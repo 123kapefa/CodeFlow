@@ -20,6 +20,8 @@ public static class MassTransitExtensions {
             x.AddConsumer<UserRegisteredConsumer> ();
             x.AddConsumer<UserLoggedConsumer>();
             x.AddConsumer<QuestionVotedConsumer>();
+            x.AddConsumer<AnswerVotedConsumer>();
+            x.AddConsumer<AnswerAcceptedConsumer>();
 
             x.UsingRabbitMq ((ctx, cfg) =>
             {
@@ -43,6 +45,18 @@ public static class MassTransitExtensions {
                 cfg.ReceiveEndpoint("user-service.question-voted", e => {
 
                     e.ConfigureConsumer<QuestionVotedConsumer>(ctx);
+                    e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+                });
+                
+                cfg.ReceiveEndpoint("user-service.answer-voted", e => {
+
+                    e.ConfigureConsumer<AnswerVotedConsumer>(ctx);
+                    e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+                });
+                
+                cfg.ReceiveEndpoint("user-service.answer-accepted", e => {
+
+                    e.ConfigureConsumer<AnswerAcceptedConsumer>(ctx);
                     e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
                 });
             });
