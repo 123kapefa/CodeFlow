@@ -135,7 +135,6 @@ public class AnswerRepository : IAnswerRepository {
     try {
       _logger.LogInformation ("Удаление ответа.");
       _context.Answers.Remove(answer);
-      await _context.SaveChangesAsync(ct);
       
       _logger.LogInformation ("Ответ успешно обновлен.");
       return Result.Success();

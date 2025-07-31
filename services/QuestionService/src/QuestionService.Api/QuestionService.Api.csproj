@@ -28,15 +28,12 @@
     <ProjectReference Include="..\QuestionService.Application\QuestionService.Application.csproj" />
     <ProjectReference Include="..\QuestionService.Infrastructure\QuestionService.Infrastructure.csproj" />
   </ItemGroup>
+  
 
   <ItemGroup>
       <ProjectReference Include="..\..\..\..\shared\src\Contracts\Contracts.csproj" />
       <ProjectReference Include="..\..\..\..\shared\src\Abstractions\Abstractions.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-      <ProjectReference Include="..\..\..\..\shared\src\Contracts\Contracts.csproj" />
-      <ProjectReference Include="..\..\..\..\shared\src\Abstractions\Abstractions.csproj" />
+      <ProjectReference Include="..\..\..\..\shared\src\Messaging\Messaging.csproj" />
   </ItemGroup>
 
 </Project>
