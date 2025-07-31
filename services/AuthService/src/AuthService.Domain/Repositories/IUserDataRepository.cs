@@ -17,6 +17,6 @@ public interface IUserDataRepository {
   Task<string> GeneratePasswordResetTokenAsync(UserData user);
   Task<Result> ResetPasswordAsync(UserData user, string token, string newPassword);
   Task<Result> DeleteAsync (UserData userData);
-  Task SaveChangesAsync();
+  Task SaveChangesAsync(CancellationToken cancellationToken);
 
 }
