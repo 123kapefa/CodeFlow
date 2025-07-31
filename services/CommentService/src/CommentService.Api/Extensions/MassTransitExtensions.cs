@@ -1,40 +1,40 @@
-﻿using MassTransit;
+﻿using CommentService.Application.Consumers;
+using CommentService.Infrastructure.Data;
 
-using QuestionService.Application.Consumers;
-using QuestionService.Infrastructure.Data;
+using MassTransit;
 
-namespace QuestionService.Api.Extensions;
+namespace CommentService.Api.Extensions;
 
 public static class MassTransitExtensions {
 
-    public static WebApplicationBuilder AddQuestionMessaging( this WebApplicationBuilder builder ) {
+    public static WebApplicationBuilder AddCommentMessaging( this WebApplicationBuilder builder ) {
 
         builder.Services.AddMassTransit(x => {
             x.SetKebabCaseEndpointNameFormatter();
 
-            x.AddEntityFrameworkOutbox<QuestionServiceDbContext>(o => {
+            x.AddEntityFrameworkOutbox<CommentServiceDbContext>(o => {
                 o.UsePostgres();
                 o.UseBusOutbox();
             });
-            
-            x.AddConsumer<AnswerCreatedConsumer> ();
+
             x.AddConsumer<AnswerDeletedConsumer> ();
+            x.AddConsumer<UserDeletedConsumer> ();
 
             x.UsingRabbitMq(( ctx, cfg ) => {
                 cfg.Host("rabbitmq", "/", h => {
                     h.Username("guest");
                     h.Password("guest");
                 });
+                
+                cfg.ReceiveEndpoint("comment-service.answer-deleted", e => {
 
-                cfg.ReceiveEndpoint("question-service.answer-created", e => {
-
-                    e.ConfigureConsumer<AnswerCreatedConsumer>(ctx);
+                    e.ConfigureConsumer<AnswerDeletedConsumer>(ctx);
                     e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
                 });
                 
-                cfg.ReceiveEndpoint("question-service.answer-deleted", e => {
+                cfg.ReceiveEndpoint("comment-service.user-deleted", e => {
 
-                    e.ConfigureConsumer<AnswerDeletedConsumer>(ctx);
+                    e.ConfigureConsumer<UserDeletedConsumer>(ctx);
                     e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
                 });
             });

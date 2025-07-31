@@ -1,24 +1,25 @@
 ﻿using MassTransit;
 
-using QuestionService.Application.Consumers;
-using QuestionService.Infrastructure.Data;
+using TagService.Application.Consumers;
+using TagService.Infrastructure.Data;
 
-namespace QuestionService.Api.Extensions;
+namespace TagService.Api.Extensions;
 
 public static class MassTransitExtensions {
 
-    public static WebApplicationBuilder AddQuestionMessaging( this WebApplicationBuilder builder ) {
+    public static WebApplicationBuilder AddTagMessaging( this WebApplicationBuilder builder ) {
 
         builder.Services.AddMassTransit(x => {
             x.SetKebabCaseEndpointNameFormatter();
 
-            x.AddEntityFrameworkOutbox<QuestionServiceDbContext>(o => {
+            x.AddEntityFrameworkOutbox<TagServiceDbContext>(o => {
                 o.UsePostgres();
                 o.UseBusOutbox();
             });
             
             x.AddConsumer<AnswerCreatedConsumer> ();
             x.AddConsumer<AnswerDeletedConsumer> ();
+            x.AddConsumer<UserDeletedConsumer> ();
 
             x.UsingRabbitMq(( ctx, cfg ) => {
                 cfg.Host("rabbitmq", "/", h => {
@@ -26,15 +27,21 @@ public static class MassTransitExtensions {
                     h.Password("guest");
                 });
 
-                cfg.ReceiveEndpoint("question-service.answer-created", e => {
+                cfg.ReceiveEndpoint("tag-service.answer-created", e => {
 
                     e.ConfigureConsumer<AnswerCreatedConsumer>(ctx);
                     e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
                 });
                 
-                cfg.ReceiveEndpoint("question-service.answer-deleted", e => {
+                cfg.ReceiveEndpoint("tag-service.answer-deleted", e => {
 
                     e.ConfigureConsumer<AnswerDeletedConsumer>(ctx);
+                    e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+                });
+                
+                cfg.ReceiveEndpoint("tag-service.user-deleted", e => {
+
+                    e.ConfigureConsumer<UserDeletedConsumer>(ctx);
                     e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
                 });
             });
