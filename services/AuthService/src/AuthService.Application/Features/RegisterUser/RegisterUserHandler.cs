@@ -45,7 +45,7 @@ public class RegisterUserHandler : ICommandHandler<Guid, RegisterUserCommand> {
     }
     
     await _messageBroker.PublishAsync (new UserRegistered (createResult.Value, dataCommand.Username), cancellationToken);
-    await _userDataRepository.SaveChangesAsync ();
+    await _userDataRepository.SaveChangesAsync (cancellationToken);
     
     var userId = createResult.Value; 
     var response = new { UserId = userId, Email = dataCommand.Email, CreatedAt = DateTime.UtcNow };

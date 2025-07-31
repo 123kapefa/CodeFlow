@@ -143,6 +143,19 @@ public class AnswerRepository : IAnswerRepository {
       return Result.Error ("База данных не отвечает.");
     }
   }
+  
+  public async Task<Result> DeleteAsync (IEnumerable<Answer> answers, CancellationToken ct) {
+    try {
+      _logger.LogInformation ("Удаление ответа.");
+      _context.Answers.RemoveRange(answers);
+      
+      _logger.LogInformation ("Ответ успешно обновлен.");
+      return Result.Success();
+    } catch (Exception) {
+      _logger.LogError ("База данных не отвечает");
+      return Result.Error ("База данных не отвечает.");
+    }
+  }
 
   public async Task<Result> AcceptAsync (IEnumerable<Answer> answers, Guid answerId, CancellationToken ct) {
     try {
