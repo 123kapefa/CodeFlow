@@ -28,6 +28,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\..\..\shared\src\Contracts\Contracts.csproj" />
         <ProjectReference Include="..\..\..\..\shared\src\Abstractions\Abstractions.csproj" />
+        <ProjectReference Include="..\ApiGateway.Application\ApiGateway.Application.csproj" />
     </ItemGroup>
 
     <ItemGroup>
