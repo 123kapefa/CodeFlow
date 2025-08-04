@@ -119,7 +119,7 @@ public class AggregationController : ControllerBase {
             results,
             resultLock);
 
-        await questionTask;
+    await questionTask;
 
         if(results.TryGetValue("questions", out var questionsObj) && questionsObj is JsonElement questionRoot) {
             if(questionRoot.TryGetProperty("value", out var questionsElement) && questionsElement.ValueKind == JsonValueKind.Array) {
@@ -131,15 +131,15 @@ public class AggregationController : ControllerBase {
                         foreach(var tagRef in tagsElement.EnumerateArray()) {
                             if(tagRef.TryGetProperty("tagId", out var idElement)) {
                                 int tagId = idElement.GetInt32();
-                                string tagKey = $"tag-{tagId}";
+                string tagKey = $"tag-{tagId}";
 
                                 Console.WriteLine($"Запрос для тега: tagKey = {tagKey}, tagId = {tagId}");
 
                                 var tagTask = _httpService.FetchDataAsync(
                                     tagKey,
                                     $"api/tags/{tagId}",
-                                    "GET",
-                                    null,
+                  "GET", 
+                  null, 
                                     tagsResult,
                                     resultLock);
 
@@ -149,17 +149,17 @@ public class AggregationController : ControllerBase {
                     }
                     else {
                         Console.WriteLine("Свойство 'questionTags' отсутствует или не является массивом.");
-                    }
-                }
+              }
+            }
 
                 await Task.WhenAll(tagTasks);
 
                 results["tags"] = tagsResult;
-            }
-            else {
+          }
+          else {
                 Console.WriteLine("Вопросы не найдены или их структура неверна.");
             }
-        }
+          }
         else {
             Console.WriteLine("Не удалось получить список вопросов.");
         }
@@ -203,6 +203,7 @@ public class AggregationController : ControllerBase {
         }
       );
 
+        await Task.WhenAll (tagTasks);
 
 
         // Console.WriteLine (JsonSerializer.Serialize (createdTags));
@@ -222,14 +223,14 @@ public class AggregationController : ControllerBase {
             , results, resultLock);
 
           await createQuestionTask;
-        }
-        else {
-          return StatusCode (500, "TagService returned invalid tag data.");
-        }
       }
       else {
-        return StatusCode (500, "Unexpected TagService response format.");
+          return StatusCode (500, "TagService returned invalid tag data.");
       }
+    }
+    else {
+        return StatusCode (500, "Unexpected TagService response format.");
+    }
 
 
     // // Проверяем успешность создания вопроса
