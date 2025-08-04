@@ -37,6 +37,8 @@ app.UseAuthorization();
 // Применяем CORS к endpoint'у прокси (важно!)
 app.MapReverseProxy().RequireCors("ReactDev");
 app.MapControllers();
+// Применяем CORS к endpoint'у прокси (важно!)
+app.MapReverseProxy().RequireCors("ReactDev");
 
 
 app.Run();
