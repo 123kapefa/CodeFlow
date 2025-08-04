@@ -8,7 +8,7 @@ function Footer() {
     <div className="container-fluid footer-body">
       <footer className="footer container-xxl">
         <section>
-          <h4>STACK OVERFLOW</h4>
+          <h4>CodeFlow</h4>
           <ul>
             <li><a href="#">Questions</a></li>
             <li><a href="#">Help</a></li>

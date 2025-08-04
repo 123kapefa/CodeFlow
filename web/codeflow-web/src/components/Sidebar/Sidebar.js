@@ -6,7 +6,7 @@ import '../../App.css'
 
 function Sidebar() {
   return (
-    <nav className="sidebar">
+    <nav className="sidebar mt-1">
       <ul>
         <li><Link to="/"><i className="bi bi-house"></i> Home</Link></li>
         <li><Link to="/questions">Questions</Link></li>
