@@ -24,6 +24,7 @@ function Header() {
         {loading ? null : user ? (
           /* --------- Авторизован --------- */
           <ul className="topbar__icons list-unstyled d-flex m-0">
+           
             <li>
               <Link
                 to={`/users/${user.userId}`}   // профиль текущего юзера

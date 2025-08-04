@@ -7,11 +7,11 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+    const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
     try {
       await login(email, password);
@@ -22,41 +22,42 @@ function Login() {
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center vh-100">
+        <Container className="d-flex justify-content-center align-items-center vh-100">
       <Row>
         <Col>
           <div className="text-center mb-4">
             <img src="/logo/logo-transparent.png" alt="logo" height="50" />
           </div>
-
+          
           <Card className="shadow-sm p-4">
+            
             <Button variant="light" className="mb-2 w-100 border">
               <i className="bi bi-google"></i> Log in with Google
             </Button>
             <Button variant="dark" className="mb-2 w-100">
               <i className="bi bi-github"></i> Log in with GitHub
-            </Button>
+            </Button>           
 
             <Form onSubmit={handleSubmit}>
               {error && <div className="alert alert-danger">{error}</div>}
 
               <Form.Group controlId="formEmail" className="mb-3">
                 <Form.Label>Email</Form.Label>
-                <Form.Control
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
+                <Form.Control 
+                  type="email" 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)} 
+                  required 
                 />
               </Form.Group>
 
               <Form.Group controlId="formPassword" className="mb-3">
                 <Form.Label>Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+                <Form.Control 
+                  type="password" 
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)} 
+                  required 
                 />
                 <small className="text-muted">
                   <a href="/forgot-password">Forgot password?</a>
@@ -72,12 +73,13 @@ function Login() {
           <div className="text-center mt-3">
             <p>
               Don’t have an account? <a href="/signup">Sign up</a>
-            </p>
+            </p>          
           </div>
         </Col>
       </Row>
     </Container>
-  );
+    );
+
 }
 
 export default Login;

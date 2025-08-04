@@ -9,7 +9,7 @@ function Logout() {
   useEffect(() => {
     (async () => {
       await logout();
-      navigate("/login", { replace: true });
+          navigate("/login", { replace: true });
     })();
   }, [logout, navigate]);
 
