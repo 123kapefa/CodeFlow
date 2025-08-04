@@ -115,7 +115,7 @@ public class AggregationController : ControllerBase {
       , $"api/questions?{pageParams.ToQueryString ()}&{sortParams.ToQueryString ()}&{tagFilter.ToQueryString ()}", "GET", null, results, resultLock);
 
     await questionTask;
-    
+
     if (results.ContainsKey ("questions") && results["questions"] is JsonElement questionRoot) {
       if (questionRoot.TryGetProperty ("value", out var questionsElement) &&
           questionsElement.ValueKind == JsonValueKind.Array) {
