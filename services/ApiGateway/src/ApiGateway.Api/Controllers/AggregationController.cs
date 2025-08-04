@@ -55,6 +55,15 @@ public class AggregationController : ControllerBase {
     var questionCommentsTask = _comments.GetQuestionCommentsAsync (qid, ct);
 
 
+    var questionTask = _httpService.FetchDataAsync ("question", $"api/questions/{request.QuestionId}", "GET", null
+      , results, resultLock);
+
+    var answersTask = _httpService.FetchDataAsync ("answers", $"api/answers/question/{request.QuestionId}", "GET", null
+      , results, resultLock);
+
+    var questionCommentsTask = _httpService.FetchDataAsync ("questionComments"
+      , $"api/comments/question/{request.QuestionId}", "GET", null, results, resultLock);
+
     await Task.WhenAll (questionTask, answersTask, questionCommentsTask);
 
     var question = await questionTask;
@@ -78,7 +87,10 @@ public class AggregationController : ControllerBase {
         var comments = kvp.Value;
         userIds.AddRange (comments.Select (c => c.AuthorId));
       }
+      else {
+        Console.WriteLine ("Не удалось найти массив answers в объекте answers");
       }
+    }
 
     userIds = userIds.Distinct ().ToList ();
 
