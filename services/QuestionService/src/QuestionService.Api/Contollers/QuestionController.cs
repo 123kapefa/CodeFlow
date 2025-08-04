@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 
-using Contracts.QuestionService.DTOs;
-using Contracts.QuestionService.Request;
+using Contracts.Common.Filters;
+using Contracts.DTOs.QuestionService;
+using Contracts.Requests.QuestionService;
 
 using QuestionService.Application.Features.GetQuestion;
 using QuestionService.Application.Features.GetQuestionShort;
@@ -17,7 +18,6 @@ using QuestionService.Application.Features.DeleteQuestion;
 using QuestionService.Application.Features.UpdateQuestionAccept;
 using QuestionService.Application.Features.UpdateQuestionView;
 using QuestionService.Application.Features.UpdateQuestionVote;
-using QuestionService.Domain.Filters;
 using QuestionService.Application.Features.GetQuestions;
 using QuestionService.Application.Features.UpdateQuestionAnswers;
 using QuestionService.Application.Features.GetUserQuestions;

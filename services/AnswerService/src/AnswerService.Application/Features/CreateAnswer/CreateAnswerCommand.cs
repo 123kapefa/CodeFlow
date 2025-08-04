@@ -1,6 +1,6 @@
 using Abstractions.Commands;
 
-using Contracts.AnswerService.Requests;
+using Contracts.Requests.AnswerService;
 
 namespace AnswerService.Application.Features.CreateAnswer;
 

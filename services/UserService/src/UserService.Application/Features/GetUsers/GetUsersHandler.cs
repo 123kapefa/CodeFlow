@@ -2,7 +2,7 @@
 
 using Ardalis.Result;
 
-using Contracts.UserService.DTOs;
+using Contracts.DTOs.UserService;
 
 using UserService.Domain.Repositories;
 

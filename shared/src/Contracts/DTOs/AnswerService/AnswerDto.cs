@@ -1,4 +1,4 @@
-namespace Contracts.AnswerService.DTOs;
+namespace Contracts.DTOs.AnswerService;
 
 public class AnswerDto {
 

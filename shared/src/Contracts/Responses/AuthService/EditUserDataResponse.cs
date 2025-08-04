@@ -1,4 +1,4 @@
-namespace Contracts.AuthService.Responses;
+namespace Contracts.Responses.AuthService;
 
 public class EditUserDataResponse {
 

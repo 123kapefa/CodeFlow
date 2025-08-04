@@ -1,4 +1,4 @@
-namespace Contracts.AuthService.Requests;
+namespace Contracts.Requests.AuthService;
 
 public record EmailChangeRequest (
   string OldEmail,

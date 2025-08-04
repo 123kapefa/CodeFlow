@@ -1,4 +1,4 @@
-﻿namespace Contracts.TagService;
+﻿namespace Contracts.DTOs.TagService;
 
 public class TagDTO {
     public int Id { get; set; }

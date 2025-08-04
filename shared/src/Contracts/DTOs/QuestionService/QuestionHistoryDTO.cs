@@ -1,4 +1,4 @@
-﻿namespace Contracts.QuestionService.DTOs;
+﻿namespace Contracts.DTOs.QuestionService;
 
 public class QuestionHistoryDTO {
     public Guid UserId { get; set; }

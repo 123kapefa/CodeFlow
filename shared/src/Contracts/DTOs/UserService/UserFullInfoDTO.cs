@@ -1,4 +1,4 @@
-﻿namespace Contracts.UserService.DTOs;
+﻿namespace Contracts.DTOs.UserService;
 
 public class UserFullInfoDTO {
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

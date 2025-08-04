@@ -6,8 +6,9 @@ using Ardalis.Result.FluentValidation;
 using AuthService.Application.Abstractions;
 using AuthService.Domain.Repositories;
 
-using Contracts.AuthService.Responses;
 using Contracts.Publishers.AuthService;
+using Contracts.Responses.AuthService;
+
 using FluentValidation;
 using Messaging.Broker;
 

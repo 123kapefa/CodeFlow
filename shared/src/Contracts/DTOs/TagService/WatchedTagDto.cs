@@ -1,4 +1,4 @@
-﻿namespace Contracts.TagService;
+﻿namespace Contracts.DTOs.TagService;
 
 public class WatchedTagDTO {
     public Guid Id { get; set; }

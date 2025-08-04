@@ -1,9 +1,11 @@
 ﻿using Abstractions.Commands;
 
 using Ardalis.Result;
-using Contracts.TagService;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Globalization;
+
+using Contracts.DTOs.TagService;
+
 using TagService.Domain.Entities;
 using TagService.Domain.Repositories;
 
@@ -23,7 +25,7 @@ public class UpdateTagCountQuestionHandler : ICommandHandler<UpdateTagCountQuest
     public async Task<Result> Handle( UpdateTagCountQuestionCommand command, CancellationToken token ) {
 
         List<int?> tagIds = command.TagDTOs.Where(t => t.TagId.HasValue).Select(t => t.TagId).ToList();
-        List<QuestionTagDTO> newTags = command.TagDTOs.Where(t => !t.TagId.HasValue).ToList();
+        List<QuestionTagDTO> newTags = command.TagDTOs.AsEnumerable().Where(t => !t.TagId.HasValue).ToList();
         DateTime now = DateTime.UtcNow;
 
         Result<List<Tag>> tagResult = await _tagRepository.GetTagsByIdAsync(tagIds, token);

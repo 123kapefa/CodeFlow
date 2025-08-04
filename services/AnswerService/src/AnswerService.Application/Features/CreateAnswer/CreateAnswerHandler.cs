@@ -6,8 +6,8 @@ using Ardalis.Result.FluentValidation;
 
 using Abstractions.Commands;
 
-using Contracts.AnswerService.Responses;
 using Contracts.Publishers.AnswerService;
+using Contracts.Responses.AnswerService;
 
 using FluentValidation;
 

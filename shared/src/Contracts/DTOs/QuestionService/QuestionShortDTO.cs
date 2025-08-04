@@ -1,4 +1,4 @@
-﻿namespace Contracts.QuestionService.DTOs;
+﻿namespace Contracts.DTOs.QuestionService;
 
 public class QuestionShortDTO {
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -21,4 +21,6 @@ public class QuestionShortDTO {
 
     public bool IsClosed { get; set; } = false;
     public Guid? AcceptedAnswerId { get; set; }  
+    
+    public ICollection<QuestionTagDTO> QuestionTags { get; set; } = new List<QuestionTagDTO>();
 }
