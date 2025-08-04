@@ -2,7 +2,7 @@ using Abstractions.Commands;
 
 using Ardalis.Result;
 
-using Contracts.QuestionService.DTOs;
+using Contracts.DTOs.QuestionService;
 
 using FluentValidation;
 

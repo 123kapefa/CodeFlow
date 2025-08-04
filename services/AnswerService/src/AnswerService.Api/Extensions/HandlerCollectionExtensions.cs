@@ -11,7 +11,7 @@ using AnswerService.Application.Features.UpdateAnswerAccept;
 using AnswerService.Domain.Repositories;
 using AnswerService.Infrastructure.Repositories;
 
-using Contracts.AnswerService.Responses;
+using Contracts.Responses.AnswerService;
 
 using FluentValidation;
 

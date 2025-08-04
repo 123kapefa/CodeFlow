@@ -1,4 +1,5 @@
-﻿using Contracts.QuestionService.DTOs;
+﻿using Contracts.DTOs.QuestionService;
+
 using QuestionService.Domain.Entities;
 
 namespace QuestionService.Application;
