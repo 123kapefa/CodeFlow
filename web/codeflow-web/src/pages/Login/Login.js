@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { Button, Form, Container, Row, Col, Card } from 'react-bootstrap';
+import { jwtDecode } from "jwt-decode";
 
 function Login() {
 
@@ -30,8 +31,12 @@ function Login() {
             console.log(data.accessToken);
             console.log(data.refreshToken);
 
+            const claims = jwtDecode(data.accessToken);
+            console.log(claims);
+            
              // Сохраняем JWT в куки
-            Cookies.set('jwt', data.accessToken, { secure: true, sameSite: 'Strict' });
+            // Cookies.set('jwt', data.accessToken, { secure: true, sameSite: 'Strict' });
+            Cookies.set('jwt', data.accessToken, { expires: 7, secure: true });
             Cookies.set('refresh_token', data.refreshToken, { secure: true, sameSite: 'Strict' });
             
 

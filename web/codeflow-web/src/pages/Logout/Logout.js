@@ -1,43 +1,56 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { RefreshToken } from "../authClient";
 
 function Logout() {
-
   const navigate = useNavigate();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const logout = async () => {
       try {
         const refreshToken = Cookies.get("refresh_token");
+        const token = Cookies.get("jwt");
 
-        if (!refreshToken) {          
+        if (!refreshToken) {
           navigate("/login", { replace: true });
           return;
         }
 
-        
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers.Authorization = `Bearer ${token}`;
+
         const response = await fetch("http://localhost:5000/api/auth/logout", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(refreshToken) 
+          headers,
+          body: JSON.stringify( refreshToken ),
         });
 
-        if (!response.ok) {
-          const err = await response.json();
-          throw new Error(err.message || "Ошибка выхода");
+        if (response.status === 401) {
+          const refresh_response = RefreshToken();
+
+          if (refresh_response) {
+            response = await fetch("http://localhost:5000/api/auth/logout", {
+              method: "POST",
+              headers,
+              body: JSON.stringify( refreshToken ),
+            });
+          }
         }
 
-        // Чистим куки
-        Cookies.remove("jwt");
-        Cookies.remove("refresh_token");
-
-        // Редиректим на login
-        navigate("/login", { replace: true });
-      }
-       catch (err) {
+        if (!response.ok) {
+          const err = await response.json();   
+          throw new Error(err.message || "Ошибка выхода");
+        }
+      } 
+      catch (err) {
         setError(err.message);
+      } 
+      finally {
+        Cookies.remove("jwt", { path: "/" });
+        Cookies.remove("refresh_token", { path: "/" });
+        navigate("/login", { replace: true });
       }
     };
 
