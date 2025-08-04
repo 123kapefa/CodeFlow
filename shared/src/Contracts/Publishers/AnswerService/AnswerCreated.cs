@@ -1,4 +1,4 @@
-using Contracts.TagService;
+using Contracts.DTOs.TagService;
 
 namespace Contracts.Publishers.AnswerService;
 

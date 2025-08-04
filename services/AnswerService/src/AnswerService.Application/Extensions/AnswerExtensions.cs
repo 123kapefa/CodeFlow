@@ -1,7 +1,7 @@
 
 using AnswerService.Domain.Entities;
 
-using Contracts.AnswerService.DTOs;
+using Contracts.DTOs.AnswerService;
 
 namespace AnswerService.Application.Extensions;
 
