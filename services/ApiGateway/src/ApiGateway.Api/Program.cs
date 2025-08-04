@@ -14,12 +14,23 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 builder.Services.AddControllers ();
 
-builder.Services.AddHttpClient();
-builder.Services.AddControllers ();
+// --- CORS ---
+builder.Services.AddCors(options => {
+    options.AddPolicy("ReactDev", policy =>
+        policy.WithOrigins(
+                "http://localhost:3000",
+                "http://127.0.0.1:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials()); // если шлёшь cookies/авторизацию
+});
 
 var app = builder.Build();
 
 app.UseRouting();
+
+// CorsMiddleware ������ ������ ����� UseRouting � UseAuth
+app.UseCors("ReactDev");
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -72,6 +83,7 @@ app.Use(async (ctx, next) =>
   await next();
 });
 
-app.MapReverseProxy ();
+// Применяем CORS к endpoint'у прокси (важно!)
+app.MapReverseProxy().RequireCors("ReactDev");
 
 app.Run();
