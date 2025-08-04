@@ -10,7 +10,7 @@ using CommentService.Application.Features.UpdateComment;
 using CommentService.Domain.Repositories;
 using CommentService.Infrastructure.Repositories;
 
-using Contracts.CommentService.DTOs;
+using Contracts.DTOs.CommentService;
 
 namespace CommentService.Api.Extensions;
 

@@ -5,7 +5,7 @@ using Ardalis.Result;
 
 using Abstractions.Commands;
 
-using Contracts.AnswerService.Responses;
+using Contracts.Responses.AnswerService;
 
 namespace AnswerService.Application.Features.GetAnswersByQuestionId;
 

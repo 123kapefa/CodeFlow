@@ -1,12 +1,9 @@
 ﻿using Ardalis.Result;
 using QuestionService.Domain.Entities;
-using QuestionService.Domain.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+
+using Contracts.Common.Filters;
 
 namespace QuestionService.Infrastructure.Extensions;
 

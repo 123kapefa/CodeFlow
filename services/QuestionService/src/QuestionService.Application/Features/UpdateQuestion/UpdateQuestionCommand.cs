@@ -1,6 +1,6 @@
 ﻿using Abstractions.Commands;
 
-using Contracts.QuestionService.DTOs;
+using Contracts.DTOs.QuestionService;
 
 namespace QuestionService.Application.Features.UpdateQuestion;
 
