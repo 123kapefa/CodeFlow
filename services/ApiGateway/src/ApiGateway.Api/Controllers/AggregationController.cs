@@ -123,16 +123,16 @@ public class AggregationController : ControllerBase {
     var tagsListTask = _tags.GetByIdsAsync (tagIds, ct);
     var usersListTask = _users.GetUsersByIdsAsync (userIds, ct);
 
-
     await Task.WhenAll (tagsListTask, usersListTask);
+
 
     var tagsList = await tagsListTask;
     var usersList = await usersListTask;
 
     var result = new { questionsList, tagsList, usersList, };
-
     return Ok (result);
   }
+
 
   [HttpGet ("get-user-summary/{userId:guid}")]
   public async Task<IActionResult> AggregateUserSummary ([FromRoute] Guid userId, CancellationToken ct) {
@@ -159,6 +159,7 @@ public class AggregationController : ControllerBase {
     };
 
     return Ok (result);
+
         }
 
   [Authorize]
@@ -232,6 +233,7 @@ public class AggregationController : ControllerBase {
       tags = await tagsTaskRec,
       users = await usersTaskRec
     });
+
   }
 
 }
