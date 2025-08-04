@@ -43,9 +43,10 @@ import Life from "./pages/Footer/Network/Life"
 import Science from "./pages/Footer/Network/Science"
 
 
-function App() {
+function App() {  
   const [isAuthenticated, setIsAuthenticated] = useState(!!Cookies.get("jwt"));
 
+  // На случай, если кука была выставлена/удалена где-то снаружи:
   useEffect(() => {
     const id = setInterval(
       () => setIsAuthenticated(!!Cookies.get("jwt")),
@@ -54,8 +55,8 @@ function App() {
     return () => clearInterval(id);
   }, []);
 
-  return (
-    <div className="App">
+  return (   
+    <div className="App">      
       <ToastContainer position="top-center" />
 
       <div className="container-xxl">
@@ -93,7 +94,7 @@ function App() {
               <Route path="/culture" element={<Culture />} />
               <Route path="/life" element={<Life />} />
               <Route path="/science" element={<Science />} />
-              
+
             </Routes>
           </main>
         </div>
