@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer } from "react-toastify";
-
+ 
 import Header from "./components/Header/Header";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Footer from "./components/Footer/Footer";
@@ -19,7 +19,7 @@ import Users from "./pages/Users/Users";
 import UserProfile from "./pages/Users/UserProfile";
 import CreateQuestion from "./pages/Questions/CreateQuestion";
 
-function App() {
+function App() {  
   const [isAuthenticated, setIsAuthenticated] = useState(!!Cookies.get("jwt"));
 
   // На случай, если кука была выставлена/удалена где-то снаружи:
@@ -31,8 +31,8 @@ function App() {
     return () => clearInterval(id);
   }, []);
 
-  return (
-    <div className="App">
+  return (   
+    <div className="App">      
       <ToastContainer position="top-center" />
       <div className="container-xxl">
         <Header isAuthenticated={isAuthenticated} />
