@@ -23,7 +23,7 @@ export async function RefreshToken() {
     Cookies.set('jwt', data.accessToken, {
       expires: accessDays,
       path: '/',
-      sameSite: 'Lax',     
+      sameSite: 'Lax',
       // secure: true   // ВКЛЮЧАЙ только в проде по HTTPS
     });
 

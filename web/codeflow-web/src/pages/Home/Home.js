@@ -65,7 +65,7 @@ export default function Home() {
   if (!user) {
     navigate("/login");
     return null;
-  }
+}
 
   /* --------- заглушки --------- */
 
