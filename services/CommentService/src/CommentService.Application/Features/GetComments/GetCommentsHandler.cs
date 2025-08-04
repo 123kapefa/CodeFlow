@@ -5,7 +5,7 @@ using Ardalis.Result;
 using CommentService.Domain.Entities;
 using CommentService.Domain.Repositories;
 
-using Contracts.CommentService.DTOs;
+using Contracts.DTOs.CommentService;
 
 namespace CommentService.Application.Features.GetComments;
 

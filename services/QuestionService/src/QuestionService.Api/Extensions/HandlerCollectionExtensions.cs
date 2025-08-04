@@ -2,7 +2,7 @@ using Abstractions.Commands;
 
 using Ardalis.Result;
 
-using Contracts.QuestionService.DTOs;
+using Contracts.DTOs.QuestionService;
 
 using FluentValidation;
 
@@ -14,6 +14,7 @@ using QuestionService.Application.Features.GetQuestions;
 using QuestionService.Application.Features.GetQuestionShort;
 using QuestionService.Application.Features.GetQuestionTags;
 using QuestionService.Application.Features.GetUserQuestions;
+using QuestionService.Application.Features.ReduceQuestionAnswers;
 using QuestionService.Application.Features.UpdateQuestion;
 using QuestionService.Application.Features.UpdateQuestionAccept;
 using QuestionService.Application.Features.UpdateQuestionAnswers;
@@ -26,28 +27,29 @@ namespace QuestionService.Api.Extensions;
 
 public static class HandlerCollectionExtensions {
 
-  public static WebApplicationBuilder AddHandlers (this WebApplicationBuilder builder) {
-    
-    builder.Services.AddScoped<IQuestionServiceRepository, QuestionServiceRepository>();
-    builder.Services.AddScoped<IValidator<CreateQuestionCommand>, CreateQuestionValidator>();
-    builder.Services.AddScoped<IValidator<UpdateQuestionCommand>, UpdateQuestionValidator>();
+    public static WebApplicationBuilder AddHandlers( this WebApplicationBuilder builder ) {
 
-    builder.Services.AddScoped<ICommandHandler<QuestionDTO, GetQuestionCommand>, GetQuestionHandler>();
-    builder.Services.AddScoped<ICommandHandler<QuestionShortDTO, GetQuestionShortCommand>, GetQuestionShortHandler>();
-    builder.Services.AddScoped<ICommandHandler<IEnumerable<QuestionHistoryDTO>, GetQuestionHistoryCommand>, GetQuestionHistoryHandler>();
-    builder.Services.AddScoped<ICommandHandler<IEnumerable<QuestionTagDTO>, GetQuestionTagsCommand>, GetQuestionTagsHandler>();
-    builder.Services.AddScoped<ICommandHandler<CreateQuestionCommand>, CreateQuestionHandler>();
-    builder.Services.AddScoped<ICommandHandler<UpdateQuestionCommand>, UpdateQuestionHandler>();
-    builder.Services.AddScoped<ICommandHandler<DeleteQuestionCommand>, DeleteQuestionHandler>();
-    builder.Services.AddScoped<ICommandHandler<UpdateQuestionAcceptCommand>, UpdateQuestionAcceptHandler>();
-    builder.Services.AddScoped<ICommandHandler<UpdateQuestionViewCommand>, UpdateQuestionViewHandler>();
-    builder.Services.AddScoped<ICommandHandler<UpdateQuestionVoteCommand>, UpdateQuestionVoteHandler>();
-    builder.Services.AddScoped<ICommandHandler<UpdateQuestionAnswersCommand>, UpdateQuestionAnswersHandler>();
-    builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetQuestionsCommand>, GetQuestionsHandler>();
-    builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetUserQuestionsCommand>, GetUserQuestionsHandler>();
+        builder.Services.AddScoped<IQuestionServiceRepository, QuestionServiceRepository>();
+        builder.Services.AddScoped<IValidator<CreateQuestionCommand>, CreateQuestionValidator>();
+        builder.Services.AddScoped<IValidator<UpdateQuestionCommand>, UpdateQuestionValidator>();
 
-    
-    return builder;
-  }
+        builder.Services.AddScoped<ICommandHandler<QuestionDTO, GetQuestionCommand>, GetQuestionHandler>();
+        builder.Services.AddScoped<ICommandHandler<QuestionShortDTO, GetQuestionShortCommand>, GetQuestionShortHandler>();
+        builder.Services.AddScoped<ICommandHandler<IEnumerable<QuestionHistoryDTO>, GetQuestionHistoryCommand>, GetQuestionHistoryHandler>();
+        builder.Services.AddScoped<ICommandHandler<IEnumerable<QuestionTagDTO>, GetQuestionTagsCommand>, GetQuestionTagsHandler>();
+        builder.Services.AddScoped<ICommandHandler<CreateQuestionCommand>, CreateQuestionHandler>();
+        builder.Services.AddScoped<ICommandHandler<UpdateQuestionCommand>, UpdateQuestionHandler>();
+        builder.Services.AddScoped<ICommandHandler<DeleteQuestionCommand>, DeleteQuestionHandler>();
+        builder.Services.AddScoped<ICommandHandler<UpdateQuestionAcceptCommand>, UpdateQuestionAcceptHandler>();
+        builder.Services.AddScoped<ICommandHandler<UpdateQuestionViewCommand>, UpdateQuestionViewHandler>();
+        builder.Services.AddScoped<ICommandHandler<UpdateQuestionVoteCommand>, UpdateQuestionVoteHandler>();
+        builder.Services.AddScoped<ICommandHandler<UpdateQuestionAnswersCommand>, UpdateQuestionAnswersHandler>();
+        builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetQuestionsCommand>, GetQuestionsHandler>();
+        builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetUserQuestionsCommand>, GetUserQuestionsHandler>();
+        builder.Services.AddScoped<ICommandHandler<ReduceQuestionAnswersCommand>, ReduceQuestionAnswersHandler>();
+
+
+        return builder;
+    }
 
 }

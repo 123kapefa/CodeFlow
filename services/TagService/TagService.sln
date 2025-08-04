@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "..\..\shared\s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions", "..\..\shared\src\Abstractions\Abstractions.csproj", "{3012F794-67B5-470A-B84B-E9B32C3F0E68}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging", "..\..\shared\src\Messaging\Messaging.csproj", "{E2F097EF-E1F2-4819-AA96-06115538BB78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{3012F794-67B5-470A-B84B-E9B32C3F0E68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3012F794-67B5-470A-B84B-E9B32C3F0E68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3012F794-67B5-470A-B84B-E9B32C3F0E68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2F097EF-E1F2-4819-AA96-06115538BB78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2F097EF-E1F2-4819-AA96-06115538BB78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2F097EF-E1F2-4819-AA96-06115538BB78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2F097EF-E1F2-4819-AA96-06115538BB78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,5 +64,6 @@ Global
 		{F7468CDA-2CDF-41CF-A347-FBF821E51755} = {4FF3D46D-FC11-4A4B-B7EF-45CD2AED4D1E}
 		{EC512575-4BD7-4399-9F2C-8840F6EC46F0} = {4FF3D46D-FC11-4A4B-B7EF-45CD2AED4D1E}
 		{3012F794-67B5-470A-B84B-E9B32C3F0E68} = {4FF3D46D-FC11-4A4B-B7EF-45CD2AED4D1E}
+		{E2F097EF-E1F2-4819-AA96-06115538BB78} = {4FF3D46D-FC11-4A4B-B7EF-45CD2AED4D1E}
 	EndGlobalSection
 EndGlobal

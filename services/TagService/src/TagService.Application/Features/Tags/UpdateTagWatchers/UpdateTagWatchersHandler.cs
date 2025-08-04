@@ -6,6 +6,7 @@ using TagService.Domain.Repositories;
 
 namespace TagService.Application.Features.Tags.UpdateTagWatchers;
 
+// TODO НЕ НУЖЕН !!! !!! УДАЛИТЬ
 public class UpdateTagWatchersHandler : ICommandHandler<UpdateTagWatchersCommand> {
 
     private readonly ITagRepository _tagRepository;

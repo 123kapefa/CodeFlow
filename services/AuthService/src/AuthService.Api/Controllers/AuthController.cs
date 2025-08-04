@@ -9,12 +9,12 @@ using AuthService.Application.Features.LoginUser;
 using AuthService.Application.Features.LogoutUser;
 using AuthService.Application.Features.PasswordChange;
 using AuthService.Application.Features.PasswordChangeConfirm;
+using AuthService.Application.Features.RefreshToken;
 using AuthService.Application.Features.RegisterUser;
 using AuthService.Application.Features.RemoveUser;
-using AuthService.Application.Features.RequestEmailChange;
 
-using Contracts.AuthService.Requests;
-using Contracts.AuthService.Responses;
+using Contracts.Requests.AuthService;
+using Contracts.Responses.AuthService;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,6 +46,13 @@ public class AuthController : ControllerBase {
     [FromBody] string token
     , [FromServices] ICommandHandler<LogoutUserCommand> handler) =>
     await handler.Handle (new LogoutUserCommand (token), new CancellationToken (false));
+  
+  [HttpPost("refresh-token")]
+  public async Task<Result<RefreshTokenResponse>> RefreshToken(
+    [FromBody] RefreshTokenRequest request,
+    [FromServices] ICommandHandler<RefreshTokenResponse, RefreshTokenCommand> handler) =>
+    await handler.Handle(new RefreshTokenCommand(request.RefreshToken), new CancellationToken(false));
+
   
   [HttpPut("{userId:guid}")]
   public async Task<Result<EditUserDataResponse>> EditUserData (
