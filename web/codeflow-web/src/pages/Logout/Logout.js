@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { RefreshToken } from "../authClient";
+import { RefreshToken } from "../../features/RefreshToken/RefreshToken";
 
 function Logout() {
   const navigate = useNavigate();
