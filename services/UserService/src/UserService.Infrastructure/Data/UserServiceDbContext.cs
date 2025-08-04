@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MassTransit;
+using MassTransit.EntityFrameworkCoreIntegration;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using UserService.Domain.Entities;
@@ -11,6 +13,10 @@ public class UserServiceDbContext : DbContext {
     
     public DbSet<UserInfo> UsersInfos { get; set; } // TODO ПЕРЕИМЕНОВАТЬ В UsersInfo
     public DbSet<UserStatistic> UsersStatistic { get; set; }
+
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+    public DbSet<OutboxState> OutboxStates => Set<OutboxState>();
+    public DbSet<InboxState> InboxStates => Set<InboxState>();
 
     public UserServiceDbContext (string connectionString) {
       _connectionString = connectionString;
@@ -41,6 +47,10 @@ public class UserServiceDbContext : DbContext {
         modelBuilder.Entity<UserStatistic>()
                     .HasIndex(s => s.UserId)
                     .IsUnique();
+
+        modelBuilder.AddInboxStateEntity();
+        modelBuilder.AddOutboxMessageEntity();
+        modelBuilder.AddOutboxStateEntity();
     }
     
     private ILoggerFactory CreateLoggerFactory () =>

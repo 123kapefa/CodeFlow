@@ -6,6 +6,7 @@ using TagService.Domain.Repositories;
 
 namespace TagService.Application.Features.ParticipationTags.UpdateTags;
 
+// TODO НЕ НУЖЕН !!! !!! УДАЛИТЬ
 public class UpdateTagsHandler : ICommandHandler<UpdateTagsCommand> {
 
     private readonly IUserTagParticipationRepository _repository;

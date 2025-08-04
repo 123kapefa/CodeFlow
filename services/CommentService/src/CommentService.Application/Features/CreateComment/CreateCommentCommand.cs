@@ -1,6 +1,6 @@
 ﻿using Abstractions.Commands;
 
-using Contracts.CommentService.DTOs;
+using Contracts.DTOs.CommentService;
 
 namespace CommentService.Application.Features.CreateComment;
 

@@ -2,6 +2,8 @@
 using QuestionService.Domain.Entities;
 
 using Microsoft.Extensions.Logging;
+using MassTransit.EntityFrameworkCoreIntegration;
+using MassTransit;
 
 namespace QuestionService.Infrastructure.Data;
 
@@ -16,6 +18,10 @@ public class QuestionServiceDbContext : DbContext {
     public DbSet<Question> Questions { get; set; }
     public DbSet<QuestionChangingHistory> QuestionChangingHistories { get; set; }
     public DbSet<QuestionTag> QuestionTags { get; set; }
+
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+    public DbSet<OutboxState> OutboxStates => Set<OutboxState>();
+    public DbSet<InboxState> InboxStates => Set<InboxState>();
 
     protected override void OnConfiguring (DbContextOptionsBuilder options) {
         options.UseNpgsql (_connectionString);
@@ -35,6 +41,10 @@ public class QuestionServiceDbContext : DbContext {
             .WithOne(qt => qt.Question)
             .HasForeignKey(qt => qt.QuestionId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.AddInboxStateEntity();
+        modelBuilder.AddOutboxMessageEntity();
+        modelBuilder.AddOutboxStateEntity();
 
     }
     

@@ -17,7 +17,7 @@ using AuthService.Infrastructure.Repositories;
 using AuthService.Infrastructure.Security;
 using AuthService.Infrastructure.Settings;
 
-using Contracts.AuthService.Responses;
+using Contracts.Responses.AuthService;
 
 using FluentValidation;
 

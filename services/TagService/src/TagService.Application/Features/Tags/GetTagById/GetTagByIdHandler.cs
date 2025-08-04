@@ -1,7 +1,8 @@
 ﻿using Abstractions.Commands;
 
 using Ardalis.Result;
-using Contracts.TagService;
+
+using Contracts.DTOs.TagService;
 
 using TagService.Domain.Entities;
 using TagService.Domain.Repositories;
@@ -42,7 +43,7 @@ public class GetTagByIdHandler : ICommandHandler<TagDTO, GetTagByIdCommand> {
             result.Value.Id,
             result.Value.Name,
             result.Value.Description,
-            DateTime.Now,
+            result.Value.CreatedAt,
             result.Value.CountQuestion,
             result.Value.CountWotchers,
             result.Value.DailyRequestCount,

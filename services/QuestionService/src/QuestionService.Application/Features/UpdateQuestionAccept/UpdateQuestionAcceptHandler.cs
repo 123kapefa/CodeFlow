@@ -4,14 +4,20 @@ using QuestionService.Domain.Repositories;
 
 using Abstractions.Commands;
 
+using Contracts.Publishers.AnswerService;
+
+using Messaging.Broker;
+
 namespace QuestionService.Application.Features.UpdateQuestionAccept;
 
 public class UpdateQuestionAcceptHandler : ICommandHandler<UpdateQuestionAcceptCommand> {
 
+    private readonly IMessageBroker _messageBroker;
     private readonly IQuestionServiceRepository _questionServiceRepository;
 
-    public UpdateQuestionAcceptHandler( IQuestionServiceRepository questionServiceRepository ) {
+    public UpdateQuestionAcceptHandler( IQuestionServiceRepository questionServiceRepository, IMessageBroker messageBroker) {
         _questionServiceRepository = questionServiceRepository;
+        _messageBroker = messageBroker;
     }
 
     public async Task<Result> Handle( UpdateQuestionAcceptCommand command, CancellationToken cancellationToken ) {
@@ -33,7 +39,9 @@ public class UpdateQuestionAcceptHandler : ICommandHandler<UpdateQuestionAcceptC
 
         Result updateResult = 
             await _questionServiceRepository.UpdateQuestionAsync(questionResult.Value, cancellationToken);
-
+        await _messageBroker.PublishAsync (new AnswerAccepted(questionResult.Value.Id, command.AcceptedAnswerId, command.AnswerUserId, 15), cancellationToken);
+        await _questionServiceRepository.SaveChangesAsync(cancellationToken);
+        
         if(!updateResult.IsSuccess)
             return Result.Error(new ErrorList(updateResult.Errors));
 

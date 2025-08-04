@@ -2,7 +2,7 @@
 
 using Abstractions.Commands;
 
-using Contracts.TagService;
+using Contracts.DTOs.TagService;
 
 using TagService.Domain.Repositories;
 

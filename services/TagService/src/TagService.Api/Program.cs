@@ -1,3 +1,7 @@
+using MassTransit;
+
+using Messaging.Extensions;
+
 using Microsoft.EntityFrameworkCore;
 
 using TagService.Api.Extensions;
@@ -10,6 +14,8 @@ builder.AddCustomSwagger ();
 builder.AddDatabase ();
 builder.AddCustomSerilog ();
 builder.AddHandlers ();
+builder.AddTagMessaging ();
+builder.Services.AddMessaging ();
 
 builder.Services.AddControllers();
 

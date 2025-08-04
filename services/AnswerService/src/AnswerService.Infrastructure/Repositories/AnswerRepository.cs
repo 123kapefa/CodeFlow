@@ -75,12 +75,18 @@ public class AnswerRepository : IAnswerRepository {
     }
   }
 
-  public async Task<Result> AddAsync (Answer answer, CancellationToken ct) {
+  public async Task<Result> CreateAsync (Answer answer, AnswerChangingHistory answerChangingHistory, CancellationToken ct) {
     try {
       _logger.LogInformation ("Добавление ответа");
+      
+      _context.Attach(answerChangingHistory);
+      _context.Entry(answerChangingHistory).State = EntityState.Added;
+
+      answer.AnswerChangingHistoriesChanges.Add(answerChangingHistory);
       answer.CreatedAt = DateTime.UtcNow;
+      
       await _context.Answers.AddAsync (answer, ct);
-      await _context.SaveChangesAsync (ct);
+      //await _context.SaveChangesAsync (ct);
       
       _logger.LogInformation ("Ответ успешно добавлен.");
       return Result.Success ();
@@ -129,7 +135,19 @@ public class AnswerRepository : IAnswerRepository {
     try {
       _logger.LogInformation ("Удаление ответа.");
       _context.Answers.Remove(answer);
-      await _context.SaveChangesAsync(ct);
+      
+      _logger.LogInformation ("Ответ успешно обновлен.");
+      return Result.Success();
+    } catch (Exception) {
+      _logger.LogError ("База данных не отвечает");
+      return Result.Error ("База данных не отвечает.");
+    }
+  }
+  
+  public async Task<Result> DeleteAsync (IEnumerable<Answer> answers, CancellationToken ct) {
+    try {
+      _logger.LogInformation ("Удаление ответа.");
+      _context.Answers.RemoveRange(answers);
       
       _logger.LogInformation ("Ответ успешно обновлен.");
       return Result.Success();

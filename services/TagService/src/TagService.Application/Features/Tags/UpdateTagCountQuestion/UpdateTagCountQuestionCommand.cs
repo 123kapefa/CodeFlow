@@ -1,6 +1,8 @@
 ﻿using Abstractions.Commands;
 
+using Contracts.DTOs.TagService;
+
 namespace TagService.Application.Features.Tags.UpdateTagCountQuestion;
 
-//TODO УДАЛИТЬ?? ИСПОЛЬЗОВАТЬ UpdateTagRequestCommand???
-public record UpdateTagCountQuestionCommand(string Name, int Count): ICommand;
+
+public record UpdateTagCountQuestionCommand(IEnumerable<QuestionTagDTO> TagDTOs, Guid UserId, Guid QuestionId): ICommand;

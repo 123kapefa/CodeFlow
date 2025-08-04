@@ -1,6 +1,6 @@
 using Abstractions.Commands;
 
-using Contracts.AuthService.Requests;
+using Contracts.Requests.AuthService;
 
 namespace AuthService.Application.Features.EmailChange;
 

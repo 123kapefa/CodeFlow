@@ -4,14 +4,18 @@ using QuestionService.Domain.Repositories;
 
 using Abstractions.Commands;
 
+using Microsoft.Extensions.Logging;
+
 namespace QuestionService.Application.Features.UpdateQuestionAnswers;
 
 public class UpdateQuestionAnswersHandler : ICommandHandler<UpdateQuestionAnswersCommand> {
 
     private readonly IQuestionServiceRepository _questionServiceRepository;
+    private readonly ILogger<UpdateQuestionAnswersHandler> _logger;
 
-    public UpdateQuestionAnswersHandler( IQuestionServiceRepository questionServiceRepository ) {
+    public UpdateQuestionAnswersHandler( IQuestionServiceRepository questionServiceRepository, ILogger<UpdateQuestionAnswersHandler> logger) {
         _questionServiceRepository = questionServiceRepository;
+        _logger = logger;
     }
 
     public async Task<Result> Handle( UpdateQuestionAnswersCommand command, CancellationToken cancellationToken ) {
@@ -23,6 +27,8 @@ public class UpdateQuestionAnswersHandler : ICommandHandler<UpdateQuestionAnswer
             return Result.Error(new ErrorList(questionResult.Errors));
 
         questionResult.Value.AnswersCount += 1;
+        await _questionServiceRepository.SaveChangesAsync (cancellationToken);
+        _logger.LogInformation("Answers count updated");
 
         Result updateResult = 
             await _questionServiceRepository.UpdateQuestionAsync(questionResult.Value, cancellationToken);
