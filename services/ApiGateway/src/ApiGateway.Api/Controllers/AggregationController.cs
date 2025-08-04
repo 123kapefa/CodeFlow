@@ -78,7 +78,7 @@ public class AggregationController : ControllerBase {
         var comments = kvp.Value;
         userIds.AddRange (comments.Select (c => c.AuthorId));
       }
-    }
+      }
 
     userIds = userIds.Distinct ().ToList ();
 
@@ -93,7 +93,7 @@ public class AggregationController : ControllerBase {
       users
     };
     return Ok (result);
-  }
+          }
 
   [HttpPost ("create-question")]
   public async Task<IActionResult> CreateQuestion ([FromBody] CreateQuestionRequest request, CancellationToken ct) {
@@ -157,7 +157,7 @@ public class AggregationController : ControllerBase {
     };
 
     return Ok (result);
-  }
+        }
 
   [Authorize]
   [HttpGet ("recommended/{userId:guid}")]
