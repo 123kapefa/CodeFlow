@@ -1,6 +1,8 @@
-﻿using QuestionService.Domain.Filters;
+﻿
 
 using Abstractions.Commands;
+
+using Contracts.Common.Filters;
 
 namespace QuestionService.Application.Features.GetQuestions;
 

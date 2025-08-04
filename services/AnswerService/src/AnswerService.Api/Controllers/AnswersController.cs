@@ -11,8 +11,8 @@ using Abstractions.Commands;
 
 using AnswerService.Application.Features.UpdateAnswerAccept;
 
-using Contracts.AnswerService.Requests;
-using Contracts.AnswerService.Responses;
+using Contracts.Requests.AnswerService;
+using Contracts.Responses.AnswerService;
 
 using Microsoft.AspNetCore.Mvc;
 

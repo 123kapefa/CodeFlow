@@ -1,8 +1,11 @@
 using ApiGateway.Api.Extensions;
+using ApiGateway.Application.Services;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder (args);
+
+builder.Services.AddSingleton<HttpService> ();
 
 builder.AddConfig ();
 builder.AddAuth ();
@@ -18,6 +21,9 @@ builder.Services.AddCors(options => {
               .AllowCredentials()); // если шлёшь cookies/авторизацию
 });
 
+builder.Services.AddHttpClient();
+builder.Services.AddControllers ();
+
 var app = builder.Build();
 
 app.UseRouting();
@@ -30,5 +36,7 @@ app.UseAuthorization();
 
 // Применяем CORS к endpoint'у прокси (важно!)
 app.MapReverseProxy().RequireCors("ReactDev");
+app.MapControllers();
+
 
 app.Run();

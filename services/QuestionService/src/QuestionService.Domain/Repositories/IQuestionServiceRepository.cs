@@ -1,6 +1,8 @@
 ﻿using Ardalis.Result;
+
+using Contracts.Common.Filters;
+
 using QuestionService.Domain.Entities;
-using QuestionService.Domain.Filters;
 
 namespace QuestionService.Domain.Repositories;
 

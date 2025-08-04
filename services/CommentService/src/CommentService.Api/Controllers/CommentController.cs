@@ -12,7 +12,7 @@ using CommentService.Application.Features.GetComments;
 using CommentService.Application.Features.UpdateComment;
 using CommentService.Domain.Enums;
 
-using Contracts.CommentService.DTOs;
+using Contracts.DTOs.CommentService;
 
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
