@@ -38,8 +38,8 @@ function Signup() {
 
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
-      <Row>   
-        <Col>
+      <Row>
+        <Col>        
           <div className="text-center mb-4">
             <img src="/logo/logo-transparent.png" alt="logo" height="50" />
             <h3 className="mt-2">Join CodeFlow</h3>
@@ -58,7 +58,7 @@ function Signup() {
               <i className="bi bi-github"></i> Sign up with GitHub
             </Button>
 
-            <div className="text-center my-3">
+            <div className="text-center my-3">           
               <span className="px-2">OR</span>
               <hr />
             </div>

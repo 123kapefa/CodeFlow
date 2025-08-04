@@ -110,7 +110,7 @@ export default function UsersPage() {
           {pagesTotal}
         </Pagination.Item>
       );
-    }
+}
 
     // «next»
     items.push(
