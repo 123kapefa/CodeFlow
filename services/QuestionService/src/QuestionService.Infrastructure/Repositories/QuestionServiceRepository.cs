@@ -1,8 +1,10 @@
 ﻿using Ardalis.Result;
-using Microsoft.EntityFrameworkCore;
+
+using Contracts.Common.Filters;
+
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using QuestionService.Domain.Entities;
-using QuestionService.Domain.Filters;
 using QuestionService.Domain.Repositories;
 using QuestionService.Infrastructure.Data;
 using QuestionService.Infrastructure.Extensions;
@@ -67,6 +69,7 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
 
         try {
             var users = await _dbContext.Questions
+               .Include(q => q.QuestionTags)
                 .Sort(sortParams)
                 .ToPagedAsync(pageParams);
 

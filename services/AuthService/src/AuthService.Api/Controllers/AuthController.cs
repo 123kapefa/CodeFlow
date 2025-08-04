@@ -12,10 +12,9 @@ using AuthService.Application.Features.PasswordChangeConfirm;
 using AuthService.Application.Features.RefreshToken;
 using AuthService.Application.Features.RegisterUser;
 using AuthService.Application.Features.RemoveUser;
-using AuthService.Application.Features.RequestEmailChange;
 
-using Contracts.AuthService.Requests;
-using Contracts.AuthService.Responses;
+using Contracts.Requests.AuthService;
+using Contracts.Responses.AuthService;
 
 using Microsoft.AspNetCore.Mvc;
 

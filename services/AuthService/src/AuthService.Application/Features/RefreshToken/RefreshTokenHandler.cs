@@ -5,7 +5,7 @@ using Ardalis.Result;
 using AuthService.Application.Abstractions;
 using AuthService.Domain.Repositories;
 
-using Contracts.AuthService.Responses;
+using Contracts.Responses.AuthService;
 
 namespace AuthService.Application.Features.RefreshToken;
 

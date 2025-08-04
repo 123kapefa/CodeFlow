@@ -3,7 +3,7 @@ using QuestionService.Domain.Repositories;
 
 using Abstractions.Commands;
 
-using Contracts.QuestionService.DTOs;
+using Contracts.DTOs.QuestionService;
 
 namespace QuestionService.Application.Features.GetQuestions;
 
@@ -35,7 +35,8 @@ public class GetQuestionsHandler :
                 AnswersCount = i.AnswersCount,
                 Upvotes = i.Upvotes,
                 Downvotes = i.Downvotes,
-                IsClosed = i.IsClosed
+                IsClosed = i.IsClosed,
+                QuestionTags = i.QuestionTags.Select(qt => new QuestionTagDTO {TagId = qt.TagId, WatchedAt = qt.WatchedAt}).ToList()
             }).ToList();
 
         return Result<PagedResult<IEnumerable<QuestionShortDTO>>>

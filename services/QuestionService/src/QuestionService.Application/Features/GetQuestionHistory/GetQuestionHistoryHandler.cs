@@ -4,7 +4,7 @@ using QuestionService.Domain.Repositories;
 
 using Abstractions.Commands;
 
-using Contracts.QuestionService.DTOs;
+using Contracts.DTOs.QuestionService;
 
 namespace QuestionService.Application.Features.GetQuestionHistory;
 

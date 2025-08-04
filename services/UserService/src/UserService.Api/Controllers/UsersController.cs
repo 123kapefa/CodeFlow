@@ -1,16 +1,14 @@
 ﻿using Abstractions.Commands;
 using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
-using Contracts.UserService.DTOs;
+
+using Contracts.DTOs.UserService;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using UserService.Application.Features.CreateUserInfo;
 using UserService.Application.Features.DeleteUser;
 using UserService.Application.Features.GetUserFullInfo;
 using UserService.Application.Features.GetUsers;
 using UserService.Application.Features.UpdateUserInfo;
-using UserService.Application.Features.UpdateUserReputation;
-using UserService.Application.Features.UpdateUserVisit;
 using UserService.Domain.Filters;
 
 namespace UserService.Api.Controllers;

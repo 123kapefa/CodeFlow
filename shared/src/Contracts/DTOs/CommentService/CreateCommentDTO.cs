@@ -1,4 +1,4 @@
-﻿namespace Contracts.CommentService.DTOs;
+﻿namespace Contracts.DTOs.CommentService;
 
 public class CreateCommentDTO {    
     public Guid AuthorId { get; set; }

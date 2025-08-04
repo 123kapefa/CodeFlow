@@ -1,3 +1,3 @@
-namespace Contracts.AnswerService.Responses;
+namespace Contracts.Responses.AnswerService;
 
 public record CreateAnswerResponse ();

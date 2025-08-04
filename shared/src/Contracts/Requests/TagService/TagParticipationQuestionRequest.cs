@@ -1,4 +1,6 @@
-﻿namespace Contracts.TagService.Requests;
+﻿using Contracts.DTOs.TagService;
+
+namespace Contracts.Requests.TagService;
 
 public sealed class TagParticipationQuestionRequest {
     public Guid UserId { get; set; }

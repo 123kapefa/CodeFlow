@@ -23,8 +23,17 @@ public class HttpService {
     , object resultLock) {
     var client = _httpClientFactory.CreateClient ();
 
+    Console.WriteLine($"\n\n{path}");
+    
+    path = TransformPath(path);
+    
+    Console.WriteLine($"\n\n{path}");
+    
     // Определяем базовый URL для сервиса на основе пути
     string baseUrl = DetermineServiceUrl (path);
+    
+    Console.WriteLine($"\n\n{baseUrl}");
+    
     if (string.IsNullOrEmpty (baseUrl)) {
       lock (resultLock) {
         results[key] = new { error = "Не удалось определить сервис для запроса" };
@@ -35,8 +44,14 @@ public class HttpService {
 
     try {
       HttpResponseMessage response;
-      var requestUrl = $"{baseUrl}{path}";
+      string transformedPath = RemoveApiPrefix(path);
+      
+      Console.WriteLine($"\n\n{transformedPath}");
+      
+      var requestUrl = $"{baseUrl}{transformedPath}";
 
+      Console.WriteLine($"\n{requestUrl}\n");
+      
       // Формируем запрос на основе метода
       if (method.ToUpper () == "GET") {
         response = await client.GetAsync (requestUrl);
@@ -88,7 +103,7 @@ public class HttpService {
     else if (path.StartsWith ("/api/users/") || path.StartsWith ("/users/")) {
       return GetServiceUrlFromCluster ("user-cluster");
     }
-    else if (path.StartsWith ("/api/questions/") || path.StartsWith ("/questions/")) {
+    else if (path.StartsWith ("/api/questions") || path.StartsWith ("/questions")) {
       return GetServiceUrlFromCluster ("question-cluster");
     }
     else if (path.StartsWith ("/api/answers/") || path.StartsWith ("/answers/")) {

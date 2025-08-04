@@ -1,5 +1,5 @@
-using Contracts.AnswerService.DTOs;
+using Contracts.DTOs.AnswerService;
 
-namespace Contracts.AnswerService.Responses;
+namespace Contracts.Responses.AnswerService;
 
 public record GetAnswersResponse (IEnumerable<AnswerDto> Answers);

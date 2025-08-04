@@ -1,4 +1,4 @@
-﻿namespace Contracts.TagService.Requests;
+﻿namespace Contracts.Requests.TagService;
 
 public class DeleteAnswerTagRequest {
     public Guid UserId { get; set; }

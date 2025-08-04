@@ -1,5 +1,6 @@
 ﻿using Abstractions.Commands;
-using Contracts.TagService;
+
+using Contracts.DTOs.TagService;
 
 namespace TagService.Application.Features.ParticipationTags.UpdateParticipationAnswer;
 

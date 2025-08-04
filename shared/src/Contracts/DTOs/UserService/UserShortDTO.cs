@@ -1,4 +1,4 @@
-﻿namespace Contracts.UserService.DTOs;
+﻿namespace Contracts.DTOs.UserService;
 
 public class UserShortDTO {
     public string UserName { get; set; } = string.Empty;

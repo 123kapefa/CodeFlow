@@ -1,5 +1,4 @@
-using Contracts.QuestionService.DTOs;
-using Contracts.TagService;
+using Contracts.DTOs.TagService;
 
 namespace Contracts.Publishers.QuestionService;
 
