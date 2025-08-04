@@ -25,6 +25,9 @@ builder.Services.AddCors(options => {
               .AllowCredentials()); // если шлёшь cookies/авторизацию
 });
 
+builder.Services.AddHttpClient();
+builder.Services.AddControllers ();
+
 var app = builder.Build();
 
 app.UseRouting();
@@ -85,5 +88,7 @@ app.Use(async (ctx, next) =>
 
 // Применяем CORS к endpoint'у прокси (важно!)
 app.MapReverseProxy().RequireCors("ReactDev");
+app.MapControllers();
+
 
 app.Run();
