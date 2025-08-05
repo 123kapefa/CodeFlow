@@ -27,18 +27,21 @@ function Login() {
             }
 
             const data = await response.json();
-             console.log(data);
+           
             console.log(data.accessToken);
             console.log(data.refreshToken);
 
             const claims = jwtDecode(data.accessToken);
             console.log(claims);
+
+            Cookies.set("userId",claims.sub);
             
              // Сохраняем JWT в куки
             // Cookies.set('jwt', data.accessToken, { secure: true, sameSite: 'Strict' });
             Cookies.set('jwt', data.accessToken, { expires: 7, secure: true });
             Cookies.set('refresh_token', data.refreshToken, { secure: true, sameSite: 'Strict' });
             
+            console.log("USER ID ", Cookies.get("userId"))
 
             // Перенаправление на главную
             navigate('/');

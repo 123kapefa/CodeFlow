@@ -34,7 +34,7 @@ function App() {
 
         <div className="main">
           <Sidebar />
-          <main className="content mt-2">
+          <main className="content mt-2 mb-2">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/questions" element={<Questions />} />
