@@ -1,14 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Cookies from "js-cookie";
+import { useAuth } from '../../features/Auth/AuthProvider ';
 
 import "../../App.css";
 
-function Header({ isAuthenticated }) {
+function Header() {
+  const { user, logout, loading } = useAuth();   // ← теперь есть user.avatarUrl
+  console.log('user from context', user);
+
   return (
     <div className="container-xxl">
       <header className="topbar p-2">
-        <div className="logo ">
+        <div className="logo">
           <Link to="/">
             <img src="/logo/logo-transparent.png" alt="logo" />
           </Link>
@@ -18,35 +21,39 @@ function Header({ isAuthenticated }) {
           <input name="q" placeholder="Search…" />
         </form>
 
-        {/* Если пользователь авторизован  */}
-        {isAuthenticated ? (
+        {/* пока грузимся — ничего не показываем */}
+        {loading ? null : user ? (
+          /* --------- Авторизован --------- */
           <ul className="topbar__icons list-unstyled d-flex m-0">
-           
             <li>
-              <Link to="/user_page" className="me-2">  {/* TODO заменить на адрес стр. юзера */}
-                
+              <Link
+                to={`/users/${user.userId}`}   // профиль текущего юзера
+                className="me-2"
+              >
                 <img
-                  src="/avatar/avatar_default.png"
+                  src={
+                    user.avatarUrl?.trim()
+                      ? user.avatarUrl
+                      : '/avatar/avatar_default.png'
+                  }
                   alt="avatar"
                   width={32}
                   height={32}
-                  style={{ borderRadius: "50%", objectFit: "cover" }}
+                  style={{ borderRadius: '50%', objectFit: 'cover' }}
                 />
               </Link>
             </li>
             <li>
-              <Link to="/logout" className="btn btn-primary">Logout</Link>
+              <button className="btn btn-primary" onClick={logout}>
+                Logout
+              </button>
             </li>
           </ul>
         ) : (
-          // Если НЕ авторизован
+          /* --------- Не авторизован --------- */
           <div>
-            <Link to="/login" className="btn btn-outline-primary me-2">
-              Log in
-            </Link>
-            <Link to="/signup" className="btn btn-primary">
-              Sign up
-            </Link>
+            <Link to="/login"  className="btn btn-outline-primary me-2">Log in</Link>
+            <Link to="/signup" className="btn btn-primary">Sign up</Link>
           </div>
         )}
       </header>

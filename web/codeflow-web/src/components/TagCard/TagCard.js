@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
 import { Card, Overlay, Popover, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
 
 function TagCard({ tag, handleWatchTag, showPopoverId, setShowPopoverId }) {
   const targetRef = useRef(null);

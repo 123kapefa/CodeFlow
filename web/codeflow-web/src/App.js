@@ -15,6 +15,7 @@ import Home from './pages/Home/Home';
 import Questions from './pages/Questions/Questions';
 import Tags from './pages/Tags/Tags';
 import Users from './pages/Users/Users';
+import UserProfile from './pages/Users/UserProfile'
 
 
 function App() {  
@@ -37,12 +38,16 @@ function App() {
           <main className="content mt-2 mb-2">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/questions" element={<Questions />} />
-              <Route path="/tags" element={<Tags />} />
-              <Route path="/users" element={<Users />} />
-              <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
-              <Route path="/logout" element={<Logout />} /> 
+              <Route path="/login" element={<Login />} />
+               <Route path="/logout" element={<Logout />} /> 
+              <Route path="/questions" element={<Questions />} />
+              <Route path="/tags/:tagId/questions" element={<Questions />} />
+              <Route path="/tags" element={<Tags />} />
+              <Route path="/users" element={<Users />} />    
+              <Route path="/users/:userId"  element={<UserProfile />} />
+              <Route path="/users/user_profile"  element={<UserProfile />} />
+              
 
             </Routes>
           </main>
