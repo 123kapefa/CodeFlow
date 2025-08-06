@@ -24,7 +24,7 @@ public class UpdateTagCountQuestionHandler : ICommandHandler<UpdateTagCountQuest
 
     public async Task<Result> Handle( UpdateTagCountQuestionCommand command, CancellationToken token ) {
 
-        List<int?> tagIds = command.TagDTOs.Where(t => t.TagId.HasValue).Select(t => t.TagId).ToList();
+        List<int> tagIds = command.TagDTOs.Where(t => t.TagId.HasValue).Select(t => t.TagId.Value).ToList();
         List<QuestionTagDTO> newTags = command.TagDTOs.AsEnumerable().Where(t => !t.TagId.HasValue).ToList();
         DateTime now = DateTime.UtcNow;
 

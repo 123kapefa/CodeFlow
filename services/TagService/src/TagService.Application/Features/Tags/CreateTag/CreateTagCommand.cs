@@ -4,4 +4,4 @@ using Contracts.DTOs.TagService;
 
 namespace TagService.Application.Features.Tags.CreateTag;
 
-public record CreateTagCommand( TagCreateDTO TagCreateDto ) : ICommand;
+public record CreateTagCommand( CreateTagDto TagCreateDto ) : ICommand;

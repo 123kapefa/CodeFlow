@@ -1,5 +1,5 @@
-using Contracts.DTOs.TagService;
+using Contracts.DTOs.QuestionService;
 
 namespace Contracts.Publishers.QuestionService;
 
-public record QuestionCreated (List<TagCreateDTO> Tags);
+public record QuestionCreated (Guid QuestionId, Guid UserId, List<int> Tags);
