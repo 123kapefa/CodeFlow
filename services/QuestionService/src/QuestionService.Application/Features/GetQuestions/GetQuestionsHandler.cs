@@ -5,6 +5,8 @@ using Abstractions.Commands;
 
 using Contracts.DTOs.QuestionService;
 
+using QuestionService.Application.Extensions;
+
 namespace QuestionService.Application.Features.GetQuestions;
 
 public class GetQuestionsHandler : 
@@ -19,25 +21,12 @@ public class GetQuestionsHandler :
     public async Task<Result<PagedResult<IEnumerable<QuestionShortDTO>>>> Handle( GetQuestionsCommand command, CancellationToken cancellationToken ) {
 
         var result = 
-            await _questionServiceRepository.GetQuestionsAsync(command.PageParams, command.SortParams, cancellationToken);
+            await _questionServiceRepository.GetQuestionsAsync(command.PageParams, command.SortParams, command.TagFilter, cancellationToken);
 
         if(!result.IsSuccess)
-            return Result.Error(new ErrorList(result.Errors));  
+            return Result.Error(new ErrorList(result.Errors));
 
-        IEnumerable<QuestionShortDTO> questionShorts = result.Value.items
-            .Select(i => new QuestionShortDTO {
-                Id = i.Id,
-                UserId = i.UserId,
-                Title = i.Title,
-                Content = i.Content,
-                CreatedAt = i.CreatedAt,
-                ViewsCount = i.ViewsCount,
-                AnswersCount = i.AnswersCount,
-                Upvotes = i.Upvotes,
-                Downvotes = i.Downvotes,
-                IsClosed = i.IsClosed,
-                QuestionTags = i.QuestionTags.Select(qt => new QuestionTagDTO {TagId = qt.TagId, WatchedAt = qt.WatchedAt}).ToList()
-            }).ToList();
+        IEnumerable<QuestionShortDTO> questionShorts = result.Value.items.ToQuestionsShortDto ();
 
         return Result<PagedResult<IEnumerable<QuestionShortDTO>>>
             .Success(new PagedResult<IEnumerable<QuestionShortDTO>>(result.Value.pageInfo, questionShorts));
