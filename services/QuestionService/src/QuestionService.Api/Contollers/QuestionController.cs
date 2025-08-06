@@ -165,8 +165,9 @@ public class QuestionController : ControllerBase {
     public async Task<Result<PagedResult<IEnumerable<QuestionShortDTO>>>> GetQuestionsAsync(
       [FromQuery] PageParams pageParams,
       [FromQuery] SortParams sortParams,
+      [FromQuery] TagFilter tagFilter,
       [FromServices] ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetQuestionsCommand> handler ) =>
-      await handler.Handle(new GetQuestionsCommand(pageParams, sortParams), new CancellationToken(false));
+      await handler.Handle(new GetQuestionsCommand(pageParams, sortParams, tagFilter), new CancellationToken(false));
 
     [HttpGet("user/{userId}")]
     [SwaggerOperation(

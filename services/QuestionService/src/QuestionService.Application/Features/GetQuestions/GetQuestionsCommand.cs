@@ -6,4 +6,4 @@ using Contracts.Common.Filters;
 
 namespace QuestionService.Application.Features.GetQuestions;
 
-public record GetQuestionsCommand(PageParams PageParams, SortParams SortParams) : ICommand;
+public record GetQuestionsCommand(PageParams PageParams, SortParams SortParams, TagFilter TagFilter) : ICommand;
