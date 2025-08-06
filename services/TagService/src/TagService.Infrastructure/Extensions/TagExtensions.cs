@@ -1,7 +1,13 @@
 ﻿using Ardalis.Result;
 using System.Linq.Expressions;
+
+using Contracts.Common.Filters;
+
 using TagService.Domain.Entities;
-using TagService.Domain.Filters;
+
+using PageParams = TagService.Domain.Filters.PageParams;
+using SortDirection = TagService.Domain.Filters.SortDirection;
+using SortParams = TagService.Domain.Filters.SortParams;
 
 namespace TagService.Infrastructure.Extensions;
 
@@ -40,6 +46,16 @@ public static class TagExtensions {
             nameof(Tag.CreatedAt) => x => x.CreatedAt,
             _ => x => x.Name
         };
+    }
+
+    public static Expression<Func<Tag, bool>> GetSearchFilter (SearchFilter searchFilter) {
+        if (String.IsNullOrEmpty (searchFilter.SearchValue))
+            return x => true;
+        
+        string searchValue = searchFilter.SearchValue.ToLower();
+        return tag => tag.Name.ToLower().Contains(searchValue) 
+         || (tag.Description != null && tag.Description.ToLower().Contains(searchValue));
+
     }
 
 }
