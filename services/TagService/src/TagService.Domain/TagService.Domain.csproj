@@ -15,4 +15,8 @@
     <ProjectReference Include="..\..\..\..\shared\src\Contracts\Contracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\shared\src\Contracts\Contracts.csproj" />
+  </ItemGroup>
+
 </Project>
