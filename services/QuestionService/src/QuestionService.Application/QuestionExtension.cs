@@ -15,8 +15,8 @@ public static class QuestionExtension {
             Content = questionDTO.Content,
             CreatedAt = DateTime.UtcNow,
 
-            QuestionTags = questionDTO.QuestionTagsDTO
-            .Select(qt => new QuestionTag { TagId = qt.TagId, WatchedAt = DateTime.UtcNow }).ToList(),
+            QuestionTags = questionDTO.NewTags
+            .Select(qt => new QuestionTag { TagId = (int)qt.Id!, WatchedAt = DateTime.UtcNow }).ToList(),
 
             QuestionChangingHistories = new List<QuestionChangingHistory> {
                 new QuestionChangingHistory {

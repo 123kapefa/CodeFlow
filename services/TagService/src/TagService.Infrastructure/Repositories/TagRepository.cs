@@ -55,14 +55,10 @@ public class TagRepository : ITagRepository {
     }
     
     
-    public async Task<Result<List<Tag>>> GetTagsByIdAsync(List<int?> ids, CancellationToken token) {
-
-        List<int> idInts = ids.Where(i => i.HasValue).Select(i => i!.Value).Distinct().ToList();
-        if(idInts.Count == 0)
-            return Result<List<Tag>>.Success(new List<Tag>());
+    public async Task<Result<List<Tag>>> GetTagsByIdAsync(List<int> ids, CancellationToken token) {
 
         List<Tag> tags = await _dbContext.Tags
-            .Where(t => idInts.Contains(t.Id))
+            .Where(t => ids.Contains(t.Id))
             .ToListAsync(token);
 
         return Result<List<Tag>>.Success(tags);

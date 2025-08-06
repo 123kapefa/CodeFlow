@@ -10,16 +10,16 @@ namespace QuestionService.Application.Features.CreateQuestion;
 public class CreateQuestionValidator : AbstractValidator<CreateQuestionCommand> {
 
     public CreateQuestionValidator() {
-        RuleFor(q => q.CreateQuestionDTO.UserId)
+        RuleFor(q => q.QuestionDto.UserId)
             .NotEmpty().WithMessage("Id автора вопроса не может быть пустым");
 
-        RuleFor(q => q.CreateQuestionDTO.Title)
+        RuleFor(q => q.QuestionDto.Title)
             .NotEmpty().WithMessage("Заголовок вопроса не может быть пустым");
 
-        RuleFor(q => q.CreateQuestionDTO.Content)
+        RuleFor(q => q.QuestionDto.Content)
             .NotEmpty().WithMessage("Тело запроса не может быть пустым");
 
-        RuleFor(q => q.CreateQuestionDTO.QuestionTagsDTO)
+        RuleFor(q => q.QuestionDto.NewTags)
             .Cascade(CascadeMode.Stop)
             .NotNull().WithMessage("Список тэгов обязателен")
             .NotEmpty().WithMessage("Нужно указать минимум один тег");
