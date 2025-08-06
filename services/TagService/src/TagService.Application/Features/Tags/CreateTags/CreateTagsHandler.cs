@@ -21,9 +21,9 @@ public class CreateTagsHandler : ICommandHandler<EnsureTagsResponse , CreateTags
   }
 
   public async Task<Result<EnsureTagsResponse >> Handle (CreateTagsCommand command, CancellationToken cancellationToken) {
-
-    var tagNames = command.Request.Names;
     
+    var tagNames = command.Request.Names;
+
     var existingResult = await _tagRepository.GetTagsByNamesAsync(tagNames, cancellationToken);
     if (!existingResult.IsSuccess)
       return Result<EnsureTagsResponse>.Error("Ошибка при получении существующих тегов по имени.");
@@ -36,7 +36,7 @@ public class CreateTagsHandler : ICommandHandler<EnsureTagsResponse , CreateTags
      .Where(n => !existingNamesSet.Contains(n))
      .Distinct(StringComparer.OrdinalIgnoreCase) // На всякий случай убираем дубли в новых именах
      .ToList();
-
+    
     // Создаём новые сущности Tag для каждого нового имени
     var createdTags = new List<Tag>();
     if (newNames.Any())
@@ -46,12 +46,12 @@ public class CreateTagsHandler : ICommandHandler<EnsureTagsResponse , CreateTags
         var tag = Tag.Create(name, description: null);
         createdTags.Add(tag);
       }
-            
+
       // Добавляем и сохраняем их в репо
       await _tagRepository.AddRangeAsync(createdTags, cancellationToken);
       await _tagRepository.SaveChangesAsync(cancellationToken);
     }
-
+    
     // Формируем результат: все имена + их Id (для уже существующих и новых)
     // Предположим, в CreateTagsResponse вы возвращаете просто список строк или же список DTO.
     // Если нужно DTO, придётся маппить. Сейчас для простоты вернём список строк (существующие + новые).
