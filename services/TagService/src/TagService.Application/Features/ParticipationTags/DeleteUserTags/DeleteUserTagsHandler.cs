@@ -31,15 +31,16 @@ public class DeleteUserTagsHandler : ICommandHandler<DeleteUserTagsCommand> {
         List<UserTagParticipation> participations = await _participationRepo.GetByUserAsync(command.UserId, token);
         List<WatchedTag> watched = await _watchedRepo.GetUserWatchedTagsListAsync(command.UserId, token);
 
-        // Готовим декременты по TagId для CountWotchers
+        // Готовим декременты по TagId для CountWatchers`
         Dictionary<int, int> decMap = watched
             .GroupBy(w => w.TagId)
             .ToDictionary(g => g.Key, g => g.Count());
 
         // Подтягиваем теги для декремента
         List<Tag> tagsToUpdate = [];
+        
         if(decMap.Count > 0) {
-            List<int?> ids = decMap.Keys.Select(id => (int?)id).ToList();
+            List<int> ids = decMap.Keys.Select(id => id).ToList();
             Result<List<Tag>> tagsRes = await _tagRepo.GetTagsByIdAsync(ids, token);
             if(!tagsRes.IsSuccess)
                 return Result.Error(new ErrorList(tagsRes.Errors));
