@@ -126,7 +126,6 @@ public class AggregationController : ControllerBase {
 
     var tagsList = await tagsListTask;
     var usersList = await usersListTask;
-
     var result = new { questionsList, tagsList, usersList, };
 
     return Ok (result);

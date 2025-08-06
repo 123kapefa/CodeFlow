@@ -70,7 +70,6 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
     CancellationToken token) {
     _logger.LogInformation ("GetQuestionsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}",
       pageParams, sortParams);
-
     try {
       var users = await _dbContext.Questions
        .Include (q => q.QuestionTags)
@@ -236,7 +235,7 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
 
       _logger.LogInformation ("GetQuestionChangingHistoryAsync: получено {Count} записей истории вопроса {QuestionId}",
         questionHistory.Count, questionId);
-      return Result<IEnumerable<QuestionChangingHistory>>.Success (questionHistory);
+     return Result<IEnumerable<QuestionChangingHistory>>.Success (questionHistory);
     }
     catch (Exception ex) {
       _logger.LogError (ex, "GetQuestionChangingHistoryAsync: ошибка базы данных");

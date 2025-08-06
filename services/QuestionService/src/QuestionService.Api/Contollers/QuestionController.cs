@@ -193,4 +193,38 @@ public class QuestionController : ControllerBase {
     [FromServices] ICommandHandler<ReduceQuestionAnswersCommand> handler) =>
     await handler.Handle (new ReduceQuestionAnswersCommand (questionId), new CancellationToken (false));
 
+    [HttpGet]
+    [SwaggerOperation(
+    Summary = "Получить по заданным параметрам список вопросов .",
+    Description = "Возвращает PagedResult<IEnumerable<QuestionShortDTO>>> .",
+    OperationId = "Questions_Get")]
+    public async Task<Result<PagedResult<IEnumerable<QuestionShortDTO>>>> GetQuestionsAsync(
+      [FromQuery] PageParams pageParams,
+      [FromQuery] SortParams sortParams,
+      [FromQuery] TagFilter tagFilter,
+      [FromServices] ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetQuestionsCommand> handler ) =>
+      await handler.Handle(new GetQuestionsCommand(pageParams, sortParams, tagFilter), new CancellationToken(false));
+
+    [HttpGet("user/{userId}")]
+    [SwaggerOperation(
+    Summary = "Получить по заданным параметрам список вопросов пользователя по userId.",
+    Description = "Возвращает PagedResult<IEnumerable<QuestionShortDTO>>> .",
+    OperationId = "Questions_Get")]
+    public async Task<Result<PagedResult<IEnumerable<QuestionShortDTO>>>> GetUserQuestionsAsync(
+      Guid userId,
+      [FromQuery] PageParams pageParams,
+      [FromQuery] SortParams sortParams,
+      [FromServices] ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetUserQuestionsCommand> handler ) =>
+      await handler.Handle(new GetUserQuestionsCommand(userId, pageParams, sortParams), new CancellationToken(false));
+
+    [HttpPut("{questionId}/answer/reduce")]
+    [SwaggerOperation(
+    Summary = "Изменить AnswersCount в Questions при удлении ответа.",
+    Description = "Возвращает PagedResult<IEnumerable<QuestionShortDTO>>> .",
+    OperationId = "Questions_Put")]
+    public async Task<Result> ReduceQuestionAnswersAsync(
+        Guid questionId, 
+        [FromServices]ICommandHandler<ReduceQuestionAnswersCommand> handler) =>
+        await handler.Handle(new ReduceQuestionAnswersCommand(questionId), new CancellationToken(false));
+
 }
