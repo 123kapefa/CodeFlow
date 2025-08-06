@@ -18,8 +18,7 @@ public class UpdateTagsHandler : ICommandHandler<UpdateTagsCommand> {
 
     public async Task<Result> Handle( UpdateTagsCommand command, CancellationToken token ) {
 
-        if(command.UpdateDto.UserId == Guid.Empty
-            || command.UpdateDto.TagId <= 0)
+        if(command.UpdateDto.UserId == Guid.Empty || command.UpdateDto.TagId <= 0)
             return Result.Error("Некорректный аргумент запроса");
 
         Result<UserTagParticipation?> resultTag = 
