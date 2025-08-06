@@ -273,6 +273,14 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
 
       return Result.Error ("Аргумент запроса не может быть null");
     }
+            return Result.Error("Аргумент запроса не может быть null");
+        }
+            return Result.Error("Аргумент запроса не может быть null");
+        }
+            return Result.Error("Аргумент запроса не может быть null");
+        }
+            return Result.Error("Аргумент запроса не может быть null");
+        }
 
     try {
       await _dbContext.Questions.AddAsync (question, token);
