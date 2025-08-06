@@ -21,6 +21,7 @@ using TagService.Application.Features.Tags.GetTagByName;
 using TagService.Application.Features.Tags.GetTags;
 using TagService.Application.Features.Tags.UpdateTag;
 using TagService.Application.Features.Tags.UpdateTagCountQuestion;
+using TagService.Application.Features.WatchedTags.CheckUserSubscription;
 using TagService.Application.Features.WatchedTags.CreateWatchedTag;
 using TagService.Application.Features.WatchedTags.DeleteWatchedTag;
 using TagService.Application.Features.WatchedTags.GetUserWatchedTags;
@@ -54,6 +55,17 @@ public class TagServiceController : ControllerBase{
         [FromServices] ICommandHandler<TagDTO, GetTagByNameCommand> handler ) =>
         await handler.Handle(new GetTagByNameCommand(tagName), new CancellationToken(false));
 
+    [HttpGet ("watched/{userId}/{tagId}/check")]
+    [SwaggerOperation (Summary = "Проверить подписку пользователя на тэг."
+        , Description = "Возвращает true, если пользователь подписан на указанный тэг, иначе false."
+        , OperationId = "Tag_CheckSubscription")]
+    public async Task<Result<CheckUserSubcriptionResponse>> CheckUserSubscriptionAsync (
+        Guid userId
+        , int tagId
+        , [FromServices] ICommandHandler<CheckUserSubcriptionResponse, CheckUserSubscriptionCommand> handler) {
+        return await handler.Handle (new CheckUserSubscriptionCommand (userId, tagId), new CancellationToken (false));
+    }
+    
     [HttpGet]
     [SwaggerOperation(
     Summary = "Получить список тэгов.",
