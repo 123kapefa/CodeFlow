@@ -5,6 +5,8 @@ using Ardalis.Result.AspNetCore;
 
 using Contracts.DTOs.TagService;
 using Contracts.Requests.TagService;
+using Contracts.Responses.TagService;
+
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TagService.Application.Features.ParticipationTags.DeleteAnswerTags;
@@ -12,6 +14,7 @@ using TagService.Application.Features.ParticipationTags.DeleteUserTags;
 using TagService.Application.Features.ParticipationTags.GetUserTags;
 using TagService.Application.Features.ParticipationTags.UpdateParticipationAnswer;
 using TagService.Application.Features.Tags.CreateTag;
+using TagService.Application.Features.Tags.CreateTags;
 using TagService.Application.Features.Tags.DeleteTag;
 using TagService.Application.Features.Tags.GetTagById;
 using TagService.Application.Features.Tags.GetTagByName;
@@ -69,10 +72,19 @@ public class TagServiceController : ControllerBase{
     Description = "Создает запись в таблице tags.",
     OperationId = "Tag_Post")]
     public async Task<Result> CreateTagAsync(
-        [FromBody] TagCreateDTO tagCreateDTO,
+        [FromBody] CreateTagDto tagCreateDTO,
         [FromServices] ICommandHandler<CreateTagCommand> handler ) =>
         await handler.Handle(new CreateTagCommand(tagCreateDTO), new CancellationToken(false));
 
+    [HttpPost ("create-tags")]
+    [SwaggerOperation(
+    Summary = "Создать тэги.",
+    Description = "Создает записи в таблице tags.",
+    OperationId = "Tag_Post")]
+    public async Task<Result<CreateTagsResponse>> CreateTagsAsync(
+        [FromBody] List<CreateTagDto> createTagDTO,
+        [FromServices] ICommandHandler<CreateTagsResponse, CreateTagsCommand> handler ) =>
+        await handler.Handle(new CreateTagsCommand(createTagDTO), new CancellationToken(false));
 
     [HttpPut("{tagId}")]
     [SwaggerOperation(

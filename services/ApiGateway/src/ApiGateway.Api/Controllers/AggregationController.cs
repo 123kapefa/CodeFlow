@@ -4,6 +4,8 @@ using ApiGateway.Application.Extensions;
 using ApiGateway.Application.Services;
 
 using Contracts.Common.Filters;
+using Contracts.DTOs.QuestionService;
+using Contracts.DTOs.TagService;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -128,10 +130,7 @@ public class AggregationController : ControllerBase {
                 Console.WriteLine ($"Запрос для тега: tagKey = {tagKey}, tagId = {tagId}");
 
                 var tagTask = _httpService.FetchDataAsync (
-                  tagKey, $"api/tags/{tagId}", 
-                  "GET", 
-                  null, 
-                  tagsResult, resultLock);
+                  tagKey, $"api/tags/{tagId}", "GET", null, tagsResult, resultLock);
 
                 tagTasks.Add (tagTask);
               }
@@ -158,6 +157,80 @@ public class AggregationController : ControllerBase {
     }
 
     return Ok (results);
+  }
+
+  [HttpPost ("create-question")]
+  public async Task<IActionResult> AggregateCreateQuestionAndTags ([FromBody] CreateQuestionRequest request) {
+    if (request == null || request.QuestionDto == null) {
+      return BadRequest ("Invalid request payload.");
+    }
+
+    Console.WriteLine (JsonSerializer.Serialize (request));
+
+    var results = new Dictionary<string, object> ();
+    var resultLock = new object ();
+    
+    var resultTag = new Dictionary<string, object> ();
+    
+    // Задачи для создания тегов и создания вопроса
+    var createTagsTask = _httpService.FetchDataAsync ("createdTags", "/api/tags/create-tags", "POST"
+      , request.QuestionDto.NewTags, resultTag, resultLock);
+
+    // Ожидаем выполнения создания тегов
+    await createTagsTask;
+    
+    Console.WriteLine (JsonSerializer.Serialize (resultTag));
+
+    if (resultTag.TryGetValue("createdTags", out var createdTagsObject) &&
+        createdTagsObject is JsonElement createdTagsElement &&
+        createdTagsElement.TryGetProperty("createdTags", out var innerTagsElement) &&
+        innerTagsElement.ValueKind == JsonValueKind.Array)
+    {
+      var createdTags = JsonSerializer.Deserialize<List<CreateTagDto>>(
+        innerTagsElement.ToString(),
+        new JsonSerializerOptions
+        {
+          PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+          PropertyNameCaseInsensitive = true
+        }
+      );
+
+
+
+        // Console.WriteLine (JsonSerializer.Serialize (createdTags));
+        //
+        // return Ok (JsonSerializer.Serialize (resultTag));
+        
+        if (createdTags != null) {
+          // Используйте созданные теги
+          request.QuestionDto.NewTags = createdTags;
+          
+          // Отправка запроса создания вопроса
+          var createQuestionTask = _httpService.FetchDataAsync (
+            "createdQuestion", 
+            "/api/questions", 
+            "POST",
+            request
+            , results, resultLock);
+
+          await createQuestionTask;
+        }
+        else {
+          return StatusCode (500, "TagService returned invalid tag data.");
+        }
+      }
+      else {
+        return StatusCode (500, "Unexpected TagService response format.");
+      }
+
+
+    // // Проверяем успешность создания вопроса
+    // if (results.TryGetValue ("createdQuestion", out var createdQuestionObject)) {
+    //   return Ok (new { Tags = results["createdTags"], Question = createdQuestionObject });
+    // }
+    
+    return Ok (results);
+    
   }
 
 }

@@ -1,4 +1,6 @@
-﻿using Abstractions.Commands;
+﻿using System.Text.Json;
+
+using Abstractions.Commands;
 
 using Microsoft.AspNetCore.Mvc;
 using Ardalis.Result;
@@ -6,6 +8,7 @@ using Ardalis.Result.AspNetCore;
 
 using Contracts.Common.Filters;
 using Contracts.DTOs.QuestionService;
+using Contracts.Requests.ApiGateway;
 using Contracts.Requests.QuestionService;
 
 using QuestionService.Application.Features.GetQuestion;
@@ -78,14 +81,17 @@ public class QuestionController : ControllerBase {
         await handler.Handle(new GetQuestionTagsCommand(questionId), new CancellationToken(false));
 
     [HttpPost]
-    [SwaggerOperation(
-    Summary = "Создать вопрос.",
-    Description = "Создает запись в таблицы: Questions, QuestionTags и QuestionChangingHistories.",
-    OperationId = "Question_Post")]
-    public async Task<Result> CreateQuestionAsync(
-        [FromBody] CreateQuestionDTO createQuestionDTO,
-        [FromServices] ICommandHandler<CreateQuestionCommand> handler ) =>
-        await handler.Handle(new CreateQuestionCommand(createQuestionDTO), new CancellationToken(false));
+    [SwaggerOperation (Summary = "Создать вопрос."
+        , Description = "Создает запись в таблицы: Questions, QuestionTags и QuestionChangingHistories."
+        , OperationId = "Question_Post")]
+    public async Task<Result> CreateQuestionAsync (
+        [FromBody] CreateQuestionRequest request
+        , [FromServices] ICommandHandler<CreateQuestionCommand> handler) {
+        Console.WriteLine("Received JSON:");
+        Console.WriteLine(JsonSerializer.Serialize(request));
+        return await handler.Handle(new CreateQuestionCommand(request.QuestionDto), new CancellationToken(false));
+    }
+        
 
     [HttpPut]
     [SwaggerOperation(

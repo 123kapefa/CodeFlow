@@ -2,7 +2,11 @@ using Abstractions.Commands;
 using Ardalis.Result;
 
 using Contracts.DTOs.TagService;
+using Contracts.Responses.TagService;
+
 using FluentValidation;
+
+using TagService.Application.Features.ParticipationTags.CreateTags;
 using TagService.Application.Features.ParticipationTags.DeleteAnswerTags;
 using TagService.Application.Features.ParticipationTags.DeleteUserTags;
 using TagService.Application.Features.ParticipationTags.GetUserTags;
@@ -37,6 +41,7 @@ public static class HandlerCollectionExtensions {
         builder.Services.AddScoped<ICommandHandler<TagDTO, GetTagByNameCommand>, GetTagByNameHandler>();
         builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<TagDTO>>, GetTagsCommand>, GetTagsHandler>();
         builder.Services.AddScoped<ICommandHandler<CreateTagCommand>, CreateTagHandler>();
+        builder.Services.AddScoped<ICommandHandler<CreateTagsResponse, TagService.Application.Features.Tags.CreateTags.CreateTagsCommand>, TagService.Application.Features.Tags.CreateTags.CreateTagsHandler>();
         builder.Services.AddScoped<ICommandHandler<UpdateTagCommand>, UpdateTagHandler>();
         //builder.Services.AddScoped<ICommandHandler<UpdateTagRequestCommand>, UpdateTagRequestHandler> ();
         builder.Services.AddScoped<ICommandHandler<UpdateTagCountQuestionCommand>, UpdateTagCountQuestionHandler>();
