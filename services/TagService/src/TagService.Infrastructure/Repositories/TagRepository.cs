@@ -1,12 +1,17 @@
 ﻿using Ardalis.Result;
+
+using Contracts.Common.Filters;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using TagService.Domain.Entities;
-using TagService.Domain.Filters;
 using TagService.Domain.Repositories;
 using TagService.Infrastructure.Data;
 using TagService.Infrastructure.Extensions;
+
+using PageParams = TagService.Domain.Filters.PageParams;
+using SortParams = TagService.Domain.Filters.SortParams;
 
 namespace TagService.Infrastructure.Repositories;
 
@@ -69,6 +74,7 @@ public class TagRepository : ITagRepository {
     public async Task<Result<(IEnumerable<Tag> items, PagedInfo pageInfo)>> GetTagsAsync(
         PageParams pageParams,
         SortParams sortParams,
+        SearchFilter searchFilter,
         CancellationToken token ) {
 
         _logger.LogInformation(
@@ -76,8 +82,10 @@ public class TagRepository : ITagRepository {
 
         try {
             var tags = await _dbContext.Tags
-                .Sort(sortParams)
-                .ToPagedAsync(pageParams);
+               .Where(TagExtensions.GetSearchFilter(searchFilter)) 
+               .Sort(sortParams)
+               .AsQueryable()
+               .ToPagedAsync(pageParams);
 
             _logger.LogInformation("GetTagsAsync: получено {Count} тэгов", tags.Value.items.Count());
             return Result<(IEnumerable<Tag> items, PagedInfo pageInfo)>.Success(tags);
