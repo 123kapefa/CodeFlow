@@ -3,6 +3,7 @@
 using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 
+using Contracts.Common.Filters;
 using Contracts.DTOs.TagService;
 using Contracts.Requests.TagService;
 using Contracts.Responses.TagService;
@@ -25,8 +26,9 @@ using TagService.Application.Features.WatchedTags.CheckUserSubscription;
 using TagService.Application.Features.WatchedTags.CreateWatchedTag;
 using TagService.Application.Features.WatchedTags.DeleteWatchedTag;
 using TagService.Application.Features.WatchedTags.GetUserWatchedTags;
-using TagService.Domain.Filters;
 
+using PageParams = TagService.Domain.Filters.PageParams;
+using SortParams = TagService.Domain.Filters.SortParams;
 
 namespace TagService.Api.Controllers;
 
@@ -68,14 +70,15 @@ public class TagServiceController : ControllerBase{
     
     [HttpGet]
     [SwaggerOperation(
-    Summary = "Получить список тэгов.",
-    Description = "Получает список тэгов для указанной страницы.",
+    Summary = "Получить список тегов.",
+    Description = "Получает список тегов для указанной страницы.",
     OperationId = "Tag_Get")]
     public async Task<Result<PagedResult<IEnumerable<TagDTO>>>> GetTagsAsync(
         [FromQuery] PageParams pageParams,
         [FromQuery] SortParams sortParams,
+        [FromQuery] SearchFilter searchFilter,
         [FromServices] ICommandHandler<PagedResult<IEnumerable<TagDTO>>, GetTagsCommand> handler ) =>
-        await handler.Handle(new GetTagsCommand(pageParams, sortParams), new CancellationToken(false));
+        await handler.Handle(new GetTagsCommand(pageParams, sortParams, searchFilter), new CancellationToken(false));
 
 
     [HttpPost]
