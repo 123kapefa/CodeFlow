@@ -1,8 +1,13 @@
 ﻿using Ardalis.Result;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Data;
+
+using Contracts.Common.Filters;
+
 using TagService.Domain.Entities;
-using TagService.Domain.Filters;
+
+using PageParams = TagService.Domain.Filters.PageParams;
+using SortParams = TagService.Domain.Filters.SortParams;
 
 namespace TagService.Domain.Repositories;
 
@@ -11,6 +16,7 @@ public interface ITagRepository {
     Task<Result<(IEnumerable<Tag> items, PagedInfo pageInfo)>> GetTagsAsync(
         PageParams pageParams,
         SortParams sortParams,
+        SearchFilter searchFilter,
         CancellationToken token );
 
     Task<Result<Tag>> GetTagByIdAsync( int tagId, CancellationToken token);

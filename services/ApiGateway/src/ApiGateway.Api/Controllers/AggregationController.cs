@@ -102,17 +102,20 @@ public class AggregationController : ControllerBase {
   [HttpPost ("get-questions")]
   public async Task<IActionResult> AggregateQuestionsWithTags (
     [FromQuery] PageParams pageParams
-    , [FromQuery] SortParams sortParams) {
+    , [FromQuery] SortParams sortParams
+    , [FromQuery] TagFilter tagFilter) {
     var results = new Dictionary<string, object> ();
     var resultLock = new object ();
 
+    Console.WriteLine (JsonSerializer.Serialize (pageParams));
+    Console.WriteLine (JsonSerializer.Serialize (sortParams));
+    Console.WriteLine (JsonSerializer.Serialize (tagFilter));
+    
     var questionTask = _httpService.FetchDataAsync ("questions"
-      , $"api/questions?{pageParams.ToQueryString ()}&{sortParams.ToQueryString ()}", "GET", null, results, resultLock);
+      , $"api/questions?{pageParams.ToQueryString ()}&{sortParams.ToQueryString ()}&{tagFilter.ToQueryString ()}", "GET", null, results, resultLock);
 
     await questionTask;
-
-    Console.WriteLine (JsonSerializer.Serialize (results));
-
+    
     if (results.ContainsKey ("questions") && results["questions"] is JsonElement questionRoot) {
       if (questionRoot.TryGetProperty ("value", out var questionsElement) &&
           questionsElement.ValueKind == JsonValueKind.Array) {
