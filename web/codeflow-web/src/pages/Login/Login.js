@@ -28,9 +28,8 @@ function Login() {
           <div className="text-center mb-4">
             <img src="/logo/logo-transparent.png" alt="logo" height="50" />
           </div>
-          
+
           <Card className="shadow-sm p-4">
-            
             <Button variant="light" className="mb-2 w-100 border">
               <i className="bi bi-google"></i> Log in with Google
             </Button>

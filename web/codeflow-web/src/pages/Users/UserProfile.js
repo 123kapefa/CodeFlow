@@ -242,6 +242,7 @@ import { useAuth } from "../../features/Auth/AuthProvider ";
 
 export default function UserProfile() {
   const { userId } = useParams();
+  const navigate = useNavigate();
   const { user: current } = useAuth(); // текущий залогиненный пользователь
 
   const [profile, setProfile] = useState(null);
@@ -269,7 +270,7 @@ export default function UserProfile() {
             headers: authorized
               ? { Authorization: `Bearer ${Cookies.get("jwt")}` }
               : {},
-          });
+        });
 
         let res;
 
