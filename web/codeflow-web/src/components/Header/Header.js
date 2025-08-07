@@ -5,8 +5,7 @@ import { useAuth } from '../../features/Auth/AuthProvider ';
 import "../../App.css";
 
 function Header() {
-  const { user, logout, loading } = useAuth();   // ← теперь есть user.avatarUrl
-  console.log('user from context', user);
+  const { user, logout, loading } = useAuth();   // ← теперь есть user.avatarUrl  
 
   return (
     <div className="container-xxl">

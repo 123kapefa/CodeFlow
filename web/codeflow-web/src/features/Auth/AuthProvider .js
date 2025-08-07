@@ -1,221 +1,130 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { RefreshToken } from "../RefreshToken/RefreshToken";
+import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // профиль пользователя
-  const [loading, setLoading] = useState(true); // загрузка состояния авторизации
+  const [user, setUser] = useState(null);   // профиль
+  const [loading, setLoading] = useState(true);
 
-  // ---- 1) Авто-восстановление сессии при старте ----
+  /* единый обёрнутый fetch */
+  const authFetch = useAuthFetch();
+
+  /* ── 1. «Тихий» bootstrap при старте ── */
   useEffect(() => {
     let cancelled = false;
 
-    const bootstrap = async () => {
+    (async () => {
       try {
-        const rt = Cookies.get("refresh_token");
-        if (!rt) {
-          // Нет refresh — считать гостем, ничего не запрашиваем
+        /* если нет refresh_token – сразу гость */
+        if (!Cookies.get("refresh_token")) {
           if (!cancelled) setUser(null);
           return;
         }
 
-        // Пытаемся «тихо» обновить токен
-        const ok = await RefreshToken();
-        if (!ok) {
-          Cookies.remove("jwt", { path: "/" });
-          Cookies.remove("refresh_token", { path: "/" });
+        /* пробуем обновить access*/
+        await RefreshToken();
+
+        const at = Cookies.get("jwt");
+        if (!at) {
           if (!cancelled) setUser(null);
           return;
         }
 
-        // Получили access — грузим профиль
-        const access = Cookies.get("jwt");
-        if (!access) {
-          if (!cancelled) setUser(null);
-          return;
-        }
-
-        const headers = {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${access}`,
-        };
-
-        const { sub: id } = jwtDecode(access);
-        let res = await fetch(`http://localhost:5000/api/users/${id}`, {
-          method: "GET",
-          headers,
-          // credentials: "include", // раскомментируй, если сервер использует куки
-        });
-
-        // На случай гонки/просрочки — одна попытка обновить ещё раз
-        if (res.status === 401) {
-          const ok2 = await RefreshToken();
-          if (ok2) {
-            const access2 = Cookies.get("jwt");
-            res = await fetch(`http://localhost:5000/api/users/${id}`, {
-              method: "GET",
-              headers: {
-                ...headers,
-                Authorization: access2 ? `Bearer ${access2}` : undefined,
-              },
-            });
-          }
-        }
+        const { sub: id } = jwtDecode(at);
+        const res = await authFetch(
+          `http://localhost:5000/api/users/${id}`
+        );
 
         if (!cancelled) {
-          if (res.ok) {
-            const profile = await res.json();
-            setUser(profile);
-          } else {
-            setUser(null);
-          }
+          if (res.ok) setUser(await res.json());
+          else       setUser(null);
         }
       } catch {
         if (!cancelled) setUser(null);
       } finally {
         if (!cancelled) setLoading(false);
       }
-    };
+    })();
 
-    bootstrap();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+    return () => { cancelled = true; };
+  }, [authFetch]);
 
-  // ---- 2) Логин ----
+  /* ── 2. login ── */
   const login = async (email, password) => {
     const res = await fetch("http://localhost:5000/api/auth/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({ email, password }),
-      // credentials: "include",
+      credentials: "include",
     });
 
-    if (!res.ok) throw new Error("Wrong credentials");
-
-    // Ожидаем, что сервер вернёт { accessToken, refreshToken?, expiresInSeconds? }
+    if (!res.ok) throw new Error("Неверный логин или пароль");
     const data = await res.json();
 
-    // Кладём access в куки (логика как в RefreshToken)
-    const accessDays = data.expiresInSeconds
-      ? data.expiresInSeconds / 86400
-      : 1 / 24; // по умолчанию 1 час
-
+    /* кладём токены */
     Cookies.set("jwt", data.accessToken, {
-      path: "/",
-      sameSite: "Lax",
-      expires: accessDays,
-      // secure: true, // включи в проде (HTTPS)
+      path: "/", sameSite: "Lax",
+      expires: (data.expiresInSeconds ?? 3600) / 86400,
     });
-
-    // Если пришёл refreshToken — тоже сохраним
     if (data.refreshToken) {
       Cookies.set("refresh_token", data.refreshToken, {
-        path: "/",
-        sameSite: "Lax",
-        expires: 30,
-        // secure: true, // включи в проде
+        path: "/", sameSite: "Lax", expires: 30,
       });
     }
 
-    // Грузим профиль
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: `Bearer ${data.accessToken}`,
-    };
-
+    /* грузим профиль тем же authFetch */
     const { sub: id } = jwtDecode(data.accessToken);
-    const profileRes = await fetch(`http://localhost:5000/api/users/${id}`, {
-      method: "GET",
-      headers,
-      // credentials: "include",
-    });
-
-    if (!profileRes.ok) throw new Error("Failed to load profile");
-
-    const profile = await profileRes.json();
-    setUser(profile);
+    const profRes = await authFetch(
+      `http://localhost:5000/api/users/${id}`
+    );
+    if (!profRes.ok) throw new Error("Profile load failed");
+    setUser(await profRes.json());
   };
 
-  // ---- 3) Логаут ----
-  const logout = async () => {
-    let ok = false;
-
-    try {
-      const rt = Cookies.get("refresh_token");
-      const at = Cookies.get("jwt");
-
-      // если нет refresh_token — просто локально выходим
-      if (!rt) {
-        ok = true;
-        return ok;
-      }
-
-      let headers = {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        ...(at ? { Authorization: `Bearer ${at}` } : {}),
-      };
-
-      const url = "http://localhost:5000/api/auth/logout";
-
-      let response = await fetch(url, {
+  /* ── 3. logout ── */
+const logout = async () => {
+  try {
+    const rt = Cookies.get("refresh_token");       
+    if (rt) {
+      await fetch("http://localhost:5000/api/auth/logout", {
         method: "POST",
-        headers,
-        credentials: "include", // если сервер опирается на куки
-        body: JSON.stringify(rt ), // <--- ключевое: ASP.NET ждёт поле token
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },                                          
+        credentials: "include",                     
+        body: JSON.stringify(rt),
       });
-
-      if (response.status === 401) {
-        const refreshed = await RefreshToken(); // <--- обязательно await
-        if (refreshed) {
-          const newAt = Cookies.get("jwt"); // перечитать новый access
-          headers = {
-            ...headers,
-            ...(newAt ? { Authorization: `Bearer ${newAt}` } : {}),
-          };
-          response = await fetch(url, {
-            method: "POST",
-            headers,
-            credentials: "include",
-            body: JSON.stringify(rt),
-          });
-        }
-      }
-
-      ok = response.ok;
-      if (!ok) {
-        // полезно увидеть, что ответил сервер
-        const text = await response.text().catch(() => "");
-        console.warn("Logout failed:", response.status, text);
-      }
-    } catch (e) {
-      console.warn("Logout network error:", e);
-    } finally {
-      // локально выходим в любом случае
-      Cookies.remove("jwt", { path: "/" });
-      Cookies.remove("refresh_token", { path: "/" });
-      setUser(null);
     }
+  } catch (e) {
+    console.warn("Logout error:", e);
+  } finally {
+    /* локально выходим в любом случае */
+    Cookies.remove("jwt",          { path: "/" });
+    Cookies.remove("refresh_token",{ path: "/" });
+    setUser(null);
+  }
+};
 
-    return ok;
-  };
-
+  /* ── что отдаём наружу ── */
   const value = useMemo(
-    () => ({ user, login, logout, loading }),
-    [user, loading]
+    () => ({ user, loading, login, logout, authFetch }),
+    [user, loading, authFetch]
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => useContext(AuthContext);
