@@ -45,7 +45,7 @@ export default function QuestionCard({ q }) {
             </div>
 
             <div className="small text-muted mt-2">{views} views</div>
-          </div>
+        </div>
 
           {/* правая колонка */}
           <div className="flex-grow-1">
@@ -54,9 +54,9 @@ export default function QuestionCard({ q }) {
                 to={`/questions/${q.id}`}
                 className="link-primary text-decoration-none"
               >
-                {q.title}
+            {q.title}
               </Link>
-            </Card.Title>
+        </Card.Title>
 
             {q.content && (
               <div
@@ -67,7 +67,7 @@ export default function QuestionCard({ q }) {
             )}
 
             {/* кликабельные теги */}
-            <div className="mb-2">
+        <div className="mb-2">
               {tagItems.map((t, i) => (
                 <Badge
                   key={t.id ?? `${t.name}-${i}`}
@@ -81,9 +81,9 @@ export default function QuestionCard({ q }) {
                   title={`tag: ${t.name}`}
                 >
                   {t.name}
-                </Badge>
-              ))}
-            </div>
+            </Badge>
+          ))}
+        </div>
 
             <div className="small text-muted text-end">
               asked {q.answeredAgo}
