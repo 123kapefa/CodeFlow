@@ -11,6 +11,7 @@ import {
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import TagCard from "../../components/TagCard/TagCard";
+import { jwtDecode } from "jwt-decode";
 
 function Tags() {
   const [tags, setTags] = useState([]);
@@ -53,6 +54,10 @@ function Tags() {
   }, [page, search, orderBy]);
 
   const handleWatchTag = async (tagId) => {
+    const access = Cookies.get("jwt");
+
+    const { sub: userId } = jwtDecode(access);   
+
     if (!userId) {
       navigate("/login");
       return;
@@ -67,9 +72,7 @@ function Tags() {
         { method: "POST", headers }
       );
       if (!response.ok) throw new Error("Ошибка при добавлении в избранное");
-      
-    } 
-    catch (error) {     
+    } catch (error) {
       alert("Не удалось добавить тэг в отслеживаемые.");
     }
   };

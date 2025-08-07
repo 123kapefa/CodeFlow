@@ -37,7 +37,7 @@ function TagCard({ tag, handleWatchTag, showPopoverId, setShowPopoverId }) {
             >
               <Popover.Header as="h3">{tag.name}</Popover.Header>
               <Popover.Body>
-                <p>{tag.description || "Описание отсутствует"}</p>
+                {/* <p>{tag.description || "Описание отсутствует"}</p> */}
                 <p>
                   <b>{tag.countWotchers} watchers</b> &nbsp; {tag.countQuestion}{" "}
                   questions

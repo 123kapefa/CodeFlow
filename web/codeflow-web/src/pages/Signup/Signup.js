@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 import { Button, Form, Container, Row, Col, Card } from "react-bootstrap";
 
-function Singup() {
+
+function Signup() {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,7 +15,7 @@ function Singup() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userName, email, password }),
@@ -25,7 +27,10 @@ function Singup() {
       }
 
       // Если всё ок — переходим на главную
-      navigate("/");
+      toast.success("Регистрация успешна 🎉", {
+        onClose: () => navigate("/questions"), // дождаться анимации (опционально)
+        autoClose: 2000,                       // 2 сек
+      });
     } catch (err) {
       setError(err.message);
     }
@@ -33,8 +38,8 @@ function Singup() {
 
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
-      <Row>
-        <Col>        
+      <Row>   
+        <Col>
           <div className="text-center mb-4">
             <img src="/logo/logo-transparent.png" alt="logo" height="50" />
             <h3 className="mt-2">Join CodeFlow</h3>
@@ -53,7 +58,7 @@ function Singup() {
               <i className="bi bi-github"></i> Sign up with GitHub
             </Button>
 
-            <div className="text-center my-3">           
+            <div className="text-center my-3">
               <span className="px-2">OR</span>
               <hr />
             </div>
@@ -109,4 +114,4 @@ function Singup() {
   );
 }
 
-export default Singup;
+export default Signup;
