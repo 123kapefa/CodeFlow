@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@mantine/core": "^5.10.5",
+    "@mantine/hooks": "^5.10.5",
+    "@mantine/rte": "^5.10.5",
     "@popperjs/core": "^2.11.8",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.6.4",
