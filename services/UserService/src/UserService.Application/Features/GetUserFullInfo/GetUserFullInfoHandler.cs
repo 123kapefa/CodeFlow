@@ -24,6 +24,7 @@ public class GetUserFullInfoHandler : ICommandHandler<UserFullInfoDTO, GetUserFu
             return Result<UserFullInfoDTO>.Error(new ErrorList(result.Errors));
 
         UserFullInfoDTO userFullInfo = new UserFullInfoDTO {
+            UserId = result.Value.UserId,
             CreatedAt = result.Value.CreatedAt,
             UserName = result.Value.Username,
             AvatarUrl = result.Value.AvatarUrl,

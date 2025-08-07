@@ -25,6 +25,7 @@ public class GetUsersHandler : ICommandHandler<PagedResult<IEnumerable<UserShort
         }
 
         IEnumerable<UserShortDTO> usersInfoDto = usersResult.Value.items.ToUsersShortDto ();
+
         return Result<PagedResult<IEnumerable<UserShortDTO>>>
             .Success(new PagedResult<IEnumerable<UserShortDTO>>(usersResult.Value.pageInfo, usersInfoDto));
     }
