@@ -9,7 +9,7 @@ export async function RefreshToken() {
   try {
     const resp = await fetch(`http://localhost:5000/api/auth/refresh-token`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },                   
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },                   
       body: JSON.stringify({ refreshToken }) 
     });
 
@@ -23,8 +23,7 @@ export async function RefreshToken() {
     Cookies.set('jwt', data.accessToken, {
       expires: accessDays,
       path: '/',
-      sameSite: 'Lax',
-      credentials: 'include'
+      sameSite: 'Lax',     
       // secure: true   // ВКЛЮЧАЙ только в проде по HTTPS
     });
 
