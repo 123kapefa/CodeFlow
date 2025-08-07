@@ -46,10 +46,7 @@ export default function Home() {
     };
   }, [user, fetchAuth]); // fetchAuth уже мемоизирован
 
-  /* хотим один раз увидеть профиль в консоли */
-  useEffect(() => {
-    if (user) console.log("Profile:", user);
-  }, [user]);
+
 
   /* 2. Теперь идут условия с ранним return */
   if (loading) {

@@ -37,7 +37,7 @@ function Tags() {
         }
 
         const response = await fetch(
-          `http://localhost:5000/api/tags?Page=${page}&PageSize=36&OrderBy=${orderField}&SortDirection=${sortDirection}&Search=${search}`
+          `http://localhost:5000/api/tags?Page=${page}&PageSize=36&OrderBy=${orderField}&SortDirection=${sortDirection}&SearchValue=${search}`
         );
 
         if (!response.ok) throw new Error("Ошибка загрузки тегов");
