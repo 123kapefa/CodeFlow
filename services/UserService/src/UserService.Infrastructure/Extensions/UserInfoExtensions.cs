@@ -7,8 +7,14 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+
+using Contracts.Common.Filters;
+
 using UserService.Domain.Entities;
-using UserService.Domain.Filters;
+
+using PageParams = UserService.Domain.Filters.PageParams;
+using SortDirection = UserService.Domain.Filters.SortDirection;
+using SortParams = UserService.Domain.Filters.SortParams;
 
 namespace UserService.Infrastructure.Extensions;
 
@@ -46,4 +52,12 @@ public static class UserInfoExtensions {
         };
     }
 
+    public static Expression<Func<UserInfo, bool>> GetSearchFilter (SearchFilter searchFilter) {
+        if (String.IsNullOrEmpty (searchFilter.SearchValue))
+            return x => true;
+        
+        string searchValue = searchFilter.SearchValue.ToLower();
+        return userInfo => userInfo.Username.ToLower().Contains(searchValue);
+
+    }
 }

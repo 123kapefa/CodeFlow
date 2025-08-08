@@ -106,7 +106,7 @@ public class CreateOrUpdateParticipationTagsHandler : ICommandHandler<CreateOrUp
 
       // Итоговый коммит
       await _tagRepository.SaveChangesAsync (cancellationToken);
-
+      await tx.CommitAsync (cancellationToken);
       return Result.Success ();
     }
     catch (Exception) {
