@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { Card, Overlay, Popover, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 function TagCard({ tag, handleWatchTag, showPopoverId, setShowPopoverId }) {
   const targetRef = useRef(null);
@@ -37,7 +38,7 @@ function TagCard({ tag, handleWatchTag, showPopoverId, setShowPopoverId }) {
             >
               <Popover.Header as="h3">{tag.name}</Popover.Header>
               <Popover.Body>
-                {/* <p>{tag.description || "Описание отсутствует"}</p> */}
+                <p>{tag.description || "Описание отсутствует"}</p>
                 <p>
                   <b>{tag.countWotchers} watchers</b> &nbsp; {tag.countQuestion}{" "}
                   questions

@@ -94,9 +94,9 @@ export default function Home() {
   return (
     <Container fluid="xxl" className="py-4">
       {/* шапка */}
-      <Row className="align-items-center mb-4">
+      <Row className="align-items-center mb-5">
         <Col>
-          <h2 className="mb-0">Welcome back, {user.userName}!</h2>
+          <h2 className="mb-0 text-start">Welcome back, {user.userName}!</h2>
         </Col>
         <Col xs="auto">
           <Button

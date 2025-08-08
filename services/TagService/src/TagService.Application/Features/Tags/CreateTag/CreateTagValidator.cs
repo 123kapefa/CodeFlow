@@ -8,7 +8,7 @@ public class CreateTagValidator : AbstractValidator<CreateTagCommand> {
         RuleFor(x => x.TagCreateDto.Name)
             .NotEmpty().WithMessage("Имя тега обязательно")
             .MaximumLength(64).WithMessage("Имя не длиннее 64 символов")
-            .Matches(@"^[a-z0-9\.\+\-]+$")  // как на Stack Overflow
+            .Matches(@"^[a-z0-9\.\+\-]+$")  
             .WithMessage("Допустимы строчные латинские буквы, цифры, +, -, .");
 
         RuleFor(x => x.TagCreateDto.Description)

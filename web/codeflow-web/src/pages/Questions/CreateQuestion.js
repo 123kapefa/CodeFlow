@@ -9,11 +9,36 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import ReactQuill from "react-quill";
+import { toast } from "react-toastify";
 
 import { useAuth } from "../../features/Auth/AuthProvider ";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 
+const tagRegex = /^[a-z0-9.+-]+$/;
+
 const API = "http://localhost:5000";
+
+const modules = {
+  toolbar: [
+    [{ header: [1, 2, false] }],
+    ["bold", "italic", "underline", "code-block"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["link"],
+    ["clean"],
+  ],
+};
+
+const formats = [
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "code-block",
+  "list",
+  "bullet",
+  "link",
+];
 
 function CreateQuestion() {
   const navigate = useNavigate();
@@ -43,7 +68,7 @@ function CreateQuestion() {
         );
 
         if (res.ok) {
-          const data = await res.json();         
+          const data = await res.json();
           const items = data.value ?? [];
           setSuggestions(
             items.map((t) => ({
@@ -82,6 +107,36 @@ function CreateQuestion() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const errors = [];
+
+    if (!title.trim()) {
+      errors.push("Title is required");
+    }
+
+    if (!content || content.replace(/<(.|\n)*?>/g, "").trim().length < 20) {
+      errors.push("Problem details are required (min 20 characters)");
+    }
+
+    if (selectedTags.length === 0) {
+      errors.push("At least one tag is required");
+    }
+
+    for (const tag of selectedTags) {
+      if (!tagRegex.test(tag.name)) {
+        errors.push(
+          `Tag "${tag.name}" is invalid. Only lowercase letters, numbers, "+", "-", "." allowed`
+        );
+      }
+      if (tag.name.length > 64) {
+        errors.push(`Tag "${tag.name}" is too long (max 64 characters)`);
+      }
+    }
+
+    if (errors.length > 0) {
+      errors.forEach((err) => toast.error(err));
+      return;
+    }
+
     const tagList = selectedTags.map((tag) => ({
       id: tag.id ?? null,
       name: tag.name,
@@ -90,7 +145,7 @@ function CreateQuestion() {
 
     const payload = {
       questionDto: {
-        userId: user.userId, // user.id или user.userId — смотри по API
+        userId: user.userId, 
         title,
         content,
         newTags: tagList,
@@ -111,7 +166,12 @@ function CreateQuestion() {
       }
 
       const result = await res.json();
-      navigate(`/questions/${result.id}`);
+
+      toast.success("Вопрос создан 🎉", {
+        onClose: () => navigate("/questions"),
+        autoClose: 1000,
+      });
+      
     } catch (err) {
       alert(err.message);
     } finally {
@@ -120,28 +180,38 @@ function CreateQuestion() {
   };
 
   const handleTagKeyDown = (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    const trimmed = tagInput.trim().toLowerCase();
+    if (!trimmed) return;
 
-      const trimmed = tagInput.trim().toLowerCase();
-      if (!trimmed) return;
-
-      const alreadyExists = selectedTags.some(
-        (tag) => tag.name.toLowerCase() === trimmed
+    if (!tagRegex.test(trimmed)) {
+      toast.error(
+        `Invalid tag "${trimmed}". Only lowercase letters, numbers, "+", "-", "." allowed`
       );
-      if (alreadyExists || selectedTags.length >= 5) return;
-
-      const match = suggestions.find(
-        (tag) => tag.name.toLowerCase() === trimmed
-      );
-
-      const newTag = match || { name: trimmed }; // если нет — создаём
-
-      setSelectedTags([...selectedTags, newTag]);
-      setTagInput("");
-      setSuggestions([]);
+      return;
     }
-  };
+
+    if (trimmed.length > 64) {
+      toast.error(`Tag "${trimmed}" is too long (max 64 characters)`);
+      return;
+    }
+
+    const alreadyExists = selectedTags.some(
+      (tag) => tag.name.toLowerCase() === trimmed
+    );
+    if (alreadyExists || selectedTags.length >= 5) return;
+
+    const match = suggestions.find(
+      (tag) => tag.name.toLowerCase() === trimmed
+    );
+
+    const newTag = match || { name: trimmed };
+    setSelectedTags([...selectedTags, newTag]);
+    setTagInput("");
+    setSuggestions([]);
+  }
+};
 
   // 5. Основная форма
   return (
@@ -181,12 +251,13 @@ function CreateQuestion() {
                 Introduce the problem and expand on what you put in the title.
                 Minimum 20 characters.
               </Form.Text>
-              <Form.Control
-                as="textarea"
-                rows={10}
+              <ReactQuill
+                theme="snow"
                 value={content}
-                onChange={(e) => setContent(e.target.value)}
-                required
+                onChange={setContent}
+                modules={modules}
+                formats={formats}
+                style={{ marginBottom: "40px" }}
               />
             </Form.Group>
 

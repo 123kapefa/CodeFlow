@@ -99,70 +99,75 @@ public class AggregationController : ControllerBase {
     return Ok (results);
   }
 
-  [HttpPost ("get-questions")]
-  public async Task<IActionResult> AggregateQuestionsWithTags (
-    [FromQuery] PageParams pageParams
-    , [FromQuery] SortParams sortParams
-    , [FromQuery] TagFilter tagFilter) {
-    var results = new Dictionary<string, object> ();
-    var resultLock = new object ();
+    [HttpPost("get-questions")]
+    public async Task<IActionResult> AggregateQuestionsWithTags(
+      [FromQuery] PageParams pageParams,
+      [FromQuery] SortParams sortParams,
+      [FromQuery] TagFilter tagFilter ) {
+        var results = new Dictionary<string, object>();
+        var resultLock = new object();
 
-    Console.WriteLine (JsonSerializer.Serialize (pageParams));
-    Console.WriteLine (JsonSerializer.Serialize (sortParams));
-    Console.WriteLine (JsonSerializer.Serialize (tagFilter));
-    
-    var questionTask = _httpService.FetchDataAsync ("questions"
-      , $"api/questions?{pageParams.ToQueryString ()}&{sortParams.ToQueryString ()}&{tagFilter.ToQueryString ()}", "GET", null, results, resultLock);
+        Console.WriteLine(JsonSerializer.Serialize(pageParams));
+        Console.WriteLine(JsonSerializer.Serialize(sortParams));
+        Console.WriteLine(JsonSerializer.Serialize(tagFilter));
 
-    await questionTask;
+        var questionTask = _httpService.FetchDataAsync(
+            "questions",
+            $"api/questions?{pageParams.ToQueryString()}&{sortParams.ToQueryString()}&{tagFilter.ToQueryString()}",
+            "GET",
+            null,
+            results,
+            resultLock);
 
-    if (results.ContainsKey ("questions") && results["questions"] is JsonElement questionRoot) {
-      if (questionRoot.TryGetProperty ("value", out var questionsElement) &&
-          questionsElement.ValueKind == JsonValueKind.Array) {
-        var tagTasks = new List<Task> ();
-        var tagsResult = new Dictionary<string, object> ();
+        await questionTask;
 
-        foreach (var question in questionsElement.EnumerateArray ()) {
-          if (question.TryGetProperty ("questionTags", out var tagsElement) &&
-              tagsElement.ValueKind == JsonValueKind.Array) {
-            foreach (var tagRef in tagsElement.EnumerateArray ()) {
-              if (tagRef.TryGetProperty ("tagId", out var idElement)) {
-                int tagId = idElement.GetInt32 ();
-                string tagKey = $"tag-{tagId}";
+        if(results.TryGetValue("questions", out var questionsObj) && questionsObj is JsonElement questionRoot) {
+            if(questionRoot.TryGetProperty("value", out var questionsElement) && questionsElement.ValueKind == JsonValueKind.Array) {
+                var tagTasks = new List<Task>();
+                var tagsResult = new Dictionary<string, object>();
 
-                Console.WriteLine ($"Запрос для тега: tagKey = {tagKey}, tagId = {tagId}");
+                foreach(var question in questionsElement.EnumerateArray()) {
+                    if(question.TryGetProperty("questionTags", out var tagsElement) && tagsElement.ValueKind == JsonValueKind.Array) {
+                        foreach(var tagRef in tagsElement.EnumerateArray()) {
+                            if(tagRef.TryGetProperty("tagId", out var idElement)) {
+                                int tagId = idElement.GetInt32();
+                                string tagKey = $"tag-{tagId}";
 
-                var tagTask = _httpService.FetchDataAsync (
-                  tagKey, $"api/tags/{tagId}", "GET", null, tagsResult, resultLock);
+                                Console.WriteLine($"Запрос для тега: tagKey = {tagKey}, tagId = {tagId}");
 
-                tagTasks.Add (tagTask);
-              }
+                                var tagTask = _httpService.FetchDataAsync(
+                                    tagKey,
+                                    $"api/tags/{tagId}",
+                                    "GET",
+                                    null,
+                                    tagsResult,
+                                    resultLock);
+
+                                tagTasks.Add(tagTask);
+                            }
+                        }
+                    }
+                    else {
+                        Console.WriteLine("Свойство 'questionTags' отсутствует или не является массивом.");
+                    }
+                }
+
+                await Task.WhenAll(tagTasks);
+
+                results["tags"] = tagsResult;
             }
-          }
-          else {
-            Console.WriteLine ("Свойство 'questionTags' отсутствует или не является массивом.");
-          }
+            else {
+                Console.WriteLine("Вопросы не найдены или их структура неверна.");
+            }
+        }
+        else {
+            Console.WriteLine("Не удалось получить список вопросов.");
         }
 
-        await Task.WhenAll (tagTasks);
-
-
-        await Task.WhenAll (tagTasks);
-
-        results["tags"] = tagsResult;
-      }
-      else {
-        Console.WriteLine ("Вопросы не найдены или их структура неверна.");
-      }
-    }
-    else {
-      Console.WriteLine ("Не удалось получить список вопросов.");
+        return Ok(results);
     }
 
-    return Ok (results);
-  }
-
-  [HttpPost ("create-question")]
+    [HttpPost ("create-question")]
   public async Task<IActionResult> AggregateCreateQuestionAndTags ([FromBody] CreateQuestionRequest request) {
     if (request == null || request.QuestionDto == null) {
       return BadRequest ("Invalid request payload.");
