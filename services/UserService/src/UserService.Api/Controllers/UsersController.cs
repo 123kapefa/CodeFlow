@@ -2,6 +2,7 @@
 using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 
+using Contracts.Common.Filters;
 using Contracts.DTOs.UserService;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -9,7 +10,9 @@ using UserService.Application.Features.DeleteUser;
 using UserService.Application.Features.GetUserFullInfo;
 using UserService.Application.Features.GetUsers;
 using UserService.Application.Features.UpdateUserInfo;
-using UserService.Domain.Filters;
+
+using PageParams = UserService.Domain.Filters.PageParams;
+using SortParams = UserService.Domain.Filters.SortParams;
 
 namespace UserService.Api.Controllers;
 
@@ -27,8 +30,9 @@ public class UsersController : ControllerBase {
     public async Task<Result<PagedResult<IEnumerable<UserShortDTO>>>> GetUsersAsync(
         [FromQuery] PageParams pageParams,
         [FromQuery] SortParams sortParams,
+        [FromQuery] SearchFilter searchFilter,    
         [FromServices] ICommandHandler<PagedResult<IEnumerable<UserShortDTO>>, GetUsersCommand> handler ) => 
-        await handler.Handle(new GetUsersCommand(pageParams,sortParams), new CancellationToken(false));
+        await handler.Handle(new GetUsersCommand(pageParams,sortParams, searchFilter), new CancellationToken(false));
 
 
     [HttpGet("{userId}")]

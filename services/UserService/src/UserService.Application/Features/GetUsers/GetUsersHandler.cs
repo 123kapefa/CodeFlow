@@ -4,6 +4,7 @@ using Ardalis.Result;
 
 using Contracts.DTOs.UserService;
 
+using UserService.Application.Extensions;
 using UserService.Domain.Repositories;
 
 namespace UserService.Application.Features.GetUsers;
@@ -17,22 +18,14 @@ public class GetUsersHandler : ICommandHandler<PagedResult<IEnumerable<UserShort
     }
 
     public async Task<Result<PagedResult<IEnumerable<UserShortDTO>>>> Handle( GetUsersCommand command, CancellationToken cancellationToken ) {
-        var usersResult = await _userInfoRepository.GetUsersAsync(command.PageParams, command.SortParams, cancellationToken);
+        var usersResult = await _userInfoRepository.GetUsersAsync(command.PageParams, command.SortParams, command.SearchFilter, cancellationToken);
 
         if(!usersResult.IsSuccess) {
             return Result<PagedResult<IEnumerable<UserShortDTO>>>.Error(usersResult.Errors.First().ToString());
         }
 
-        IEnumerable<UserShortDTO> usersInfoDTO = usersResult.Value.items.Select(i => new UserShortDTO {
-            UserName = i.Username,
-            Location = i.Location,
-            AboutMe = i.AboutMe,
-            AvatarUrl = i.AvatarUrl,
-            Reputation = i.UserStatistic.Reputation,
-            Tags = [] //TODO полуние TagDTO из другого сервиса
-        });
-
+        IEnumerable<UserShortDTO> usersInfoDto = usersResult.Value.items.ToUsersShortDto ();
         return Result<PagedResult<IEnumerable<UserShortDTO>>>
-            .Success(new PagedResult<IEnumerable<UserShortDTO>>(usersResult.Value.pageInfo, usersInfoDTO));
+            .Success(new PagedResult<IEnumerable<UserShortDTO>>(usersResult.Value.pageInfo, usersInfoDto));
     }
 }
