@@ -56,7 +56,7 @@ function Tags() {
   const handleWatchTag = async (tagId) => {
     const access = Cookies.get("jwt");
 
-    const { sub: userId } = jwtDecode(access);   
+    const { sub: userId } = jwtDecode(access);
 
     if (!userId) {
       navigate("/login");
@@ -85,7 +85,7 @@ function Tags() {
         similar questions.
       </p>
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="d-flex justify-content-between align-items-center mb-4">        
         <Form className="me-3" style={{ maxWidth: "300px" }}>
           <Form.Control
             type="text"

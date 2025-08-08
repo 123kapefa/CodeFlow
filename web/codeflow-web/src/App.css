@@ -113,3 +113,15 @@ body.layout {
 .footer a:hover {
   color: white;
 }
+
+/* reach_editor */
+.ql-container {
+  height: 200px !important;
+  min-height: 200px !important;
+}
+
+.ql-editor {
+  height: 160px;
+  overflow-y: auto;
+}
+

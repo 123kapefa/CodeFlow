@@ -3,7 +3,7 @@ import { Card, Badge } from 'react-bootstrap';
 export default function WatchedTagsCard({ tags = [], className = '' }) {
   return (
     <Card className={`h-100 shadow-sm ${className}`}>
-      <Card.Header className="bg-light d-flex justify-content-between align-items-center">
+      <Card.Header className="bg-light d-flex justify-content-between align-items-center text-uppercase fw-bold small">
         <span>Watched tags</span>
         <a href="#all-tags" className="small">
           See all
