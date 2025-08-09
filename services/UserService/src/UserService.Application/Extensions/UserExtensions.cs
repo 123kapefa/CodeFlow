@@ -24,6 +24,7 @@ public static class UserExtensions {
       user.AvatarUrl
     ));
 
+
   public static IEnumerable<UserShortDTO> ToUsersShortDto (this IEnumerable<UserInfo> users)
     => users.Select(user => new UserShortDTO {
       UserName = user.Username,

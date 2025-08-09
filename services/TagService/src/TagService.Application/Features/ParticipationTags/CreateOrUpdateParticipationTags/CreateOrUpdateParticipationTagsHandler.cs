@@ -111,8 +111,6 @@ public class CreateOrUpdateParticipationTagsHandler : ICommandHandler<CreateOrUp
 
     }
     catch (Exception) {
-            _logger.LogError("\n\nFAILED TRANSACTION\n\n");
-            Console.WriteLine("\n\nFAILED TRANSACTION\n\n");
       await tx.RollbackAsync (cancellationToken);
       return Result.Error ("Ошибка при обновлении тегов.");
     }
