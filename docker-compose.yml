@@ -97,6 +97,8 @@ services:
       args:
         PROJECT_NAME: UserService
         DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env
     environment:
       ASPNETCORE_URLS:          http://+:5000
       ConnectionStrings__UserServiceDbContext: 'Host=user-db;Port=5432;Database=userdb;Username=user;Password=secret'
