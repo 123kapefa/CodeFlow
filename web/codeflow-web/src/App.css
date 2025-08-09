@@ -125,3 +125,7 @@ body.layout {
   overflow-y: auto;
 }
 
+.no-left-padding {
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}

@@ -3,12 +3,13 @@ import {
   Container,
   Row,
   Col,
-  Card,
+  Button,
   Pagination,
   ButtonGroup,
   ToggleButton,
-  Spinner,
+  Spinner,  
 } from "react-bootstrap";
+import { useNavigate, Link } from "react-router-dom";
 import { useParams, useSearchParams } from "react-router-dom";
 
 import QuestionCard from "../../components/QuestionCard/QuestionCard";
@@ -99,13 +100,22 @@ function Questions() {
 
   return (
     <Container className="my-4">
-      <h2 className="mb-3">
-        {tagId ? (
-          <>Questions tagged [{currentTag ?? tagId}]</>
-        ) : (
-          "All questions"
-        )}
-      </h2>
+      <Row className="align-items-center mb-5">
+        <Col>
+          <h2 className="mb-3">
+            {tagId ? (
+              <>Questions tagged [{currentTag ?? tagId}]</>
+            ) : (
+              "All questions"
+            )}
+          </h2>
+        </Col>
+        <Col xs="auto">
+          <Button as={Link} to="/questions/ask" variant="outline-primary">
+            Ask Question
+          </Button>
+        </Col>
+      </Row>
 
       <div className="d-flex justify-content-end mb-3">
         <ButtonGroup className="mb-3">
