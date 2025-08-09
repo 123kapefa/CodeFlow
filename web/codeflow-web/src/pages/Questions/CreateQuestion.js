@@ -218,7 +218,7 @@ function CreateQuestion() {
     <Container className="mt-4">
       <Card>
         <Card.Body>
-          <Card.Title class="mb-5">
+          <Card.Title className="mb-5">
             <h3>Ask a question</h3>
             <p className="text-muted">
               A private space to help new users write their first questions.

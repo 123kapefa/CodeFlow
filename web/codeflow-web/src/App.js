@@ -12,12 +12,17 @@ import Footer from "./components/Footer/Footer";
 import Login from "./pages/Login/Login";
 import Signup from "./pages/Signup/Signup";
 import Logout from "./pages/Logout/Logout";
+
 import Home from "./pages/Home/Home";
-import Questions from "./pages/Questions/Questions";
+
 import Tags from "./pages/Tags/Tags";
+
 import Users from "./pages/Users/Users";
 import UserProfile from "./pages/Users/UserProfile";
+
+import Questions from "./pages/Questions/Questions";
 import CreateQuestion from "./pages/Questions/CreateQuestion";
+import QuestionPage from "./pages/Questions/QuestionPage";
 
 function App() {  
   const [isAuthenticated, setIsAuthenticated] = useState(!!Cookies.get("jwt"));
@@ -52,6 +57,7 @@ function App() {
               <Route path="/users/:userId" element={<UserProfile />} />
               <Route path="/users/user_profile" element={<UserProfile />} />
               <Route path="/questions/ask" element={<CreateQuestion />} />
+              <Route path="/questions/:id" element={<QuestionPage />} />
             </Routes>
           </main>
         </div>

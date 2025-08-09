@@ -1,19 +1,107 @@
-import React, { useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Card, Overlay, Popover, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
+import { useAuth } from "../../features/Auth/AuthProvider ";
+import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 
-function TagCard({ tag, handleWatchTag, showPopoverId, setShowPopoverId }) {
+function TagCard({
+  tag,
+  isWatched: isWatchedFromProps,
+  showPopoverId,
+  onPopoverShow,
+  onPopoverHide,
+}) {
+  const [isWatched, setIsWatched] = useState(undefined);
+  const { user } = useAuth();
+  const authFetch = useAuthFetch();
   const targetRef = useRef(null);
   const navigate = useNavigate();
+
+  // Синхронизируем локальное состояние с пропсом, если нужно
+  useEffect(() => {
+    setIsWatched(undefined);
+  }, [isWatchedFromProps]);
+
+  // Функция проверки
+  const fetchIsWatched = async () => {
+    if (!user) {
+      setIsWatched(false);
+      return;
+    }
+    try {
+      console.log(
+        `http://localhost:5000/api/tags/watched/user/${user.userId}/tag/${tag.id}`
+      );
+      const res = await authFetch(
+        `http://localhost:5000/api/tags/watched/user/${user.userId}/tag/${tag.id}`
+      );
+      if (!res.ok) throw new Error("Ошибка при проверке отслеживания");
+
+      const data = await res.json();     
+      setIsWatched(data);     
+    } catch (e) {
+      setIsWatched(false);
+      console.error(e);
+    }
+  };
+
+  const handleMouseEnter = () => {
+    onPopoverShow(tag.id);
+    // если статус ещё не определён, то проверяем
+    if (isWatched === undefined) {
+      fetchIsWatched();
+      console.log("isWatched  => " + isWatched);
+    }
+  };
+
+  const handleWatchTag = async (e) => {
+    e.stopPropagation();
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    try {
+      console.log(
+        "POST" +
+          `http://localhost:5000/api/tags/watched/${user.userId}/${tag.id}`
+      );
+      const response = await authFetch(
+        `http://localhost:5000/api/tags/watched/${user.userId}/${tag.id}`,
+        { method: "POST" }
+      );
+      if (!response.ok) throw new Error("Ошибка при добавлении");      
+
+      setIsWatched(true);
+    } catch {
+      alert("Не удалось добавить тэг в отслеживаемые.");
+    }
+  };
+
+  const handleUnwatchTag = async (e) => {
+    e.stopPropagation();
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    try {
+      const response = await authFetch(
+        `http://localhost:5000/api/tags/watched/${tag.id}/${user.userId}`,
+        { method: "DELETE" }
+      );
+      if (!response.ok) throw new Error("Ошибка при удалении");
+      setIsWatched(false);
+    } catch {
+      alert("Не удалось удалить тэг из отслеживаемых.");
+    }
+  };
 
   return (
     <Card className="h-100 shadow-sm">
       <Card.Body>
         <div
           ref={targetRef}
-          onMouseEnter={() => setShowPopoverId(tag.id)}
-          onMouseLeave={() => setShowPopoverId(null)}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={onPopoverHide}
           style={{ display: "inline-block" }}
         >
           <h5
@@ -33,26 +121,35 @@ function TagCard({ tag, handleWatchTag, showPopoverId, setShowPopoverId }) {
             <Popover
               id={`popover-${tag.id}`}
               {...props}
-              onMouseEnter={() => setShowPopoverId(tag.id)}
-              onMouseLeave={() => setShowPopoverId(null)}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={onPopoverHide}
             >
               <Popover.Header as="h3">{tag.name}</Popover.Header>
               <Popover.Body>
-                <p>{tag.description || "Описание отсутствует"}</p>
                 <p>
                   <b>{tag.countWotchers} watchers</b> &nbsp; {tag.countQuestion}{" "}
                   questions
                 </p>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleWatchTag(tag.id);
-                  }}
-                >
-                  Watch tag
-                </Button>
+
+                <div className="d-flex justify-content-center">
+                  {isWatched ? (
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={handleUnwatchTag}
+                    >
+                      Unwatch tag
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={handleWatchTag}
+                    >
+                      Watch tag
+                    </Button>
+                  )}
+                </div>
               </Popover.Body>
             </Popover>
           )}
