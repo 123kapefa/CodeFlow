@@ -45,6 +45,7 @@ public class UserInfoRepository : IUserInfoRepository {
     return Result<UserInfo>.Success (userInfo);
   }
 
+
   public async Task<Result<IEnumerable<UserInfo>>> GetUsersByIdsAsync (IEnumerable<Guid> userIds, CancellationToken token) {
     _logger.LogInformation ("GetUsersByIdsAsync started. UserId");
 
