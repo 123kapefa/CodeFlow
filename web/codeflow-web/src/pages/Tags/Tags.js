@@ -266,8 +266,9 @@ function Tags() {
         if (!response.ok) throw new Error("Ошибка загрузки тегов");
 
         const data = await response.json();
+      
         setTags(data.value);
-        setTotalPages(data.pagedInfo.totalPages);
+        setTotalPages(data.pagedInfo.totalPages);        
       } catch (error) {
         console.error(error);
       }

@@ -1,230 +1,429 @@
-// import { useParams } from "react-router-dom";
-// import { useEffect, useState } from "react";
-// import {
-//   Container,
-//   Spinner,
-//   Badge,
-//   Card,
-//   Button,
-//   Form
-// } from "react-bootstrap";
+import { useNavigate, useParams, Link } from "react-router-dom";
+import React, { useEffect, useState, useCallback } from "react";
+import {
+  Container,
+  Spinner,
+  Badge,
+  Card,
+  Button,
+  Form,
+  Col,
+} from "react-bootstrap";
 
-// import hljs from "highlight.js";
-// import "highlight.js/styles/github.css";
-
-// import dayjs from "dayjs";
-// import relativeTime from "dayjs/plugin/relativeTime";
-// dayjs.extend(relativeTime);
-
-// export default function QuestionPage() {
-//   const { id } = useParams();
-//   const [data, setData] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [answerText, setAnswerText] = useState("");
-
-//   const createdAtText = `Asked ${dayjs(question.createdAt).fromNow()}`;
-// const updatedAtText = question.updatedAt
-//   ? `Modified ${dayjs(question.updatedAt).fromNow()}`
-//   : null;
-// const viewsText = `Viewed ${question.viewsCount.toLocaleString()} times`;
-
-//   useEffect(() => {
-//     if (data) {
-//       document.querySelectorAll("pre.ql-syntax").forEach((block) => {
-//         hljs.highlightElement(block);
-//       });
-//     }
-//   }, [data]);
-
-//   const loadQuestion = () => {
-//     setLoading(true);
-
-//     fetch("http://localhost:5000/api/aggregate/get-question", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//         Accept: "application/json",
-//       },
-//       body: JSON.stringify({ questionId: id }),
-//     })
-//       .then(async (r) => {
-//         if (!r.ok) throw new Error(`HTTP error ${r.status}`);
-//         const text = await r.text();
-//         if (!text) throw new Error("Empty response");
-//         return JSON.parse(text);
-//       })
-//       .then((res) => {
-//         setData(res);
-//       })
-//       .catch((err) => {
-//         console.error("Ошибка при получении вопроса:", err.message);
-//       })
-//       .finally(() => setLoading(false));
-//   };
-
-//   const handleAnswerSubmit = (e) => {
-//     e.preventDefault();
-//     console.log("Отправка ответа:", answerText);
-//     // TODO: отправить POST на API
-//     setAnswerText("");
-//   };
-
-//   if (loading) {
-//     return (
-//       <div className="text-center my-5">
-//         <Spinner animation="border" />
-//       </div>
-//     );
-//   }
-
-//   if (!data) {
-//     return <Container className="my-5">Question not found</Container>;
-//   }
-
-//   const { question, answers, tags } = data;
-
-//   return (
-//     <Container className="my-4">
-//       {/* Верхняя панель */}
-//       <div className="d-flex justify-content-between align-items-start mb-4">
-//         <h2 className="mb-0">{question.title}</h2>
-//         <div className="text-muted small text-end">
-//           Asked: {new Date(question.createdAt).toLocaleString()} <br />
-//           Views: {question.viewsCount}
-//         </div>
-//       </div>
-
-//       {/* Контент вопроса с голосами */}
-//       <div className="d-flex mb-4">
-//         {/* Голоса */}
-//         <div className="text-center me-3">
-//           <Button variant="light" size="sm" className="d-block mb-1">▲</Button>
-//           <div>{question.upvotes - question.downvotes}</div>
-//           <Button variant="light" size="sm" className="d-block mt-1">▼</Button>
-//         </div>
-
-//         {/* Текст вопроса */}
-//         <div className="flex-grow-1">
-//           <Card className="mb-2">
-//             <Card.Body>
-//               <div dangerouslySetInnerHTML={{ __html: question.content }} />
-//             </Card.Body>
-//           </Card>
-
-//           {/* Теги */}
-//           <div className="mb-3">
-//             {question.questionTags.map((t) => (
-//               <Badge
-//                 key={t.tagId}
-//                 bg="light"
-//                 text="dark"
-//                 className="border me-2"
-//               >
-//                 {tags[`tag-${t.tagId}`]?.name ?? "unknown"}
-//               </Badge>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Ответы */}
-//       <h5 className="mb-3">{answers.answers.length} Answers</h5>
-//       {answers.answers.map((a) => (
-//         <div key={a.id} className="d-flex mb-4">
-//           {/* Голоса */}
-//           <div className="text-center me-3">
-//             <Button variant="light" size="sm" className="d-block mb-1">▲</Button>
-//             <div>{a.upvotes - a.downvotes}</div>
-//             <Button variant="light" size="sm" className="d-block mt-1">▼</Button>
-//           </div>
-
-//           {/* Текст ответа */}
-//           <div className="flex-grow-1">
-//             <Card>
-//               <Card.Body>{a.content}</Card.Body>
-//             </Card>
-//           </div>
-//         </div>
-//       ))}
-
-//       {/* Форма ответа */}
-//       <h5 className="mt-5 mb-3">Your Answer</h5>
-//       <Form onSubmit={handleAnswerSubmit}>
-//         <Form.Group controlId="answerText" className="mb-3">
-//           <Form.Control
-//             as="textarea"
-//             rows={6}
-//             value={answerText}
-//             onChange={(e) => setAnswerText(e.target.value)}
-//             placeholder="Type your answer here..."
-//           />
-//         </Form.Group>
-//         <Button type="submit" variant="primary">
-//           Post Your Answer
-//         </Button>
-//       </Form>
-//     </Container>
-//   );
-// }
-
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Container, Spinner, Badge, Card, Button, Form } from "react-bootstrap";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css";
 
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useAuth } from "../../features/Auth/AuthProvider ";
+import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
+
+import AuthorCard from "../../components/AuthorCard/AuthorCard";
+import "./QuestionPage.css";
+
 dayjs.extend(relativeTime);
+
+const modules = {
+  toolbar: [
+    [{ header: [1, 2, false] }],
+    ["bold", "italic", "underline", "code-block"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["link"],
+    ["clean"],
+  ],
+};
+
+const formats = [
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "code-block",
+  "list",
+  "bullet",
+  "link",
+];
+
+const CommentForm = React.memo(function CommentForm({
+  commentText,
+  setCommentText,
+  commentSubmitting,
+  onSubmit,
+  onCancel,
+}) {
+  return (
+    <div className="d-flex gap-2 align-items-start w-100">
+      <Form.Control
+        as="textarea"
+        rows={3}
+        value={commentText}
+        onChange={(e) => setCommentText(e.target.value)}
+        placeholder="Use comments to ask for more information or suggest improvements"
+        style={{ flex: 1, minWidth: 0 }}
+      />
+      <div className="d-flex flex-column gap-2">
+        <Button
+          size="sm"
+          variant="primary"
+          onClick={onSubmit}
+          disabled={commentSubmitting}
+        >
+          {commentSubmitting ? "Posting..." : "Post"}
+        </Button>
+        <Button
+          size="sm"
+          variant="outline-secondary"
+          onClick={onCancel}
+          disabled={commentSubmitting}
+        >
+          Cancel
+        </Button>
+      </div>
+    </div>
+  );
+});
 
 export default function QuestionPage() {
   const { id } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [answerText, setAnswerText] = useState("");
 
-  // Загрузка вопроса
-  useEffect(() => {
+  const [answerHtml, setAnswerHtml] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  // Кому сейчас пишем комментарий: "question" | "<answerId>" | null
+  const [openCommentFor, setOpenCommentFor] = useState(null);
+  // Текст комментария
+  const [commentText, setCommentText] = useState("");
+  const [commentSubmitting, setCommentSubmitting] = useState(false);
+
+  const [votingQ, setVotingQ] = useState(false); // голосование за вопрос
+  const [votingA, setVotingA] = useState({}); // голосование за ответы: { [answerId]: boolean }
+  const [acceptingA, setAcceptingA] = useState({}); // { [answerId]: boolean }
+
+  const { user } = useAuth();
+  const fetchAuth = useAuthFetch();
+  const navigate = useNavigate();
+
+  // ЗАГРУЗКА ВОПРОСА
+  const loadQuestion = useCallback(async () => {
     setLoading(true);
+    try {
+      const r = await fetch(
+        "http://localhost:5000/api/aggregate/get-question",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({ questionId: id }),
+        }
+      );
+      if (!r.ok) throw new Error(`HTTP error ${r.status}`);
+      const text = await r.text();
+      if (!text) throw new Error("Empty response");
+      const res = JSON.parse(text);
+      setData(res);
+    } catch (err) {
+      console.error("Ошибка при получении вопроса:", err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
 
-    fetch("http://localhost:5000/api/aggregate/get-question", {
+  useEffect(() => {
+    loadQuestion();
+  }, [loadQuestion]);
+
+  // Подсветка кода в контенте вопроса/ответов
+  useEffect(() => {
+    if (!data) return;
+    document.querySelectorAll("pre.ql-syntax").forEach((block) => {
+      hljs.highlightElement(block);
+    });
+  }, [data]);
+
+  const handleAnswerSubmit = async (e) => {
+    e.preventDefault();
+    if (submitting) return;
+
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    const plainText = answerHtml
+      ?.replace(/<[^>]*>/g, "")
+      .replace(/&nbsp;/g, " ")
+      .trim();
+    if (!plainText) {
+      alert("Ответ не может быть пустым.");
+      return;
+    }
+
+    const { question, tags } = data;
+
+    const tagsPayload =
+      (question?.questionTags ?? []).map((t) => ({
+        tagId: t.tagId,
+        name: tags?.[`tag-${t.tagId}`]?.name || "",
+      })) || [];
+
+    const payload = {
+      questionId: question.id,
+      userId: user.userId,
+      content: answerHtml, // HTML из редактора
+      tags: tagsPayload,
+    };
+
+    try {
+      setSubmitting(true);
+      const res = await fetchAuth("http://localhost:5000/api/answers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText || `HTTP ${res.status}`);
+      }
+      setAnswerHtml("");
+      await loadQuestion();
+    } catch (err) {
+      console.error("Create answer failed:", err);
+      alert("Не удалось создать ответ: " + err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // НАПИСАТЬ КОМЕНТ
+  const postComment = async ({ type, targetId, content }) => {
+    // тип — "Question" или "Answer" (как в твоём примере)
+    const payload = {
+      authorId: user.id ?? user.userId, // из контекста авторизации
+      content,
+      type, // "Question" | "Answer"
+      targetId, // guid вопроса или ответа
+    };
+
+    const res = await fetchAuth("http://localhost:5000/api/comments/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({ questionId: id }),
-    })
-      .then(async (r) => {
-        if (!r.ok) throw new Error(`HTTP error ${r.status}`);
-        const text = await r.text();
-        if (!text) throw new Error("Empty response");
-        return JSON.parse(text);
-      })
-      .then((res) => {
-        setData(res);
-      })
-      .catch((err) => {
-        console.error("Ошибка при получении вопроса:", err.message);
-      })
-      .finally(() => setLoading(false));
-  }, [id]);
+      body: JSON.stringify(payload),
+    });
 
-  // Подсветка кода после загрузки данных
-  useEffect(() => {
-    if (data) {
-      document.querySelectorAll("pre.ql-syntax").forEach((block) => {
-        hljs.highlightElement(block);
-      });
+    return res;
+  };
+
+  // ОТПРАВКА КОМЕНТА
+  const handleCommentSubmit = async () => {
+    if (commentSubmitting) return;
+    if (!user) {
+      navigate("/login");
+      return;
     }
-  }, [data]);
 
-  const handleAnswerSubmit = (e) => {
-    e.preventDefault();
-    console.log("Отправка ответа:", answerText);
-    // TODO: отправить POST на API
-    setAnswerText("");
+    const trimmed = commentText.replace(/\s+/g, " ").trim();
+    if (!trimmed) return;
+
+    try {
+      setCommentSubmitting(true);
+
+      if (openCommentFor === "question") {
+        const res = await postComment({
+          type: "Question",
+          targetId: data.question.id,
+          content: trimmed, // обычно plain text; если хочешь HTML — реши на бэке
+        });
+        if (!res.ok) throw new Error(await res.text());
+      } else {
+        const res = await postComment({
+          type: "Answer",
+          targetId: openCommentFor, // это id ответа
+          content: trimmed,
+        });
+        if (!res.ok) throw new Error(await res.text());
+      }
+
+      setCommentText("");
+      setOpenCommentFor(null);
+      await loadQuestion(); // обновляем списки комментариев
+    } catch (e) {
+      console.error("Create comment failed:", e);
+      alert("Не удалось создать комментарий");
+    } finally {
+      setCommentSubmitting(false);
+    }
+  };
+
+  // ГОЛОСОВАНИЕ ЗА ВОПРОС
+  const voteQuestion = async (value) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    if (votingQ) return;
+
+    try {
+      setVotingQ(true);
+
+      setData((prev) => ({
+        ...prev,
+        question: {
+          ...prev.question,
+          upvotes: prev.question.upvotes + (value === 1 ? 1 : 0),
+          downvotes: prev.question.downvotes + (value === -1 ? 1 : 0),
+        },
+      }));
+
+      const res = await fetchAuth(
+        `http://localhost:5000/api/questions/${data.question.id}/vote/${value}`,
+        {
+          method: "PUT",
+          headers: { Accept: "application/json" },
+        }
+      );
+
+      if (!res.ok) {
+        // откат, если сервер не принял
+        await loadQuestion();
+        const errText = await res.text();
+        throw new Error(errText || `HTTP ${res.status}`);
+      }
+    } catch (e) {
+      console.error("Question vote failed:", e);
+      alert("Не удалось проголосовать за вопрос");
+    } finally {
+      setVotingQ(false);
+    }
+  };
+
+  // ГОЛОСОВАНИЕ ЗА ОТВЕТ
+  const voteAnswer = async (answerId, value) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    if (votingA[answerId]) return;
+
+    try {
+      setVotingA((m) => ({ ...m, [answerId]: true }));
+
+      // оптимистично обновим локально
+      setData((prev) => ({
+        ...prev,
+        answers: {
+          ...prev.answers,
+          answers: prev.answers.answers.map((a) =>
+            a.id === answerId
+              ? {
+                  ...a,
+                  upvotes: a.upvotes + (value === 1 ? 1 : 0),
+                  downvotes: a.downvotes + (value === -1 ? 1 : 0),
+                }
+              : a
+          ),
+        },
+      }));
+
+      // ВАЖНО: эндпоинт для ответов
+      const res = await fetchAuth(
+        `http://localhost:5000/api/answers/${answerId}/vote/${value}`,
+        {
+          method: "PUT",
+          headers: { Accept: "application/json" },
+        }
+      );
+
+      if (!res.ok) {
+        await loadQuestion(); // откат до серверного состояния
+        const errText = await res.text();
+        throw new Error(errText || `HTTP ${res.status}`);
+      }
+    } catch (e) {
+      console.error("Answer vote failed:", e);
+      alert("Не удалось проголосовать за ответ");
+    } finally {
+      setVotingA((m) => ({ ...m, [answerId]: false }));
+    }
+  };
+
+  // ВЫБОР ПРАВИЛЬНОГО ОТВЕТА
+  const acceptAnswer = async (answerId) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    // только автор вопроса может принять ответ
+    if ((user.id ?? user.userId) !== question.userId) {
+      alert("Только автор вопроса может принять ответ.");
+      return;
+    }
+
+    if (acceptingA[answerId]) return;
+
+    try {
+      setAcceptingA((m) => ({ ...m, [answerId]: true }));
+
+      // запрос к правильному эндпоинту
+      const res = await fetchAuth(
+        `http://localhost:5000/api/questions/${question.id}/answer-accept`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            AcceptAnswerId: answerId,
+            UserAnswerId: user.userId,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText || `HTTP ${res.status}`);
+      }
+
+      // оптимистично обновим локально:
+      setData((prev) => ({
+        ...prev,
+        question: {
+          ...prev.question,
+          acceptedAnswerId: answerId,
+          isClosed: true,
+        },
+        answers: {
+          ...prev.answers,
+          answers: prev.answers.answers.map((a) =>
+            a.id === answerId
+              ? { ...a, isAccepted: true, accepted: true }
+              : { ...a, isAccepted: false, accepted: false }
+          ),
+        },
+      }));
+
+      // при желании можно дополнительно синхронизироваться с сервером:
+      await loadQuestion();
+    } catch (e) {
+      console.error("Accept answer failed:", e);
+      alert("Не удалось принять ответ");
+    } finally {
+      setAcceptingA((m) => ({ ...m, [answerId]: false }));
+    }
   };
 
   if (loading) {
@@ -234,108 +433,307 @@ export default function QuestionPage() {
       </div>
     );
   }
-
   if (!data) {
     return <Container className="my-5">Question not found</Container>;
   }
 
   const { question, answers, tags } = data;
-
-  // Форматируем даты и просмотры с помощью dayjs
   const createdAtText = `Asked ${dayjs(question.createdAt).fromNow()}`;
   const updatedAtText = question.updatedAt
     ? `Modified ${dayjs(question.updatedAt).fromNow()}`
     : null;
   const viewsText = `Viewed ${question.viewsCount.toLocaleString()} times`;
 
-  return (
-    <Container className="my-4">
-      {/* Верхняя панель */}
-      <div className="mb-4">
-        <h2 className="mb-0 text-start">{question.title}</h2>
-        <div className="text-muted small  text-start">
-          {createdAtText}
-          {updatedAtText && <> · {updatedAtText}</>}
-          {" · "}
-          {viewsText}
-        </div>
-      </div>
+  // Удобные геттеры для списков комментариев
+  const questionComments = data.questionComments ?? [];
+  const answerCommentsMap = data.answerComments ?? {};
+  const getAnswerComments = (answerId) =>
+    answerCommentsMap[`comments-for-answer-${answerId}`] ?? [];
 
-      {/* Контент вопроса с голосами */}
-      <div className="d-flex mb-4">
-        {/* Голоса */}
-        <div className="text-center me-3">
-          <Button variant="light" size="sm" className="d-block mb-1">
+  return (
+    <Container className="my-4 question-page">
+      {/* Заголовок и мета */}
+      <header className="mb-3 text-start">
+        <div className="d-flex justify-content-between align-items-center">
+          <h1 className="qp-title mb-0">{question.title}</h1>
+          <Button as={Link} to="/questions/ask" variant="outline-primary">
+            Ask Question
+          </Button>
+        </div>
+        <div className="qp-meta">
+          <span>{createdAtText}</span>
+          {updatedAtText && <span> · {updatedAtText}</span>}
+          <span> · {viewsText}</span>
+        </div>
+      </header>
+
+      {/* Пост-вопрос */}
+      <article className="post">
+        <div className="vote-col ">
+          <Button
+            variant="light"
+            size="sm"
+            className="vote-btn"
+            onClick={() => voteQuestion(1)}
+            disabled={votingQ}
+            title={user ? "Upvote" : "Sign in to vote"}
+          >
             ▲
           </Button>
-          <div>{question.upvotes - question.downvotes}</div>
-          <Button variant="light" size="sm" className="d-block mt-1">
+          <div className="vote-score">
+            {question.upvotes - question.downvotes}
+          </div>
+          <Button
+            variant="light"
+            size="sm"
+            className="vote-btn"
+            onClick={() => voteQuestion(-1)}
+            disabled={votingQ}
+            title={user ? "Downvote" : "Sign in to vote"}
+          >
             ▼
           </Button>
         </div>
 
-        {/* Текст вопроса */}
-        <div className="flex-grow-1">
-          <Card className="mb-2 border-0">
-            <Card.Body className="text-start">
-              <div dangerouslySetInnerHTML={{ __html: question.content }} />
+        <div className="post-body text-start">
+          <Card className="border-0">
+            <Card.Body className="p-0">
+              <div
+                className="post-content"
+                dangerouslySetInnerHTML={{ __html: question.content }}
+              />
+              <div className="post-tags">
+                {question.questionTags.map((t) => {
+                  const tagName = tags[`tag-${t.tagId}`]?.name ?? "unknown";
+                  return (
+                    <Badge
+                      key={t.tagId}
+                      bg="light"
+                      text="dark"
+                      className="tag-badge mt-5"
+                      title={`tag: ${tagName}`}
+                      style={{ cursor: "pointer" }}
+                      onClick={() => navigate(`/tags/${t.tagId}/questions`)}
+                    >
+                      {tagName}
+                    </Badge>
+                  );
+                })}
+              </div>
             </Card.Body>
           </Card>
+        </div>
+      </article>
 
-          {/* Теги */}
-          <div className="mb-3 text-start">
-            {question.questionTags.map((t) => (
-              <Badge
-                key={t.tagId}
-                bg="light"
-                text="dark"
-                className="border me-2"
-              >
-                {tags[`tag-${t.tagId}`]?.name ?? "unknown"}
-              </Badge>
+      {/* Нижний блок под вопросом */}
+      <div className="post-footer">
+        <div className="post-actions">
+          <Button
+            variant="link"
+            className="p-0 edit-link"
+            onClick={() => navigate(`/questions/edit/${question.id}`)}
+          >
+            Edit
+          </Button>
+        </div>
+
+        <AuthorCard
+          kind="asked"
+          dt={question.createdAt}
+          userId={question.userId}
+          name={question.authorName} // может быть undefined — ок
+          reputation={question.authorReputation}
+          avatarUrl={question.authorAvatarUrl}
+        />
+      </div>
+
+      {/* Комментарии к вопросу */}
+      <div className="mt-3 text-center comment-block">
+        {questionComments.length > 0 && (
+          <ul className="list-unstyled mb-2">
+            {questionComments.map((c) => (
+              <li key={c.id} className="mb-1">
+                <span>{c.content}</span>
+                <span className="text-muted small ms-2">
+                  – {c.authorName ?? "user"} {dayjs(c.createdAt).fromNow()}
+                </span>
+              </li>
             ))}
-          </div>
+          </ul>
+        )}
+
+        <div className="post-actions w-100">
+          {openCommentFor === "question" ? (
+            <CommentForm
+              key="comment-question"
+              commentText={commentText}
+              setCommentText={setCommentText}
+              commentSubmitting={commentSubmitting}
+              onSubmit={handleCommentSubmit}
+              onCancel={() => setOpenCommentFor(null)}
+            />
+          ) : (
+            <Button
+              variant="link"
+              className="p-0 edit-link"
+              onClick={() => setOpenCommentFor("question")}
+            >
+              Add comment
+            </Button>
+          )}
         </div>
       </div>
 
       {/* Ответы */}
-      <h5 className="mb-3 text-start">{answers.answers.length} Answers</h5>
+      <h2 className="answers-title text-start pt-5">
+        {answers.answers.length} Answers
+      </h2>
       {answers.answers.map((a) => (
-        <div key={a.id} className="d-flex mb-4">
-          {/* Голоса */}
-          <div className="text-center me-3">
-            <Button variant="light" size="sm" className="d-block mb-1">
-              ▲
-            </Button>
-            <div>{a.upvotes - a.downvotes}</div>
-            <Button variant="light" size="sm" className="d-block mt-1">
-              ▼
-            </Button>
+        <React.Fragment key={a.id}>
+          <article className="post">
+            <div className="vote-col">
+              <Button
+                variant="light"
+                size="sm"
+                className="vote-btn"
+                onClick={() => voteAnswer(a.id, 1)}
+                disabled={!!votingA[a.id]}
+                title={user ? "Upvote" : "Sign in to vote"}
+              >
+                ▲
+              </Button>
+              <div className="vote-score">{a.upvotes - a.downvotes}</div>
+              <Button
+                variant="light"
+                size="sm"
+                className="vote-btn"
+                onClick={() => voteAnswer(a.id, -1)}
+                disabled={!!votingA[a.id]}
+                title={user ? "Downvote" : "Sign in to vote"}
+              >
+                ▼
+              </Button>
+
+              {/* Кнопка / галочка выбора правильного ответа */}
+              <div className="text-center mt-1">
+                {a.isAccepted ? (
+                  // Всегда показываем галочку, если ответ принят
+                  <span
+                    style={{ color: "green", fontSize: "20px" }}
+                    title="Принятый ответ"
+                  >
+                    ✔
+                  </span>
+                ) : (
+                  // Если ответ ещё не принят — показываем кнопку только автору вопроса
+                  user?.userId === question.userId && (
+                    <Button
+                      variant="outline-success"
+                      size="sm"
+                      className="vote-btn"
+                      onClick={() => acceptAnswer(a.id)}
+                      disabled={!!acceptingA[a.id]}
+                      title="Отметить как принятый"
+                    >
+                      ✓
+                    </Button>
+                  )
+                )}
+              </div>
+            </div>
+
+            <div className="post-body text-start">
+              <Card className="border-0">
+                <Card.Body className="p-0">
+                  <div
+                    className="post-content"
+                    dangerouslySetInnerHTML={{ __html: a.content }}
+                  />
+                </Card.Body>
+              </Card>
+            </div>
+          </article>
+
+          {/* Футер ответа — ОТДЕЛЬНЫЙ РЯД, как у вопроса */}
+          <div className="post-footer">
+            <div className="post-actions">
+              <Button
+                variant="link"
+                className="p-0 edit-link"
+                onClick={() =>
+                  navigate(`/answers/edit/${a.id}`, {
+                    state: { content: a.content, questionId: question.id, authorId: a.userId },
+                  })
+                }
+              >
+                Edit
+              </Button>
+            </div>
+            <AuthorCard
+              kind="answered"
+              dt={a.createdAt}
+              userId={a.userId} // <<< ИМЕННО из ответа
+              name={a.authorName}
+              reputation={a.authorReputation}
+              avatarUrl={a.authorAvatarUrl}
+            />
           </div>
 
-          {/* Текст ответа */}
-          <div className="flex-grow-1">
-            <Card className="border-0">
-              <Card.Body className="text-start">{a.content}</Card.Body>
-            </Card>
+          {/* Комментарии к ответу */}
+          <div className="mt-2 text-center">
+            {getAnswerComments(a.id).length > 0 && (
+              <ul className="list-unstyled mb-2">
+                {getAnswerComments(a.id).map((c) => (
+                  <li key={c.id} className="mb-1">
+                    {/* <span dangerouslySetInnerHTML={{ __html: c.content ?? "" }} /> */}
+                    <span>{c.content}</span>
+                    <span className="text-muted small ms-2">
+                      – {c.authorName ?? "user"} {dayjs(c.createdAt).fromNow()}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <div className="post-actions">
+              {openCommentFor === a.id ? (
+                <CommentForm
+                  key={`comment-answer-${a.id}`}
+                  commentText={commentText}
+                  setCommentText={setCommentText}
+                  commentSubmitting={commentSubmitting}
+                  onSubmit={handleCommentSubmit}
+                  onCancel={() => setOpenCommentFor(null)}
+                />
+              ) : (
+                <Button
+                  variant="link"
+                  className="p-0 edit-link pb-5"
+                  onClick={() => setOpenCommentFor(a.id)}
+                >
+                  Add comment
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
+        </React.Fragment>
       ))}
 
       {/* Форма ответа */}
-      <h5 className="mt-5 mb-3 text-start">Your Answer</h5>
+      <h2 className="your-answer-title text-start pt-3">Your Answer</h2>
       <Form onSubmit={handleAnswerSubmit}>
-        <Form.Group controlId="answerText" className="mb-3">
-          <Form.Control
-            as="textarea"
-            rows={6}
-            value={answerText}
-            onChange={(e) => setAnswerText(e.target.value)}
-            placeholder="Type your answer here..."
+        <Form.Group controlId="answerHtml" className="mb-3 text-start">
+          <ReactQuill
+            theme="snow"
+            value={answerHtml}
+            onChange={setAnswerHtml}
+            modules={modules}
+            formats={formats}
+            style={{ marginBottom: 16 }}
           />
         </Form.Group>
-        <Button type="submit" variant="primary">
-          Post Your Answer
+        <Button type="submit" variant="primary" disabled={submitting}>
+          {submitting ? "Posting..." : "Post Your Answer"}
         </Button>
       </Form>
     </Container>

@@ -29,16 +29,13 @@ function TagCard({
       return;
     }
     try {
-      console.log(
-        `http://localhost:5000/api/tags/watched/user/${user.userId}/tag/${tag.id}`
-      );
       const res = await authFetch(
         `http://localhost:5000/api/tags/watched/user/${user.userId}/tag/${tag.id}`
       );
       if (!res.ok) throw new Error("Ошибка при проверке отслеживания");
 
-      const data = await res.json();     
-      setIsWatched(data);     
+      const data = await res.json();
+      setIsWatched(data);
     } catch (e) {
       setIsWatched(false);
       console.error(e);
@@ -50,7 +47,6 @@ function TagCard({
     // если статус ещё не определён, то проверяем
     if (isWatched === undefined) {
       fetchIsWatched();
-      console.log("isWatched  => " + isWatched);
     }
   };
 
@@ -61,15 +57,11 @@ function TagCard({
       return;
     }
     try {
-      console.log(
-        "POST" +
-          `http://localhost:5000/api/tags/watched/${user.userId}/${tag.id}`
-      );
       const response = await authFetch(
         `http://localhost:5000/api/tags/watched/${user.userId}/${tag.id}`,
         { method: "POST" }
       );
-      if (!response.ok) throw new Error("Ошибка при добавлении");      
+      if (!response.ok) throw new Error("Ошибка при добавлении");
 
       setIsWatched(true);
     } catch {
@@ -106,7 +98,11 @@ function TagCard({
         >
           <h5
             style={{ cursor: "pointer" }}
-            onClick={() => navigate(`/tags/${tag.id}/questions`)}
+            onClick={() =>
+              navigate(`/tags/${tag.id}/questions`, {
+                state: { tagName: tag.name },
+              })
+            }
           >
             <span className="badge bg-secondary">{tag.name}</span>
           </h5>

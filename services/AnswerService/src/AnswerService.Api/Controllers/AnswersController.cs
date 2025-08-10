@@ -17,6 +17,7 @@ using Contracts.Responses.AnswerService;
 using Microsoft.AspNetCore.Mvc;
 
 using Swashbuckle.AspNetCore.Annotations;
+using AnswerService.Application.Features.UpdateAnswerVote;
 
 namespace AnswerService.Api.Controllers;
 
@@ -102,5 +103,20 @@ public class AnswersController : ControllerBase {
     , [FromRoute] Guid questionId
     , [FromServices] ICommandHandler<UpdateAnswerAcceptCommand> handler) =>
   await handler.Handle (new UpdateAnswerAcceptCommand(answerId, questionId), new CancellationToken (false));
-  
+
+ 
+
+    [HttpPut("{answerId}/vote/{value}")]
+    [SwaggerOperation(
+    Summary = "Обновить поле Upvotes или Downvotes.",
+    Description = "Обновляет данные в таблице Questions.",
+    OperationId = "Question_Put")]
+    public async Task<Result> UpdateAnswerVote( 
+        Guid answerId,
+        int value,
+        [FromServices] ICommandHandler<UpdateAnswerVoteCommand> handler ) =>
+        await handler.Handle(new UpdateAnswerVoteCommand(answerId, value), new CancellationToken(false));
+
+
 }
+
