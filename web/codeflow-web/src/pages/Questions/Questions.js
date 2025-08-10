@@ -7,9 +7,9 @@ import {
   Pagination,
   ButtonGroup,
   ToggleButton,
-  Spinner,  
+  Spinner,
 } from "react-bootstrap";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useParams, useSearchParams } from "react-router-dom";
 
 import QuestionCard from "../../components/QuestionCard/QuestionCard";
@@ -17,6 +17,8 @@ import QuestionCard from "../../components/QuestionCard/QuestionCard";
 function Questions() {
   /* ───────── URL-параметры ───────── */
   const { tagId } = useParams(); // undefined или id тега
+  const location = useLocation();
+  const initialTagName = location.state?.tagName ?? null;
   const [qs, setQs] = useSearchParams();
 
   const page = parseInt(qs.get("page") ?? "1", 10);
@@ -28,6 +30,20 @@ function Questions() {
   const [pageInfo, setInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentTag, setCurrentTag] = useState(null);
+  const [tagNameLoading, setTagNameLoading] = useState(false);
+
+  // 1) Сначала пробуем имя из state (если пришли со страницы Tags)
+  useEffect(() => {
+    if (!tagId) {
+      setCurrentTag(null);
+      return;
+    }
+    if (typeof initialTagName === "string" && initialTagName.trim()) {
+      setCurrentTag(initialTagName.trim());
+    } else {
+      setCurrentTag(null);
+    }
+  }, [tagId, initialTagName]);
 
   /* ───────── загрузка ───────── */
   useEffect(() => {
@@ -37,9 +53,7 @@ function Questions() {
       setLoading(true);
       const url =
         `http://localhost:5000/api/aggregate/get-questions?page=${page}` +
-        `&pageSize=30&orderBy=${orderBy}&sortDirection=${
-          sortDir === 1 ? "Ascending" : "Descending"
-        }` +
+        `&pageSize=30&orderBy=${orderBy}&sortDirection=${sortDir}` +
         (tagId ? `&tagId=${tagId}` : "");
 
       fetch(url, {
@@ -71,11 +85,11 @@ function Questions() {
           setItems(mappedItems);
           setInfo(res.questions.pagedInfo);
 
-          if (tagId && tagMap[`tag-${tagId}`]) {
-            setCurrentTag(tagMap[`tag-${tagId}`].name);
-          } else {
-            setCurrentTag(null);
-          }
+          // if (tagId && tagMap[`tag-${tagId}`]) {
+          //   setCurrentTag(tagMap[`tag-${tagId}`].name);
+          // } else {
+          //   setCurrentTag(null);
+          // }
         })
         .catch((err) => {
           console.error("Ошибка при получении вопросов:", err.message);
@@ -98,13 +112,17 @@ function Questions() {
     setQs(qs);
   };
 
+  console.log(currentTag);
+
   return (
     <Container className="my-4">
       <Row className="align-items-center mb-5">
         <Col>
           <h2 className="mb-3">
             {tagId ? (
-              <>Questions tagged [{currentTag ?? tagId}]</>
+              <>
+                Questions tagged [{(currentTag && currentTag.trim()) ? currentTag : (tagNameLoading ? "…" : "")}]
+              </>
             ) : (
               "All questions"
             )}

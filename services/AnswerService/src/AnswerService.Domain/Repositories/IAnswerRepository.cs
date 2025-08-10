@@ -17,5 +17,6 @@ public interface IAnswerRepository {
   Task<Result<IEnumerable<Answer>>> GetByUserIdAsync (Guid userId, CancellationToken ct);
   Task<Result<IEnumerable<string>>> GetCommentsByAnswerIdAsync (Guid userId, CancellationToken ct);
   Task SaveAsync (CancellationToken ct);
+    Task<Result> UpdateAsync( IEnumerable<Answer> answers, CancellationToken ct );
 
 }

@@ -21,13 +21,28 @@ import Users from "./pages/Users/Users";
 import UserProfile from "./pages/Users/UserProfile";
 
 import Questions from "./pages/Questions/Questions";
-import CreateQuestion from "./pages/Questions/CreateQuestion";
+import CreateOrEditQuestion from "./pages/Questions/CreateOrEditQuestion";
 import QuestionPage from "./pages/Questions/QuestionPage";
 
-function App() {  
+import EditAnswerPage from "./pages/Answer/EditAnswerPage";
+
+import HelpPage from "./pages/Footer/CodeFlow/HelpPage";
+import Teams from "./pages/Footer/Products/Teams"
+import Advertising from "./pages/Footer/Products/Advertising"
+import Talent from "./pages/Footer/Products/Talent"
+import About from "./pages/Footer/Company/About"
+import Press from "./pages/Footer/Company/Press"
+import WorkHere from "./pages/Footer/Company/WorkHere"
+import Legal from "./pages/Footer/Company/Legal"
+import Technology from "./pages/Footer/Network/Technology"
+import Culture from "./pages/Footer/Network/Culture"
+import Life from "./pages/Footer/Network/Life"
+import Science from "./pages/Footer/Network/Science"
+
+
+function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!Cookies.get("jwt"));
 
-  // На случай, если кука была выставлена/удалена где-то снаружи:
   useEffect(() => {
     const id = setInterval(
       () => setIsAuthenticated(!!Cookies.get("jwt")),
@@ -36,15 +51,15 @@ function App() {
     return () => clearInterval(id);
   }, []);
 
-  return (   
-    <div className="App">      
+  return (
+    <div className="App">
       <ToastContainer position="top-center" />
+
       <div className="container-xxl">
         <Header isAuthenticated={isAuthenticated} />
-
         <div className="main">
           <Sidebar />
-          <main className="content mt-2 mb-2">
+          <main className="content">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/signup" element={<Signup />} />
@@ -56,8 +71,24 @@ function App() {
               <Route path="/users" element={<Users />} />
               <Route path="/users/:userId" element={<UserProfile />} />
               <Route path="/users/user_profile" element={<UserProfile />} />
-              <Route path="/questions/ask" element={<CreateQuestion />} />
+              <Route path="/questions/ask" element={<CreateOrEditQuestion />} />
               <Route path="/questions/:id" element={<QuestionPage />} />
+              <Route path="/questions/edit/:id" element={<CreateOrEditQuestion />} />
+              <Route path="/answers/edit/:answerId" element={<EditAnswerPage />} />
+
+              <Route path="/help" element={<HelpPage />} />
+              <Route path="/teams" element={<Teams />} />
+              <Route path="/advertising" element={<Advertising />} />
+              <Route path="/talent" element={<Talent />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/press" element={<Press />} />
+              <Route path="/work-here" element={<WorkHere />} />
+              <Route path="/legal" element={<Legal />} />
+              <Route path="/technology" element={<Technology />} />
+              <Route path="/culture" element={<Culture />} />
+              <Route path="/life" element={<Life />} />
+              <Route path="/science" element={<Science />} />
+              
             </Routes>
           </main>
         </div>

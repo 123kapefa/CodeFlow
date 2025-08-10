@@ -1,14 +1,15 @@
-.App {
-  text-align: center;
+html, body, #root {
+  height: 100%;
 }
 
-body.layout {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  display: grid;
-  grid-template-rows: 60px 1fr auto;
+/* Главный контейнер приложения — колонка на всю высоту */
+.App {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
+
+
 
 /* ─────────── Top-bar ─────────── */
 .topbar {
@@ -42,6 +43,8 @@ body.layout {
 .main {
   display: grid;
   grid-template-columns: 220px 1fr;
+  flex: 1;                  /* <<< тянем основную область */
+  min-height: 0;            /* чтобы не распирало из-за внутренних overflow */
 }
 .sidebar {
   border-right: 1px solid #e4e4e4;
@@ -80,6 +83,7 @@ body.layout {
   border: 1px solid gray;
   border-radius: 5px;
   color: black;
+  min-height: 0;
 }
 
 /* ─────────── Footer ─────────── */
