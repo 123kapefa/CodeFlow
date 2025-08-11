@@ -173,3 +173,7 @@
 /* .comment-block{
    border-bottom: 1px solid #e3e6e8;
 } */
+
+.history-btn { color: #6c757d; }
+.history-btn:hover { color: #0a58ca; text-decoration: none; }
+.vote-col .history-btn svg { vertical-align: -2px; }

@@ -18,6 +18,32 @@ public class AnswerChangingHistoryRepository : IAnswerChangingHistoryRepository 
     _logger = logger;
   }
 
+
+    public async Task<Result<IEnumerable<AnswerChangingHistory>>> GetByAnswerIdAsync( Guid answerId, CancellationToken ct ) {
+
+        _logger.LogInformation($"GetByAnswerIdAsync: Получение истории ответапо  {answerId}.", answerId);
+
+        try {
+            List<AnswerChangingHistory> answerChangingHistories = await _context.AnswerChangingHistories
+            .Where(ach => ach.AnswerId == answerId)
+            .ToListAsync(ct);
+
+            if(!answerChangingHistories.Any()) {
+                _logger.LogError("GetByAnswerIdAsync: История не найдена.");
+                Result<IEnumerable<Answer>>.Error("История не найдена.");
+            }
+
+            _logger.LogInformation("Возврат истории ответов.");
+
+            return Result<IEnumerable<AnswerChangingHistory>>.Success(answerChangingHistories);
+        }
+        catch(Exception ex) {
+            _logger.LogError(ex, "GetByAnswerIdAsync: Ошибка при получении ответа.");
+            return Result<IEnumerable<AnswerChangingHistory>>.Error("Ошибка при получении ответа.");
+        }
+       
+    }
+
   public async Task<Result> CreateAsync (AnswerChangingHistory answerChangingHistory, CancellationToken ct) {
     try {
       _logger.LogInformation ($"Создание новой записи об изменении контента для ответа {answerChangingHistory.Id}.", answerChangingHistory.Id);

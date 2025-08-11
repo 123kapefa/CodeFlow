@@ -9,6 +9,7 @@ import {
   Form,
   Col,
 } from "react-bootstrap";
+import { ClockHistory } from "react-bootstrap-icons";
 
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -398,7 +399,6 @@ export default function QuestionPage() {
         throw new Error(errText || `HTTP ${res.status}`);
       }
 
-      // оптимистично обновим локально:
       setData((prev) => ({
         ...prev,
         question: {
@@ -416,7 +416,6 @@ export default function QuestionPage() {
         },
       }));
 
-      // при желании можно дополнительно синхронизироваться с сервером:
       await loadQuestion();
     } catch (e) {
       console.error("Accept answer failed:", e);
@@ -492,6 +491,17 @@ export default function QuestionPage() {
             title={user ? "Downvote" : "Sign in to vote"}
           >
             ▼
+          </Button>
+
+          <Button
+            variant="link"
+            size="sm"
+            className="p-0 mt-1 history-btn"
+            onClick={() => navigate(`/questions/${question.id}/history`)}
+            title="View edit history"
+            aria-label="View edit history"
+          >
+            <ClockHistory size={16} />
           </Button>
         </div>
 
@@ -640,6 +650,17 @@ export default function QuestionPage() {
                   )
                 )}
               </div>
+
+              <Button
+                variant="link"
+                size="sm"
+                className="p-0 mt-1 history-btn"
+                onClick={() => navigate(`/answers/${a.id}/history`)}
+                title="View edit history"
+                aria-label="View edit history"
+              >
+                <ClockHistory size={16} />
+              </Button>
             </div>
 
             <div className="post-body text-start">
@@ -662,7 +683,11 @@ export default function QuestionPage() {
                 className="p-0 edit-link"
                 onClick={() =>
                   navigate(`/answers/edit/${a.id}`, {
-                    state: { content: a.content, questionId: question.id, authorId: a.userId },
+                    state: {
+                      content: a.content,
+                      questionId: question.id,
+                      authorId: a.userId,
+                    },
                   })
                 }
               >

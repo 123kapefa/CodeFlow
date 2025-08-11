@@ -15,6 +15,8 @@ using Contracts.Responses.AnswerService;
 
 using FluentValidation;
 using AnswerService.Application.Features.UpdateAnswerVote;
+using AnswerService.Application.Features.GetAnswerHistory;
+using Contracts.DTOs.AnswerService;
 
 namespace AnswerService.Api.Extensions;
 
@@ -33,6 +35,7 @@ public static class HandlerCollectionExtensions {
     builder.Services.AddScoped<ICommandHandler<GetAnswersResponse, GetAnswersByUserIdCommand>, GetAnswersByUserIdHandler> ();
     builder.Services.AddScoped<ICommandHandler<GetAnswersResponse, GetAnswersByQuestionIdCommand>, GetAnswersByQuestionIdHandler> ();
         builder.Services.AddScoped<ICommandHandler<UpdateAnswerVoteCommand>, UpdateAnswerVoteHandler>();
+        builder.Services.AddScoped<ICommandHandler<IEnumerable<AnswerHistoryDTO>, GetAnswerHistoryCommand>, GetAnswerHistoryHandler>();
 
         builder.Services.AddScoped<IValidator<CreateAnswerCommand>, CreateAnswerValidator> ();
     builder.Services.AddScoped<IValidator<EditAnswerCommand>, EditAnswerValidator> ();
