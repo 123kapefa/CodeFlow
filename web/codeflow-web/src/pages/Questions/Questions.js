@@ -23,7 +23,7 @@ function Questions() {
 
   const page = parseInt(qs.get("page") ?? "1", 10);
   const orderBy = qs.get("orderBy") ?? "AnswersCount";
-  const sortDir = parseInt(qs.get("sortDir") ?? "0", 10); // 0 = Descending
+  const sortDir = parseInt(qs.get("sortDir") ?? "1", 10); // 0 = Descending
 
   /* ───────── состояние ───────── */
   const [items, setItems] = useState([]);
@@ -51,6 +51,7 @@ function Questions() {
 
     const fetchData = async () => {
       setLoading(true);
+
       const url =
         `http://localhost:5000/api/aggregate/get-questions?page=${page}` +
         `&pageSize=30&orderBy=${orderBy}&sortDirection=${sortDir}` +
@@ -70,26 +71,30 @@ function Questions() {
         })
         .then((res) => {
           const tagMap = res.tags;
-          const mappedItems = res.questions.value.map((q) => ({
-            id: q.id,
-            title: q.title,
-            votes: q.upvotes - q.downvotes,
-            answers: q.answersCount,
-            views: q.viewsCount,
-            tags: q.questionTags.map(
-              (t) => tagMap[`tag-${t.tagId}`]?.name ?? "unknown"
-            ),
-            author: "unknown",
-            answeredAgo: new Date(q.createdAt).toLocaleDateString(),
-          }));
+
+          const mappedItems = res.questions.value.map((q) => {
+            const tagItems = (q.questionTags ?? []).map((t) => ({
+              id: t.tagId,
+              name: tagMap[`tag-${t.tagId}`]?.name ?? `tag-${t.tagId}`,
+            }));
+
+            return {
+              id: q.id,
+              title: q.title,
+              votes: (q.upvotes ?? 0) - (q.downvotes ?? 0),
+              answers: q.answersCount ?? 0,
+              views: q.viewsCount ?? 0,
+              tags: tagItems.map((x) => x.name), // как раньше — массив имён
+              tagItems, // НОВОЕ: { id, name } для ссылок
+              isClosed: !!q.isClosed,
+              author: "unknown",
+              answeredAgo: new Date(q.createdAt).toLocaleDateString(),
+              content: q.content ?? null,
+            };
+          });
+
           setItems(mappedItems);
           setInfo(res.questions.pagedInfo);
-
-          // if (tagId && tagMap[`tag-${tagId}`]) {
-          //   setCurrentTag(tagMap[`tag-${tagId}`].name);
-          // } else {
-          //   setCurrentTag(null);
-          // }
         })
         .catch((err) => {
           console.error("Ошибка при получении вопросов:", err.message);
@@ -112,8 +117,6 @@ function Questions() {
     setQs(qs);
   };
 
-  console.log(currentTag);
-
   return (
     <Container className="my-4">
       <Row className="align-items-center mb-5">
@@ -121,7 +124,13 @@ function Questions() {
           <h2 className="mb-3">
             {tagId ? (
               <>
-                Questions tagged [{(currentTag && currentTag.trim()) ? currentTag : (tagNameLoading ? "…" : "")}]
+                Questions tagged [
+                {currentTag && currentTag.trim()
+                  ? currentTag
+                  : tagNameLoading
+                  ? "…"
+                  : ""}
+                ]
               </>
             ) : (
               "All questions"
@@ -144,7 +153,7 @@ function Questions() {
               orderBy === "AnswersCount" ? "primary" : "outline-secondary"
             }
             checked={orderBy === "AnswersCount"}
-            onChange={() => setSort("AnswersCount", 0)} // descending
+            onChange={() => setSort("AnswersCount", 1)} // descending
           >
             Answered
           </ToggleButton>

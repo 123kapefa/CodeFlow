@@ -13,7 +13,7 @@ export default function WatchedTagsCard({ tags = [], className = '' }) {
       <Card.Body>
         {tags.length ? (
           tags.map(t => (
-            <Badge key={t.id} bg="secondary" className="me-2 mb-2">
+            <Badge key={t.id} bg="secondary" className="me-2 mb-2 tag-badge">
               {t.tagName}
             </Badge>
           ))

@@ -90,13 +90,13 @@ function TagCard({
   return (
     <Card className="h-100 shadow-sm">
       <Card.Body>
-        <div
+        <div 
           ref={targetRef}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={onPopoverHide}
           style={{ display: "inline-block" }}
         >
-          <h5
+          <h5 
             style={{ cursor: "pointer" }}
             onClick={() =>
               navigate(`/tags/${tag.id}/questions`, {
@@ -104,7 +104,7 @@ function TagCard({
               })
             }
           >
-            <span className="badge bg-secondary">{tag.name}</span>
+            <span className="badge bg-secondary tag-badge">{tag.name}</span>
           </h5>
         </div>
 

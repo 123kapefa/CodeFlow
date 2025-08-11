@@ -117,7 +117,7 @@ export default function Home() {
         <Col>
           {/* разные состояния загрузки */}
           {watched === null && !wErr && (
-            <WatchedTagsCard tags={[]} className="h-100">
+            <WatchedTagsCard tags={[]} className="h-100 tag-badge">
               <div>Loading…</div>
             </WatchedTagsCard>
           )}

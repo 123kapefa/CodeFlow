@@ -26,6 +26,9 @@ import QuestionPage from "./pages/Questions/QuestionPage";
 
 import EditAnswerPage from "./pages/Answer/EditAnswerPage";
 
+import QuestionHistoryPage from "./pages/Questions/QuestionHistoryPage"
+import AnswerHistoryPage from "./pages/Answer/AnswerHistoryPage"
+
 import HelpPage from "./pages/Footer/CodeFlow/HelpPage";
 import Teams from "./pages/Footer/Products/Teams"
 import Advertising from "./pages/Footer/Products/Advertising"
@@ -75,6 +78,8 @@ function App() {
               <Route path="/questions/:id" element={<QuestionPage />} />
               <Route path="/questions/edit/:id" element={<CreateOrEditQuestion />} />
               <Route path="/answers/edit/:answerId" element={<EditAnswerPage />} />
+              <Route path="/questions/:id/history" element={<QuestionHistoryPage />} />
+              <Route path="/answers/:answerId/history" element={<AnswerHistoryPage />} />
 
               <Route path="/help" element={<HelpPage />} />
               <Route path="/teams" element={<Teams />} />

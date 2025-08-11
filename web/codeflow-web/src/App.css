@@ -1,4 +1,6 @@
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
 }
 
@@ -8,8 +10,6 @@ html, body, #root {
   display: flex;
   flex-direction: column;
 }
-
-
 
 /* ─────────── Top-bar ─────────── */
 .topbar {
@@ -43,8 +43,8 @@ html, body, #root {
 .main {
   display: grid;
   grid-template-columns: 220px 1fr;
-  flex: 1;                  /* <<< тянем основную область */
-  min-height: 0;            /* чтобы не распирало из-за внутренних overflow */
+  flex: 1; /* <<< тянем основную область */
+  min-height: 0; /* чтобы не распирало из-за внутренних overflow */
 }
 .sidebar {
   border-right: 1px solid #e4e4e4;
@@ -132,4 +132,40 @@ html, body, #root {
 .no-left-padding {
   padding-left: 0 !important;
   margin-left: 0 !important;
+}
+
+/* answers pill — как на StackOverflow */
+.answers-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  line-height: 1;
+  font-size: 0.875rem; /* ~14px */
+  white-space: nowrap;
+}
+
+.answers-pill.accepted {
+  background: #2f6f44; /* зелёный SO */
+  color: #fff;
+}
+
+.answers-pill.outlined {
+  border: 1px solid #2f6f44;
+  color: #2f6f44;
+  background: transparent;
+}
+
+.answers-pill.none {
+  border: 1px solid rgba(108, 117, 125, 0.35); /* мягко-серый бордер */
+  color: #6c757d;
+}
+
+/* чек слева, компактный */
+.answers-pill svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
 }
