@@ -33,5 +33,6 @@ public interface IAnswerRepository {
     CancellationToken ct);
 
   Task SaveAsync (CancellationToken ct);
+    Task<Result> UpdateAsync( IEnumerable<Answer> answers, CancellationToken ct );
 
 }

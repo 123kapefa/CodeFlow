@@ -46,10 +46,7 @@ export default function Home() {
     };
   }, [user, fetchAuth]); // fetchAuth уже мемоизирован
 
-  /* хотим один раз увидеть профиль в консоли */
-  useEffect(() => {
-    if (user) console.log("Profile:", user);
-  }, [user]);
+
 
   /* 2. Теперь идут условия с ранним return */
   if (loading) {
@@ -97,9 +94,9 @@ export default function Home() {
   return (
     <Container fluid="xxl" className="py-4">
       {/* шапка */}
-      <Row className="align-items-center mb-4">
+      <Row className="align-items-center mb-5">
         <Col>
-          <h2 className="mb-0">Welcome back, {user.userName}!</h2>
+          <h2 className="mb-0 text-start">Welcome back, {user.userName}!</h2>
         </Col>
         <Col xs="auto">
           <Button
@@ -120,7 +117,7 @@ export default function Home() {
         <Col>
           {/* разные состояния загрузки */}
           {watched === null && !wErr && (
-            <WatchedTagsCard tags={[]} className="h-100">
+            <WatchedTagsCard tags={[]} className="h-100 ">
               <div>Loading…</div>
             </WatchedTagsCard>
           )}

@@ -1,0 +1,179 @@
+/* Контейнер страницы */
+.question-page {
+  max-width: 980px;
+}
+
+/* Заголовок и мета */
+.qp-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: .25rem;
+}
+.qp-meta {
+  color: #6a737c;
+  font-size: .9rem;
+}
+
+/* Универсальный блок поста (вопрос/ответ) */
+.post {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid #e3e6e8;
+}
+.post:first-of-type {
+   border-top: 1px solid #e3e6e8; /*верхняя линия у вопроса */
+}
+
+.vote-col {
+  width: 64px;
+  text-align: center;
+  flex: 0 0 64px;
+  user-select: none;
+}
+.vote-btn {
+  display: block;
+  width: 100%;
+  font-weight: 700;
+}
+.vote-score {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 4px 0;
+}
+.post-body {
+  flex: 1 1 auto;
+}
+.post-content {
+  font-size: 1rem;
+  color: #232629;
+}
+.post-content p {
+  margin-bottom: 1rem;
+}
+.post-content pre {
+  padding: 12px;
+  border: 1px solid #e3e6e8;
+  border-radius: 4px;
+  overflow: auto;
+}
+
+/* Теги */
+.post-tags {
+  margin-top: 12px;
+}
+.tag-badge {
+  border: 1px solid #e3e6e8 !important;
+  margin-right: 8px;
+  margin-bottom: 6px;
+  background: #e1ecf4 !important;
+  color: #39739d !important;
+}
+
+/* Заголовки секций */
+.answers-title,
+.your-answer-title {
+  margin-top: 24px;
+  margin-bottom: 12px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  /* border-top: 1px solid #e3e6e8; */
+}
+
+/* ReactQuill чуть плотнее к стилю SO */
+.ql-container {
+  min-height: 180px;
+}
+.ql-editor {
+  min-height: 160px;
+  font-size: 1rem;
+}
+
+
+/* Ряд под постом (и вопрос, и ответ) */
+.post-footer {
+  display: flex;
+  justify-content: space-between;  /* Edit слева, автор справа */
+  align-items: flex-start;
+  margin: 8px 0 16px;
+  padding-top: 8px; 
+  padding-bottom: 25px;
+   border-bottom: 1px solid #e3e6e8;
+}
+
+/* Левая часть (Edit и т.п.) */
+.post-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Ссылка Edit */
+.edit-link {
+    margin-left: 4vw;
+  color: #6a737c;
+  font-size: 0.85rem;
+}
+.edit-link:hover {
+  color: #0a95ff;
+  text-decoration: underline;
+}
+
+/* Правая карточка автора — одинаковый размер для вопроса и ответа */
+.post-author {
+  background-color: #f1f8ff;      /* светло-голубой как у SO */
+  border-radius: 3px;
+  padding: 6px 8px;
+  width: 260px;                    /* фиксированная ширина */
+  min-height: 70px;                /* одинаковая высота при пустых данных */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Содержимое карточки автора */
+.author-card {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;                 /* чтобы имя переносилось, но блок не рос */
+}
+
+.author-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 3px;
+  object-fit: cover;
+  background: #fff;
+}
+
+.author-name {
+  font-size: 0.9rem;
+  color: #0074cc;
+  text-decoration: none;
+}
+.author-name:hover {
+  text-decoration: underline;
+}
+
+.author-rep {
+  font-size: 0.85rem;
+  color: #6a737c;
+}
+
+/* заглушка-аватар */
+.author-avatar-fallback{
+  width:32px;height:32px;border-radius:3px;background:#6a737c;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;
+}
+
+
+/* .comment-block{
+   border-bottom: 1px solid #e3e6e8;
+} */
+
+.history-btn { color: #6c757d; }
+.history-btn:hover { color: #0a58ca; text-decoration: none; }
+.vote-col .history-btn svg { vertical-align: -2px; }

@@ -24,6 +24,7 @@ public class AnswerRepository : IAnswerRepository {
   public async Task<Result<IEnumerable<Answer>>> GetByQuestionIdAsync (Guid questionId, CancellationToken ct) {
     try {
       _logger.LogInformation ("Получение списка ответов по {QuestionId}.", questionId);
+
       var answers = await _context.Answers.Where (a => a.QuestionId == questionId).ToListAsync (ct);
 
       if (answers.Any ()) {
@@ -104,20 +105,23 @@ public class AnswerRepository : IAnswerRepository {
     }
   }
 
-  public async Task<Result> UpdateAsync (Answer answer, CancellationToken ct) {
-    try {
-      _logger.LogInformation ("Обновление ответа.");
-      _context.Answers.Update (answer);
-      await _context.SaveChangesAsync (ct);
 
-      _logger.LogInformation ("Ответ успешно обновлен.");
-      return Result.Success ();
-    }
-    catch (Exception) {
-      _logger.LogError ("База данных не отвечает");
-      return Result.Error ("База данных не отвечает.");
-    }
-  }
+    public async Task<Result> UpdateAsync( IEnumerable<Answer> answers, CancellationToken ct ) {
+        try {
+            _logger.LogInformation("Обновление ответа.");
+            _context.Answers.UpdateRange(answers);
+            await _context.SaveChangesAsync(ct);
+
+            _logger.LogInformation("Ответ успешно обновлен.");
+            return Result.Success();
+        }
+        catch(Exception) {
+            _logger.LogError("База данных не отвечает");
+            return Result.Error("База данных не отвечает.");
+        }
+    }    
+
+
 
   public async Task<Result> UpdateAsync (
     Answer answer
