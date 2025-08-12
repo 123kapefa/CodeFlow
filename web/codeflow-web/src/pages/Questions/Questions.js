@@ -84,7 +84,7 @@ function Questions() {
               votes: (q.upvotes ?? 0) - (q.downvotes ?? 0),
               answers: q.answersCount ?? 0,
               views: q.viewsCount ?? 0,
-              tags: tagItems.map((x) => x.name), // как раньше — массив имён
+              tags: tagItems.map((x) => x.name),
               tagItems, // НОВОЕ: { id, name } для ссылок
               isClosed: !!q.isClosed,
               author: "unknown",

@@ -169,3 +169,11 @@ body,
   height: 14px;
   flex: 0 0 auto;
 }
+
+
+.form-check.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem; /* расстояние между чекбоксом и текстом */
+}
