@@ -7,16 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Compile Remove="DTOs\AuthService\**" />
-      <EmbeddedResource Remove="DTOs\AuthService\**" />
-      <None Remove="DTOs\AuthService\**" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Folder Include="Common\" />
+      <Folder Include="DTOs\" />
+      <Folder Include="DTOs\AuthService\" />
+      <Folder Include="Responses\ApiGateway\" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Ardalis.Result" Version="10.1.0" />
       <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
     </ItemGroup>
 

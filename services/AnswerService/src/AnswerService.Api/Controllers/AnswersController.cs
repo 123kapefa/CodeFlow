@@ -11,6 +11,8 @@ using Abstractions.Commands;
 
 using AnswerService.Application.Features.UpdateAnswerAccept;
 
+using Contracts.Common.Filters;
+using Contracts.DTOs.AnswerService;
 using Contracts.Requests.AnswerService;
 using Contracts.Responses.AnswerService;
 
@@ -75,9 +77,9 @@ public class AnswersController : ControllerBase {
     OperationId = "Answer_GetByQuestionId")]
   [SwaggerResponse(200, "Список ответов успешно получен", typeof(GetAnswersResponse))]
   [SwaggerResponse(404, "Вопрос не найден")]
-  public async Task<GetAnswersResponse> GetAnswersByQuestionId (
+  public async Task<Result<IEnumerable<AnswerDto>>> GetAnswersByQuestionId (
     [FromRoute] Guid questionId
-    , [FromServices] ICommandHandler<GetAnswersResponse, GetAnswersByQuestionIdCommand> handler) =>
+    , [FromServices] ICommandHandler<IEnumerable<AnswerDto>, GetAnswersByQuestionIdCommand> handler) =>
     await handler.Handle (new GetAnswersByQuestionIdCommand(questionId), new CancellationToken (false));
 
   [HttpGet ("user/{userId:guid}")]
@@ -87,10 +89,12 @@ public class AnswersController : ControllerBase {
     OperationId = "Answer_GetByUserId")]
   [SwaggerResponse(200, "Список ответов успешно получен", typeof(GetAnswersResponse))]
   [SwaggerResponse(404, "Пользователь не найден")]
-  public async Task<GetAnswersResponse> GetAnswersByUserId (
-    [FromRoute] Guid userId
-    , [FromServices] ICommandHandler<GetAnswersResponse, GetAnswersByUserIdCommand> handler) =>
-    await handler.Handle (new GetAnswersByUserIdCommand(userId), new CancellationToken (false));
+  public async Task<Result<PagedResult<IEnumerable<AnswerDto>>>> GetAnswersByUserId (
+    [FromRoute] Guid userId,
+    [FromQuery] PageParams pageParams,
+    [FromQuery] SortParams sortParams
+    , [FromServices] ICommandHandler<PagedResult<IEnumerable<AnswerDto>>, GetAnswersByUserIdCommand> handler) =>
+    await handler.Handle (new GetAnswersByUserIdCommand(userId, pageParams, sortParams), new CancellationToken (false));
   
   [HttpPut ("accept/{answerId:guid}/question/{questionId:guid}")]
   [SwaggerOperation(
