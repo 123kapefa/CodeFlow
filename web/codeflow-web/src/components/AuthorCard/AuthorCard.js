@@ -23,8 +23,9 @@ function AuthorCard({ kind, dt, userId, name, reputation, avatarUrl }) {
           <div className="author-avatar-fallback">{(name?.[0] || "?").toUpperCase()}</div>
         )}
 
-        <div className="author-info">
+        <div className="author-info ms-3">
           <span className="author-name">{name || "—"}</span>
+          <br />
           {reputation != null && <span className="author-rep">{reputation}</span>}
         </div>
       </div>
