@@ -34,7 +34,7 @@ public class CommentApi {
     if (result is null) return new Dictionary<Guid, List<CommentDTO>>();
     
     var grouped = result
-     .GroupBy(comment => comment.AuthorId)
+     .GroupBy(comment => comment.TargetId)
      .ToDictionary(
         group => group.Key,
         group => group.ToList()

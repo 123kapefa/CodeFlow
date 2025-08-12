@@ -37,6 +37,8 @@ public static class HandlerCollectionExtensions {
     builder.Services.AddScoped<ICommandHandler<UpdateAnswerAcceptCommand>, UpdateAnswerAcceptHandler> ();
     builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<AnswerDto>>, GetAnswersByUserIdCommand>, GetAnswersByUserIdHandler> ();
     builder.Services.AddScoped<ICommandHandler<IEnumerable<AnswerDto>, GetAnswersByQuestionIdCommand>, GetAnswersByQuestionIdHandler> ();
+        builder.Services.AddScoped<ICommandHandler<UpdateAnswerVoteCommand>, UpdateAnswerVoteHandler>();
+        builder.Services.AddScoped<ICommandHandler<IEnumerable<AnswerHistoryDTO>,GetAnswerHistoryCommand>, GetAnswerHistoryHandler>();
     
     builder.Services.AddScoped<IValidator<CreateAnswerCommand>, CreateAnswerValidator> ();
     builder.Services.AddScoped<IValidator<EditAnswerCommand>, EditAnswerValidator> ();

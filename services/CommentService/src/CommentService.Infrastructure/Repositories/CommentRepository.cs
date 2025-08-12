@@ -64,12 +64,12 @@ public class CommentRepository : ICommentRepository {
     public async Task<Result<IEnumerable<Comment>>> GetCommentsByAnswerIdsAsync (IEnumerable<Guid> answerIds, CancellationToken token) {
         try {
             _logger.LogInformation ("Поиск комментов по списку Id ответов.");
-            await _commentDbContext.Comments
-               .Where (comment => answerIds.Contains (comment.Id))
+            List<Comment> comments = await _commentDbContext.Comments
+               .Where (comment => answerIds.Contains (comment.TargetId))
                .ToListAsync (token);
             
-            _logger.LogInformation ("Комменты найдены.");
-            return Result.Success ();
+            _logger.LogInformation ($"Комменты найдены - {comments.Count}.");
+            return Result<IEnumerable<Comment>>.Success (comments);
         }
         catch (Exception) {
             _logger.LogError ("База данных не отвечает");

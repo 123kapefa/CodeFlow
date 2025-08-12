@@ -29,7 +29,7 @@ using TagService.Application.Features.WatchedTags.CheckUserSubscription;
 using TagService.Application.Features.WatchedTags.CreateWatchedTag;
 using TagService.Application.Features.WatchedTags.DeleteWatchedTag;
 using TagService.Application.Features.WatchedTags.GetUserWatchedTags;
-
+using TagService.Application.Features.WatchedTags.IsExists;
 using PageParams = TagService.Domain.Filters.PageParams;
 using SortParams = TagService.Domain.Filters.SortParams;
 
@@ -221,7 +221,7 @@ public class TagServiceController : ControllerBase {
     await handler.Handle (new DeleteAnswerTagsCommand (request.UserId, request.QuestionId, request.TagIds),
       new CancellationToken (false));
 
-}
+
 
     [HttpGet("watched/user/{userId}/tag/{tagId}")]
     [SwaggerOperation(

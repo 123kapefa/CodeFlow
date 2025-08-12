@@ -29,45 +29,46 @@ export default function UsersPage() {
   const query = useMemo(() => {
     const q = new URLSearchParams();
 
-    // обязательные параметры пагинации
-    q.append("Page", page);
-    q.append("PageSize", PAGE_SIZE);
+    // пагинация
+    q.append("Page", String(page));
+    q.append("PageSize", String(PAGE_SIZE));
 
-    // (если нужен поиск по имени — передайте свой параметр; пример:)
-    if (filter.trim()) q.append("Filter", filter.trim());
+    // поиск
+    if (filter.trim()) q.append("SearchValue", filter.trim());
 
     // сортировка
     if (sort === "reputation") {
       q.append("OrderBy", "Reputation");
-      q.append("SortDirection", "1"); // 1 = DESC в вашей схеме
+      q.append("SortDirection", "Descending"); // топ репутация сверху
     } else {
       q.append("OrderBy", "CreatedAt");
-      q.append("SortDirection", "1");
+      q.append("SortDirection", "Descending"); // самые новые сверху
     }
+
     return q.toString();
   }, [page, filter, sort]);
 
   /* --------------------------- fetch ----------------------------- */
   useEffect(() => {
     const ctrl = new AbortController();
+
     (async () => {
       setLoading(true);
-      try {     
+      try {
         const res = await fetch(`${API_URL}?${query}`, { signal: ctrl.signal });
-
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-        const dto = await res.json();
-
-        setUsers(dto.value);
-        setPagesTotal(dto.pagedInfo.totalPages || 1);
+        const dto = await res.json(); // { value: User[], pagedInfo: { totalPages, ... } }
+        setUsers(dto.value ?? []);
+        setPagesTotal(dto.pagedInfo?.totalPages ?? 1);
         setError(null);
       } catch (e) {
-        if (e.name !== "AbortError") setError(e.message);
+        if (e.name !== "AbortError") setError(e.message || "Request failed");
       } finally {
         setLoading(false);
       }
     })();
+
     return () => ctrl.abort();
   }, [query]);
 
@@ -75,12 +76,10 @@ export default function UsersPage() {
   const Pager = () => {
     if (pagesTotal <= 1) return null;
 
-    // строим диапазон 1 … 2 3 4 5 … N
     const items = [];
     const window = 5;
     const head = Math.min(pagesTotal, window);
 
-    // «prev»
     items.push(
       <Pagination.Prev
         key="prev"
@@ -89,7 +88,6 @@ export default function UsersPage() {
       />
     );
 
-    // первые страницы
     for (let p = 1; p <= head; p++) {
       items.push(
         <Pagination.Item key={p} active={p === page} onClick={() => setPage(p)}>
@@ -98,7 +96,6 @@ export default function UsersPage() {
       );
     }
 
-    // многоточие + последняя страница
     if (pagesTotal > window) {
       items.push(<Pagination.Ellipsis key="ellipsis" disabled />);
       items.push(
@@ -110,9 +107,8 @@ export default function UsersPage() {
           {pagesTotal}
         </Pagination.Item>
       );
-}
+    }
 
-    // «next»
     items.push(
       <Pagination.Next
         key="next"
@@ -176,7 +172,6 @@ export default function UsersPage() {
         </Col>
       </Row>
 
-      {/* grid */}
       {loading && (
         <div className="text-center my-5">
           <Spinner animation="border" role="status" />
@@ -187,11 +182,10 @@ export default function UsersPage() {
 
       <Row>
         {users.map((u) => (
-          <UserCard key={u.userName} user={u} />
+          <UserCard key={u.id ?? u.userName} user={u} />
         ))}
       </Row>
 
-      {/* pagination */}
       <Pager />
     </Container>
   );
