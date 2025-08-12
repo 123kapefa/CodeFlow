@@ -26,7 +26,7 @@ using TagService.Application.Features.WatchedTags.CheckUserSubscription;
 using TagService.Application.Features.WatchedTags.CreateWatchedTag;
 using TagService.Application.Features.WatchedTags.DeleteWatchedTag;
 using TagService.Application.Features.WatchedTags.GetUserWatchedTags;
-
+using TagService.Application.Features.WatchedTags.IsExists;
 using PageParams = TagService.Domain.Filters.PageParams;
 using SortParams = TagService.Domain.Filters.SortParams;
 
@@ -35,7 +35,7 @@ namespace TagService.Api.Controllers;
 [ApiController]
 [Route("tags")]
 [TranslateResultToActionResult]
-public class TagServiceController : ControllerBase{
+public class TagServiceController : ControllerBase {
 
     [HttpGet("{tagId}")]
     [SwaggerOperation(
@@ -44,7 +44,7 @@ public class TagServiceController : ControllerBase{
     OperationId = "Tag_Get")]
     public async Task<Result<TagDTO>> GetTagByIdAsync(
         int tagId,
-        [FromServices] ICommandHandler<TagDTO,GetTagByIdCommand> handler ) =>
+        [FromServices] ICommandHandler<TagDTO, GetTagByIdCommand> handler ) =>
         await handler.Handle(new GetTagByIdCommand(tagId), new CancellationToken(false));
 
     [HttpGet("{tagName}/name")]
@@ -57,17 +57,17 @@ public class TagServiceController : ControllerBase{
         [FromServices] ICommandHandler<TagDTO, GetTagByNameCommand> handler ) =>
         await handler.Handle(new GetTagByNameCommand(tagName), new CancellationToken(false));
 
-    [HttpGet ("watched/{userId}/{tagId}/check")]
-    [SwaggerOperation (Summary = "Проверить подписку пользователя на тэг."
+    [HttpGet("watched/{userId}/{tagId}/check")]
+    [SwaggerOperation(Summary = "Проверить подписку пользователя на тэг."
         , Description = "Возвращает true, если пользователь подписан на указанный тэг, иначе false."
         , OperationId = "Tag_CheckSubscription")]
-    public async Task<Result<CheckUserSubcriptionResponse>> CheckUserSubscriptionAsync (
+    public async Task<Result<CheckUserSubcriptionResponse>> CheckUserSubscriptionAsync(
         Guid userId
         , int tagId
-        , [FromServices] ICommandHandler<CheckUserSubcriptionResponse, CheckUserSubscriptionCommand> handler) {
-        return await handler.Handle (new CheckUserSubscriptionCommand (userId, tagId), new CancellationToken (false));
+        , [FromServices] ICommandHandler<CheckUserSubcriptionResponse, CheckUserSubscriptionCommand> handler ) {
+        return await handler.Handle(new CheckUserSubscriptionCommand(userId, tagId), new CancellationToken(false));
     }
-    
+
     [HttpGet]
     [SwaggerOperation(
     Summary = "Получить список тегов.",
@@ -91,7 +91,7 @@ public class TagServiceController : ControllerBase{
         [FromServices] ICommandHandler<CreateTagCommand> handler ) =>
         await handler.Handle(new CreateTagCommand(tagCreateDTO), new CancellationToken(false));
 
-    [HttpPost ("create-tags")]
+    [HttpPost("create-tags")]
     [SwaggerOperation(
     Summary = "Создать тэги.",
     Description = "Создает записи в таблице tags.",
@@ -131,8 +131,8 @@ public class TagServiceController : ControllerBase{
     Description = "Обновляет/добавляет записи в таблице tags,userTagParticipation, userTagParticipationQuestion .",
     OperationId = "Tag_Post")]
     public async Task<Result> UpdateTagCountQuestionAsync(
-        [FromBody]TagParticipationQuestionRequest request,
-        [FromServices]ICommandHandler<UpdateTagCountQuestionCommand> handler) =>
+        [FromBody] TagParticipationQuestionRequest request,
+        [FromServices] ICommandHandler<UpdateTagCountQuestionCommand> handler ) =>
         await handler.Handle(
             new UpdateTagCountQuestionCommand(request.Tags, request.UserId, request.QuestionId), new CancellationToken(false));
 
@@ -253,9 +253,9 @@ public class TagServiceController : ControllerBase{
     Summary = "Обновить/добавить записи в таблице userTagParticipation, userTagParticipationQuestion при создании ответа.",
     Description = "Обновляет/добавляет записи в таблице userTagParticipation, userTagParticipationQuestion .",
     OperationId = "Tag_Post")]
-    public async Task<Result> UpdateParticipationAnswerAsync( 
+    public async Task<Result> UpdateParticipationAnswerAsync(
         [FromBody] TagParticipationAnswerRequest request,
-        [FromServices]ICommandHandler<UpdateParticipationAnswerCommand> handler) =>
+        [FromServices] ICommandHandler<UpdateParticipationAnswerCommand> handler ) =>
         await handler.Handle(new UpdateParticipationAnswerCommand(
             request.Tags, request.UserId, request.QuestionId), new CancellationToken(false));
 
@@ -280,4 +280,16 @@ public class TagServiceController : ControllerBase{
         [FromServices] ICommandHandler<DeleteAnswerTagsCommand> handler ) =>
         await handler.Handle(
             new DeleteAnswerTagsCommand(request.UserId, request.QuestionId, request.TagIds), new CancellationToken(false));
+
+    [HttpGet("watched/user/{userId}/tag/{tagId}")]
+    [SwaggerOperation(
+    Summary = "Проверка на существование отслеживаемого тэга для пользователя",
+    Description = "Возвращает bool при проверке WatchedTags по UserId и TagId",
+    OperationId = "Tag_Get")]
+    public async Task<Result<bool>> IsWatchedTagExistsAsync(
+        Guid userId,
+        int tagId,
+        [FromServices] ICommandHandler<bool, IsExistsCommand> handler ) =>
+        await handler.Handle(new IsExistsCommand(userId, tagId), new CancellationToken(false));
+
 }

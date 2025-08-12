@@ -24,7 +24,7 @@ public class AnswerRepository : IAnswerRepository {
       var answers = await _context.Answers
        .Where (a => a.QuestionId == questionId).ToListAsync (ct);
       
-      if (answers.Any ()) {
+      if (!answers.Any ()) {
         _logger.LogError ("Ответы не найдены.");
         Result<IEnumerable<Answer>>.Error ("Ответы не найдены.");
       }
@@ -109,8 +109,26 @@ public class AnswerRepository : IAnswerRepository {
       return Result.Error ("База данных не отвечает.");
     }
   }
-  
-  public async Task<Result> UpdateAsync (Answer answer, AnswerChangingHistory answerChangingHistory, CancellationToken ct) {
+
+
+    public async Task<Result> UpdateAsync( IEnumerable<Answer> answers, CancellationToken ct ) {
+        try {
+            _logger.LogInformation("Обновление ответа.");
+            _context.Answers.UpdateRange(answers);
+            await _context.SaveChangesAsync(ct);
+
+            _logger.LogInformation("Ответ успешно обновлен.");
+            return Result.Success();
+        }
+        catch(Exception) {
+            _logger.LogError("База данных не отвечает");
+            return Result.Error("База данных не отвечает.");
+        }
+    }
+
+
+
+    public async Task<Result> UpdateAsync (Answer answer, AnswerChangingHistory answerChangingHistory, CancellationToken ct) {
     try { 
       _logger.LogInformation ("Обновление ответа.");
       

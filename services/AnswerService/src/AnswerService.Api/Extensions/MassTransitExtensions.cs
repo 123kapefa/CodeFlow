@@ -33,8 +33,13 @@ public static class MassTransitExtensions {
                     e.ConfigureConsumer<UserDeletedConsumer>(ctx);
                     e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
                 });
+
+                cfg.ReceiveEndpoint("answer-service.answer-accepted", e => {
+
+                    e.ConfigureConsumer<AnswerAcceptedConsumer>(ctx);
+                    e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+                });
                 
-                cfg.ConfigureEndpoints(ctx);
             });
         });
 

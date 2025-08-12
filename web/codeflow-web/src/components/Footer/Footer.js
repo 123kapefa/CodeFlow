@@ -10,35 +10,34 @@ function Footer() {
         <section>
           <h4>CodeFlow</h4>
           <ul>
-            <li><a href="#">Questions</a></li>
-            <li><a href="#">Help</a></li>
-            <li><a href="#">Chat</a></li>
+            <li><a href="/questions">Questions</a></li>
+            <li><a href="/help">Help</a></li>          
           </ul>
         </section>
         <section>
           <h4>PRODUCTS</h4>
           <ul>
-            <li><a href="#">Teams</a></li>
-            <li><a href="#">Advertising</a></li>
-            <li><a href="#">Talent</a></li>
+            <li><a href="/teams">Teams</a></li>
+            <li><a href="/advertising">Advertising</a></li>
+            <li><a href="/talent">Talent</a></li>
           </ul>
         </section>
         <section>
           <h4>COMPANY</h4>
           <ul>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Press</a></li>
-            <li><a href="#">Work Here</a></li>
-            <li><a href="#">Legal</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/press">Press</a></li>
+            <li><a href="/work-here">Work Here</a></li>
+            <li><a href="/legal">Legal</a></li>
           </ul>
         </section>
         <section>
           <h4>STACK EXCHANGE NETWORK</h4>
           <ul>
-            <li><a href="#">Technology</a></li>
-            <li><a href="#">Culture & recreation</a></li>
-            <li><a href="#">Life & arts</a></li>
-            <li><a href="#">Science</a></li>
+            <li><a href="/technology">Technology</a></li>
+            <li><a href="/culture">Culture & recreation</a></li>
+            <li><a href="/life">Life & arts</a></li>
+            <li><a href="/science">Science</a></li>
           </ul>
         </section>
       </footer>
