@@ -7,7 +7,7 @@ namespace AnswerService.Application.Extensions;
 
 public static class AnswerExtensions {
 
-  public static IEnumerable<AnswerDto> ToDto (this IEnumerable<Answer> answers) {
+  public static IEnumerable<AnswerDto> ToAnswersDto (this IEnumerable<Answer> answers) {
     
     List<AnswerDto> dto = new List<AnswerDto>();
     

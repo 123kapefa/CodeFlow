@@ -12,6 +12,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using UserService.Application.Features.DeleteUser;
 using UserService.Application.Features.GetUserFullInfo;
 using UserService.Application.Features.GetUsers;
+using UserService.Application.Features.GetUsersByIds;
 using UserService.Application.Features.UpdateUserInfo;
 using UserService.Application.Features.UpdateUserProfile;
 
@@ -38,6 +39,15 @@ public class UsersController : ControllerBase {
         [FromServices] ICommandHandler<PagedResult<IEnumerable<UserShortDTO>>, GetUsersCommand> handler ) => 
         await handler.Handle(new GetUsersCommand(pageParams,sortParams, searchFilter), new CancellationToken(false));
 
+    [HttpPost ("get-users-by-ids")]
+    [SwaggerOperation(
+    Summary = "Получить список пользователей.",
+    Description = "Получает список пользователей для указанной страницы.",
+    OperationId = "User_Get")]
+    public async Task<Result<IEnumerable<UserForQuestionDto>>> GetUsersByIdsAsync(
+        [FromBody] List<Guid> userIds,
+        [FromServices] ICommandHandler<IEnumerable<UserForQuestionDto>, GetUsersByIdsCommand> handler ) => 
+        await handler.Handle(new GetUsersByIdsCommand(userIds), new CancellationToken(false));
 
     [HttpGet("{userId}")]
     [SwaggerOperation(

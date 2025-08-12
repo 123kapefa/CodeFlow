@@ -5,12 +5,13 @@ using Ardalis.Result;
 
 using Abstractions.Commands;
 
+using Contracts.DTOs.AnswerService;
 using Contracts.Responses.AnswerService;
 
 namespace AnswerService.Application.Features.GetAnswersByQuestionId;
 
 public class GetAnswersByQuestionIdHandler
-  : ICommandHandler <GetAnswersResponse, GetAnswersByQuestionIdCommand> {
+  : ICommandHandler <IEnumerable<AnswerDto>, GetAnswersByQuestionIdCommand> {
 
   private readonly IAnswerRepository _answerRepository;
   
@@ -18,16 +19,16 @@ public class GetAnswersByQuestionIdHandler
     _answerRepository = answerRepository;
   }
 
-  public async Task<Result<GetAnswersResponse>> Handle (
+  public async Task<Result<IEnumerable<AnswerDto>>> Handle (
     GetAnswersByQuestionIdCommand command, 
     CancellationToken cancellationToken) {
     var answers = await _answerRepository
      .GetByQuestionIdAsync (command.QuestionId, cancellationToken);
 
     if (!answers.IsSuccess) {
-      return Result<GetAnswersResponse>.Error (new ErrorList (answers.Errors));
+      return Result<IEnumerable<AnswerDto>>.Error (new ErrorList (answers.Errors));
     }
     
-    return Result<GetAnswersResponse>.Success (new GetAnswersResponse(answers.Value.ToDto()));
+    return Result<IEnumerable<AnswerDto>>.Success (answers.Value.ToAnswersDto ());
   }
 }

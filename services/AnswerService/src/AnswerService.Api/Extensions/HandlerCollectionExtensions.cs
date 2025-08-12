@@ -11,6 +11,9 @@ using AnswerService.Application.Features.UpdateAnswerAccept;
 using AnswerService.Domain.Repositories;
 using AnswerService.Infrastructure.Repositories;
 
+using Ardalis.Result;
+
+using Contracts.DTOs.AnswerService;
 using Contracts.Responses.AnswerService;
 
 using FluentValidation;
@@ -32,12 +35,10 @@ public static class HandlerCollectionExtensions {
     builder.Services.AddScoped<ICommandHandler<DeleteAnswerCommand>, DeleteAnswerHandler> ();
     builder.Services.AddScoped<ICommandHandler<DeleteAnswersByUserIdCommand>, DeleteAnswersByUserIdHandler> ();
     builder.Services.AddScoped<ICommandHandler<UpdateAnswerAcceptCommand>, UpdateAnswerAcceptHandler> ();
-    builder.Services.AddScoped<ICommandHandler<GetAnswersResponse, GetAnswersByUserIdCommand>, GetAnswersByUserIdHandler> ();
-    builder.Services.AddScoped<ICommandHandler<GetAnswersResponse, GetAnswersByQuestionIdCommand>, GetAnswersByQuestionIdHandler> ();
-        builder.Services.AddScoped<ICommandHandler<UpdateAnswerVoteCommand>, UpdateAnswerVoteHandler>();
-        builder.Services.AddScoped<ICommandHandler<IEnumerable<AnswerHistoryDTO>, GetAnswerHistoryCommand>, GetAnswerHistoryHandler>();
-
-        builder.Services.AddScoped<IValidator<CreateAnswerCommand>, CreateAnswerValidator> ();
+    builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<AnswerDto>>, GetAnswersByUserIdCommand>, GetAnswersByUserIdHandler> ();
+    builder.Services.AddScoped<ICommandHandler<IEnumerable<AnswerDto>, GetAnswersByQuestionIdCommand>, GetAnswersByQuestionIdHandler> ();
+    
+    builder.Services.AddScoped<IValidator<CreateAnswerCommand>, CreateAnswerValidator> ();
     builder.Services.AddScoped<IValidator<EditAnswerCommand>, EditAnswerValidator> ();
       
         return builder;

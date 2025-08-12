@@ -78,6 +78,30 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
     }
   }
 
+  public async Task<Result<(IEnumerable<Question> items, PagedInfo pageInfo)>> GetQuestionsByIdsAsync (
+    IEnumerable<Guid> questionIds,
+    PageParams pageParams,
+    SortParams sortParams,
+    CancellationToken token) {
+    _logger.LogInformation ("GetQuestionsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}"
+      , pageParams, sortParams);
+
+    try {
+      var questions = await _dbContext.Questions
+       .Include (q => q.QuestionTags)
+       .Where (q => questionIds.Contains (q.Id))
+       .Sort (sortParams)
+       .ToPagedAsync (pageParams);
+
+      _logger.LogInformation ("GetQuestionsAsync: получено {Count} вопросов", questions.Value.items.Count ());
+      return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Success (questions);
+    }
+    catch (Exception ex) {
+      _logger.LogError (ex, "GetQuestionsAsync: ошибка базы данных");
+      return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Error ("Ошибка базы данных");
+    }
+  }
+
   /// <summary> Получить список вопросов пользователя. </summary>
   public async Task<Result<(IEnumerable<Question> items, PagedInfo pageInfo)>> GetUserQuestionsAsync (
     Guid userId
