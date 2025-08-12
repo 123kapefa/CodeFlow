@@ -4,4 +4,4 @@ using Contracts.DTOs.QuestionService;
 
 namespace QuestionService.Application.Features.CreateQuestion;
 
-public record CreateQuestionCommand (CreateQuestionDTO CreateQuestionDTO) : ICommand;
+public record CreateQuestionCommand (CreateQuestionDTO QuestionDto) : ICommand;

@@ -25,4 +25,8 @@
       <ProjectReference Include="..\AnswerService.Domain\AnswerService.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\..\shared\src\Contracts\Contracts.csproj" />
+    </ItemGroup>
+
 </Project>

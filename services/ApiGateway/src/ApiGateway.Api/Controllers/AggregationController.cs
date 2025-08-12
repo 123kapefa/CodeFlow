@@ -1,13 +1,19 @@
 using System.Text.Json;
 
+using ApiGateway.Application.Clients;
 using ApiGateway.Application.Extensions;
 using ApiGateway.Application.Services;
 
 using Contracts.Common.Filters;
+using Contracts.DTOs.AnswerService;
+using Contracts.DTOs.CommentService;
+using Contracts.DTOs.QuestionService;
+using Contracts.DTOs.TagService;
 
 using Microsoft.AspNetCore.Mvc;
 
 using Contracts.Requests.ApiGateway;
+using Contracts.Requests.TagService;
 
 namespace ApiGateway.Api.Controllers;
 
@@ -17,147 +23,138 @@ public class AggregationController : ControllerBase {
 
   private readonly HttpService _httpService;
 
-  public AggregationController (HttpService httpService) {
+  private readonly UserApi _users;
+  private readonly QuestionApi _questions;
+  private readonly AnswerApi _answers;
+  private readonly TagApi _tags;
+  private readonly CommentApi _comments;
+
+  public AggregationController (
+    HttpService httpService,
+    QuestionApi questions,
+    AnswerApi answers,
+    TagApi tags,
+    CommentApi comments,
+    UserApi users) {
     _httpService = httpService;
+    _questions = questions;
+    _answers = answers;
+    _tags = tags;
+    _comments = comments;
+    _users = users;
   }
 
   [HttpPost ("get-question")]
-  public async Task<IActionResult> AggregateQuestionWithAnswersAndComments ([FromBody] QuestionRequest request) {
-    if (string.IsNullOrEmpty (request.QuestionId)) {
-      return BadRequest ("ID вопроса не указан");
-    }
+  public async Task<IActionResult> GetQuestion ([FromBody] QuestionRequest request, CancellationToken ct) {
+    if (!Guid.TryParse (request.QuestionId, out var qid))
+      return BadRequest ("Invalid questionId");
 
-    var results = new Dictionary<string, object> ();
-    var resultLock = new object ();
-
-    var questionTask = _httpService.FetchDataAsync ("question", $"api/questions/{request.QuestionId}", "GET", null
-      , results, resultLock);
-
-    var answersTask = _httpService.FetchDataAsync ("answers", $"api/answers/question/{request.QuestionId}", "GET", null
-      , results, resultLock);
-
-    var questionCommentsTask = _httpService.FetchDataAsync ("questionComments"
-      , $"api/comments/question/{request.QuestionId}", "GET", null, results, resultLock);
+    var questionTask = _questions.GetAsync (qid, ct);
+    var answersTask = _answers.GetByQuestionAsync (qid, ct);
+    var questionCommentsTask = _comments.GetQuestionCommentsAsync (qid, ct);
 
     await Task.WhenAll (questionTask, answersTask, questionCommentsTask);
 
-    Console.WriteLine (JsonSerializer.Serialize (results));
+    var question = await questionTask;
+    var answers = await answersTask ?? new List<AnswerDto> ();
+    var questionComments = await questionCommentsTask ?? new List<CommentDTO> ();
 
-    if (results.ContainsKey ("answers") && results["answers"] is JsonElement answersRoot) {
-      if (answersRoot.TryGetProperty ("answers", out var answersElement) &&
-          answersElement.ValueKind == JsonValueKind.Array) {
-        var answerComments = new Dictionary<string, object> ();
-        var answerCommentTasks = new List<Task> ();
+    if (question is null) return NotFound ("Question not found");
 
-        foreach (var answer in answersElement.EnumerateArray ()) {
-          if (answer.TryGetProperty ("id", out var idElement)) {
-            string answerId = idElement.GetString ();
-            string commentKey = $"comments-for-answer-{answerId}";
+    var answerComments = await _comments.GetCommentsForAnswersAsync (answers.Select (a => a.Id), ct);
 
-            var task = _httpService.FetchDataAsync (commentKey, $"api/comments/answer/{answerId}", "GET", null
-              , answerComments, resultLock);
+    var tagIds = question.QuestionTags?.Select (t => t.TagId).Distinct ().ToList () ?? new ();
+    var tags = await _tags.GetByIdsAsync (tagIds, ct);
 
-            answerCommentTasks.Add (task);
-          }
-        }
+    var userIds = new List<Guid> ();
 
-        await Task.WhenAll (answerCommentTasks);
-        results["answerComments"] = answerComments;
-      }
-      else {
-        Console.WriteLine ("Не удалось найти массив answers в объекте answers");
+    userIds.Add (question.UserId);
+    userIds.AddRange (answers.Select (a => a.UserId));
+    userIds.AddRange (questionComments.Select (c => c.AuthorId));
+    if (answerComments != null) {
+      foreach (var kvp in answerComments) {
+        var comments = kvp.Value;
+        userIds.AddRange (comments.Select (c => c.AuthorId));
       }
     }
 
-    if (results.ContainsKey ("question") && results["question"] is JsonElement questionElement) {
-      if (questionElement.TryGetProperty ("questionTags", out var tagsElement) &&
-          tagsElement.ValueKind == JsonValueKind.Array) {
-        var questionTags = new Dictionary<string, object> ();
-        var questionTagTasks = new List<Task> ();
+    userIds = userIds.Distinct ().ToList ();
 
-        foreach (var tagRef in tagsElement.EnumerateArray ()) {
-          if (tagRef.TryGetProperty ("tagId", out var idElement)) {
-            int tagId = idElement.GetInt32 ();
-            string tagKey = $"tag-{tagId}";
+    var users = await _users.GetUsersByIdsAsync (userIds, ct);
 
-            var task = _httpService.FetchDataAsync (tagKey, $"api/tags/{tagId}", "GET", null, questionTags, resultLock);
+    var result = new {
+      question,
+      questionComments,
+      answers,
+      answerComments,
+      tags,
+      users
+    };
+    return Ok (result);
+  }
 
-            questionTagTasks.Add (task);
-          }
-        }
+  [HttpPost ("create-question")]
+  public async Task<IActionResult> CreateQuestion ([FromBody] CreateQuestionRequest request, CancellationToken ct) {
+    var createdTags = await _tags.EnsureAsync (
+      new EnsureTagsRequest (request.QuestionDto.NewTags.Select (t => t.Name).ToList ()), ct);
 
-        await Task.WhenAll (questionTagTasks);
-        results["tags"] = questionTags;
-      }
-      else {
-        Console.WriteLine ("Не удалось найти массив questionTags в объекте вопроса");
-      }
-    }
+    request.QuestionDto.NewTags = createdTags.TagIds.Select (t => new CreateTagDto { Id = t }).ToList ();
 
-    return Ok (results);
+    var createdQuestion = await _questions.CreateAsync (request, ct);
+    return Ok (createdQuestion);
   }
 
   [HttpPost ("get-questions")]
   public async Task<IActionResult> AggregateQuestionsWithTags (
-    [FromQuery] PageParams pageParams
-    , [FromQuery] SortParams sortParams) {
-    var results = new Dictionary<string, object> ();
-    var resultLock = new object ();
+    [FromQuery] PageParams pageParams,
+    [FromQuery] SortParams sortParams,
+    [FromQuery] TagFilter tagFilter,
+    CancellationToken ct) {
+    var questionsList = await _questions.GetListAsync (
+      $"{pageParams.ToQueryString ()}&{sortParams.ToQueryString ()}&{tagFilter.ToQueryString ()}", ct);
 
-    var questionTask = _httpService.FetchDataAsync ("questions"
-      , $"api/questions?{pageParams.ToQueryString ()}&{sortParams.ToQueryString ()}", "GET", null, results, resultLock);
+    var userIds = questionsList.Value.Select (q => q.UserId).ToList ();
+    var tagIds = questionsList.Value.Select (q => q.QuestionTags.Select (t => t.TagId)).SelectMany (t => t).Distinct ()
+     .ToList ();
 
-    await questionTask;
+    var tagsListTask = _tags.GetByIdsAsync (tagIds, ct);
+    var usersListTask = _users.GetUsersByIdsAsync (userIds, ct);
 
-    Console.WriteLine (JsonSerializer.Serialize (results));
+    await Task.WhenAll (tagsListTask, usersListTask);
 
-    if (results.ContainsKey ("questions") && results["questions"] is JsonElement questionRoot) {
-      if (questionRoot.TryGetProperty ("value", out var questionsElement) &&
-          questionsElement.ValueKind == JsonValueKind.Array) {
-        var tagTasks = new List<Task> ();
-        var tagsResult = new Dictionary<string, object> ();
+    var tagsList = await tagsListTask;
+    var usersList = await usersListTask;
 
-        foreach (var question in questionsElement.EnumerateArray ()) {
-          if (question.TryGetProperty ("questionTags", out var tagsElement) &&
-              tagsElement.ValueKind == JsonValueKind.Array) {
-            foreach (var tagRef in tagsElement.EnumerateArray ()) {
-              if (tagRef.TryGetProperty ("tagId", out var idElement)) {
-                int tagId = idElement.GetInt32 ();
-                string tagKey = $"tag-{tagId}";
+    var result = new { questionsList, tagsList, usersList, };
 
-                Console.WriteLine ($"Запрос для тега: tagKey = {tagKey}, tagId = {tagId}");
+    return Ok (result);
+  }
 
-                var tagTask = _httpService.FetchDataAsync (
-                  tagKey, $"api/tags/{tagId}", 
-                  "GET", 
-                  null, 
-                  tagsResult, resultLock);
+  [HttpGet ("get-user-summary/{userId:guid}")]
+  public async Task<IActionResult> AggregateUserSummary ([FromRoute] Guid userId, CancellationToken ct) {
+    if (userId == Guid.Empty)
+      return BadRequest ("UserId не указан.");
 
-                tagTasks.Add (tagTask);
-              }
-            }
-          }
-          else {
-            Console.WriteLine ("Свойство 'questionTags' отсутствует или не является массивом.");
-          }
-        }
+    var userTask = _users.GetUserFullInfoAsync (userId, ct);
+    var questionsUserListTask = _questions.GetQuestionsByUserIdAsync (userId, ct);
+    var answersUserListTask = _answers.GetAnswersByUserIdAsync (userId, ct);
+    var tagsUserListTask = _tags.GetTagsByUserIdAsync (userId, ct);
 
-        await Task.WhenAll (tagTasks);
+    await Task.WhenAll (userTask, questionsUserListTask, answersUserListTask, tagsUserListTask);
 
+    var user = await userTask;
+    var questionsUserList = await questionsUserListTask;
+    var answersUserList = await answersUserListTask;
+    var tagsUserList = await tagsUserListTask;
 
-        await Task.WhenAll (tagTasks);
+    var questionIds = answersUserList.Select (a => a.QuestionId).ToList ();
+    var questionsAnswerList = await _questions.GetQuestionsByIdsAsync (questionIds, ct);
 
-        results["tags"] = tagsResult;
-      }
-      else {
-        Console.WriteLine ("Вопросы не найдены или их структура неверна.");
-      }
-    }
-    else {
-      Console.WriteLine ("Не удалось получить список вопросов.");
-    }
+    var result = new {
+      user, questionsUserList, questionsAnswerList, tagsUserList,
+    };
 
-    return Ok (results);
+    return Ok (result);
   }
 
 }
