@@ -85,8 +85,35 @@ export default function QuestionCard({ q }) {
               ))}
             </div>
 
-            <div className="small text-muted text-end">
-              asked {q.answeredAgo}
+            <div className="d-flex justify-content-end align-items-center gap-2 mt-2">
+              {/* Аватар */}
+              <img
+                src={
+                  q.authorAvatar?.trim()
+                    ? q.authorAvatar
+                    : "/avatar/avatar_default.png"
+                }
+                alt={q.author}
+                width={24}
+                height={24}
+                className="rounded" // квадратная форма
+                style={{ objectFit: "cover" }}
+              />
+
+              {/* Имя + репутация */}
+              <div className="small">
+                <Link
+                  to={`/users/${q.authorId}`}
+                  className="text-decoration-none"
+                  title={q.author}
+                >
+                  {q.author}
+                </Link>{" "}
+                <span className="text-muted">{q.authorReputation}</span>
+              </div>
+
+              {/* Время */}
+              <div className="small text-muted">asked {q.answeredAgo}</div>
             </div>
           </div>
         </div>

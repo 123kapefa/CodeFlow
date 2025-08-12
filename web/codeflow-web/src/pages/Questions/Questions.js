@@ -103,12 +103,16 @@ function Questions() {
             answers: q.answersCount ?? 0,
             views: q.viewsCount ?? 0,
             tags: tagItems.map((x) => x.name),
-            tagItems, // для кликабельных ссылок на теги
+            tagItems,
             isClosed: !!q.isClosed,
+
+            // 🔽 новое:
+            authorId: q.userId,
             author: author?.username ?? "unknown",
             authorAvatar: author?.avatarUrl ?? null,
             authorReputation: author?.reputation ?? 0,
-            answeredAgo: new Date(q.createdAt).toLocaleDateString(),
+            askedAt: q.createdAt, // пригодится для "asked …"
+            answeredAgo: new Date(q.createdAt).toLocaleDateString(), // можно оставить, если используешь
             content: q.content ?? null,
           };
         });
@@ -148,16 +152,17 @@ function Questions() {
 
   return (
     <Container className="my-4">
-      <Row className="align-items-center mb-5">
+      <Row className="align-items-center mb-2">
         <Col>
-          <h2 className="mb-3">
+          <h2 className="mb-1">
             {tagId ? (
               <>Questions tagged [{currentTag?.trim() ?? ""}]</>
             ) : (
-              "All questions"
+              "All Questions"
             )}
           </h2>
         </Col>
+
         <Col xs="auto">
           <Button as={Link} to="/questions/ask" variant="outline-primary">
             Ask Question
@@ -165,31 +170,43 @@ function Questions() {
         </Col>
       </Row>
 
-      <div className="d-flex justify-content-end mb-3">
-        <ButtonGroup className="mb-3">
-          <ToggleButton
-            id="sort-answers"
-            type="radio"
-            variant={
-              orderBy === "AnswersCount" ? "primary" : "outline-secondary"
-            }
-            checked={orderBy === "AnswersCount"}
-            onChange={() => setSort("AnswersCount", 1)} // Desc
-          >
-            Answered
-          </ToggleButton>
+      <Row className="align-items-center mb-3">
+        <Col xs="auto">
+          <div className="text-muted">
+            {pageInfo
+              ? `${pageInfo.totalRecords.toLocaleString()} questions`
+              : ""}
+          </div>
+        </Col>
 
-          <ToggleButton
-            id="sort-new"
-            type="radio"
-            variant={orderBy === "CreatedAt" ? "primary" : "outline-secondary"}
-            checked={orderBy === "CreatedAt"}
-            onChange={() => setSort("CreatedAt", 1)} // Desc
-          >
-            Newest
-          </ToggleButton>
-        </ButtonGroup>
-      </div>
+        <Col className="d-flex justify-content-end">
+          <ButtonGroup>
+            <ToggleButton
+              id="sort-answers"
+              type="radio"
+              variant={
+                orderBy === "AnswersCount" ? "primary" : "outline-secondary"
+              }
+              checked={orderBy === "AnswersCount"}
+              onChange={() => setSort("AnswersCount", 0)}
+            >
+              Answered
+            </ToggleButton>
+
+            <ToggleButton
+              id="sort-new"
+              type="radio"
+              variant={
+                orderBy === "CreatedAt" ? "primary" : "outline-secondary"
+              }
+              checked={orderBy === "CreatedAt"}
+              onChange={() => setSort("CreatedAt", 1)}
+            >
+              Newest
+            </ToggleButton>
+          </ButtonGroup>
+        </Col>
+      </Row>
 
       {loading ? (
         <div className="text-center my-5">
