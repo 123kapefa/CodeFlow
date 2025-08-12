@@ -2,6 +2,8 @@ using AnswerService.Domain.Entities;
 
 using Ardalis.Result;
 
+using Contracts.Common.Filters;
+
 namespace AnswerService.Domain.Repositories;
 
 public interface IAnswerRepository {
@@ -14,6 +16,13 @@ public interface IAnswerRepository {
   Task<Result> UpdateAsync (Answer answer, CancellationToken ct);
   Task<Result> UpdateAsync (Answer answer, AnswerChangingHistory answerChangingHistory, CancellationToken ct);
   Task<Result> AcceptAsync (IEnumerable<Answer> answers, Guid answerId, CancellationToken ct);
+
+  Task<Result<(IEnumerable<Answer> items, PagedInfo pageInfo)>> GetByUserIdAsync (
+    Guid userId
+    , PageParams pageParams
+    , SortParams sortParams
+    , CancellationToken ct);
+
   Task<Result<IEnumerable<Answer>>> GetByUserIdAsync (Guid userId, CancellationToken ct);
   Task<Result<IEnumerable<string>>> GetCommentsByAnswerIdAsync (Guid userId, CancellationToken ct);
   Task SaveAsync (CancellationToken ct);

@@ -2,7 +2,12 @@ using Abstractions.Commands;
 using Ardalis.Result;
 
 using Contracts.DTOs.TagService;
+using Contracts.Responses.TagService;
+
 using FluentValidation;
+
+using TagService.Application.Features.ParticipationTags.CreateOrUpdateParticipationTags;
+using TagService.Application.Features.ParticipationTags.CreateTags;
 using TagService.Application.Features.ParticipationTags.DeleteAnswerTags;
 using TagService.Application.Features.ParticipationTags.DeleteUserTags;
 using TagService.Application.Features.ParticipationTags.GetUserTags;
@@ -12,6 +17,7 @@ using TagService.Application.Features.Tags.DeleteTag;
 using TagService.Application.Features.Tags.GetTagById;
 using TagService.Application.Features.Tags.GetTagByName;
 using TagService.Application.Features.Tags.GetTags;
+using TagService.Application.Features.Tags.GetTagsByIds;
 using TagService.Application.Features.Tags.UpdateTag;
 using TagService.Application.Features.Tags.UpdateTagCountQuestion;
 using TagService.Application.Features.WatchedTags.CreateWatchedTag;
@@ -37,26 +43,23 @@ public static class HandlerCollectionExtensions {
         builder.Services.AddScoped<ICommandHandler<TagDTO, GetTagByNameCommand>, GetTagByNameHandler>();
         builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<TagDTO>>, GetTagsCommand>, GetTagsHandler>();
         builder.Services.AddScoped<ICommandHandler<CreateTagCommand>, CreateTagHandler>();
+        builder.Services.AddScoped<ICommandHandler<EnsureTagsResponse, TagService.Application.Features.Tags.CreateTags.CreateTagsCommand>, TagService.Application.Features.Tags.CreateTags.CreateTagsHandler>();
         builder.Services.AddScoped<ICommandHandler<UpdateTagCommand>, UpdateTagHandler>();
-        //builder.Services.AddScoped<ICommandHandler<UpdateTagRequestCommand>, UpdateTagRequestHandler> ();
         builder.Services.AddScoped<ICommandHandler<UpdateTagCountQuestionCommand>, UpdateTagCountQuestionHandler>();
-        //builder.Services.AddScoped<ICommandHandler<UpdateTagWatchersCommand>, UpdateTagWatchersHandler> ();
         builder.Services.AddScoped<ICommandHandler<DeleteTagCommand>, DeleteTagHandler>();
+        builder.Services.AddScoped<ICommandHandler<IEnumerable<TagDTO>, GetTagsByIdsCommand>, GetTagsByIdsHandler> ();
 
         builder.Services
          .AddScoped<ICommandHandler<IEnumerable<WatchedTagDTO>, GetUserWatchedTagsCommand>, GetUserWatchedTagsHandler>();
         builder.Services.AddScoped<ICommandHandler<CreateWatchedTagCommand>, CreateWatchedTagHandler>();
         builder.Services.AddScoped<ICommandHandler<DeleteWatchedTagCommand>, DeleteWatchedTagHandler>();
-        //builder.Services.AddScoped<ICommandHandler<DeleteUserWatchedTagsCommand>, DeleteUserWatchedTagsHandler> ();
-
-        //builder.Services.AddScoped<ICommandHandler<CreateTagsCommand>, CreateTagsHandler> ();
-        //builder.Services.AddScoped<ICommandHandler<UpdateTagsCommand>, UpdateTagsHandler> ();
         builder.Services.AddScoped<ICommandHandler<DeleteUserTagsCommand>, DeleteUserTagsHandler>();
         builder.Services
          .AddScoped<ICommandHandler<PagedResult<IEnumerable<ParticipationDTO>>, GetUserTagsCommand>, GetUserTagsHandler>();
         builder.Services.AddScoped<ICommandHandler<UpdateParticipationAnswerCommand>, UpdateParticipationAnswerHandler>();
         builder.Services.AddScoped<ICommandHandler<DeleteAnswerTagsCommand>, DeleteAnswerTagsHandler>();
-
+        builder.Services.AddScoped<ICommandHandler<CreateOrUpdateParticipationTagsCommand>, CreateOrUpdateParticipationTagsHandler> ();
+        
         return builder;
     }
 
