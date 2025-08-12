@@ -15,7 +15,15 @@ public static class UserExtensions {
       , Reputation = user.UserStatistic.Reputation
       , Tags = []
     };
-  
+
+  public static IEnumerable<UserForQuestionDto> ToUsersForQuestionDto (this IEnumerable<UserInfo> users)
+    => users.Select(user => new UserForQuestionDto (
+      user.UserId,
+      user.Username,
+      user.UserStatistic.Reputation,
+      user.AvatarUrl
+    ));
+
   public static IEnumerable<UserShortDTO> ToUsersShortDto (this IEnumerable<UserInfo> users)
     => users.Select(user => new UserShortDTO {
       UserName = user.Username,
@@ -25,5 +33,5 @@ public static class UserExtensions {
       Reputation = user.UserStatistic.Reputation,
       Tags = []
     });
- 
+
 }

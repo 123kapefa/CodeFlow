@@ -1,4 +1,6 @@
-﻿using Ardalis.Result;
+﻿using System.Linq.Expressions;
+
+using Ardalis.Result;
 using TagService.Domain.Entities;
 using TagService.Domain.Filters;
 
@@ -26,8 +28,20 @@ public static class TagParticipationExtensions {
 
 
     public static IQueryable<UserTagParticipation> Sort( this IQueryable<UserTagParticipation> tags, SortParams sortParams ) {
-        return sortParams.SortDirection == SortDirection.Descending ?
-            tags = tags.OrderByDescending(t => t.Tag.Name) : tags.OrderBy(t => t.Tag.Name);
+        return sortParams.SortDirection == SortDirection.Descending 
+            ? tags = tags.OrderByDescending(GetKey (sortParams.OrderBy)) 
+            : tags.OrderBy(GetKey (sortParams.OrderBy));
     }    
+    
+    private static Expression<Func<UserTagParticipation, object>> GetKey (string? orderBy) {
+        if (string.IsNullOrEmpty (orderBy))
+            return x => x.Tag.Name;
+
+        return orderBy switch {
+            nameof(UserTagParticipation.QuestionsCreated) => x => x.QuestionsCreated, 
+            nameof(UserTagParticipation.AnswersWritten) => x => x.AnswersWritten, 
+            _ => x => x.Tag.Name
+        };
+    }
 
 }

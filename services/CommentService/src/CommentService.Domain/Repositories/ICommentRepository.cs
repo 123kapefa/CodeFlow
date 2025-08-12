@@ -9,6 +9,7 @@ public interface ICommentRepository {
         TypeTarget target, Guid questionId, CancellationToken token);
     
     Task<Result<Comment>> GetCommentByIdAsync( Guid commentId, CancellationToken token );
+    Task<Result<IEnumerable<Comment>>> GetCommentsByAnswerIdsAsync( IEnumerable<Guid> answerIds, CancellationToken token );
 
     Task<Result> CreateCommentAsync(Comment comment, CancellationToken token);
     Task<Result> UpdateCommentAsync( Comment comment, CancellationToken token );

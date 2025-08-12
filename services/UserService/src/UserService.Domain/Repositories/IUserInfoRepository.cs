@@ -24,6 +24,7 @@ public interface IUserInfoRepository {
     , CancellationToken token);
 
   Task<Result<UserInfo>> GetUserInfoByIdAsync (Guid userId, CancellationToken token);
+  Task<Result<IEnumerable<UserInfo>>> GetUsersByIdsAsync (IEnumerable<Guid> userIds, CancellationToken token);
   Task<Result<UserStatistic>> GetUserStatisticByIdAsync (Guid userId, CancellationToken token);
   Task<Result<UserInfo>> GetFullUserInfoByIdAsync (Guid userId, CancellationToken token);
 

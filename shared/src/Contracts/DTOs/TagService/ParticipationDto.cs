@@ -11,7 +11,7 @@ public class ParticipationDTO {
     public int AnswersWritten { get; set; } // количество ответов с тегом
 
 
-    protected ParticipationDTO() { }
+    public ParticipationDTO() { }
 
     private ParticipationDTO(
         Guid userId, int tagId, DateTime lastActiveAt, int questionsCreated, int answersWritten, string tagName ) {
