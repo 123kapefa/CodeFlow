@@ -119,7 +119,7 @@ public class AggregationController : ControllerBase {
             results,
             resultLock);
 
-    await questionTask;
+        await questionTask;
 
         if(results.TryGetValue("questions", out var questionsObj) && questionsObj is JsonElement questionRoot) {
             if(questionRoot.TryGetProperty("value", out var questionsElement) && questionsElement.ValueKind == JsonValueKind.Array) {
