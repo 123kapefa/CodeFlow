@@ -22,6 +22,7 @@ public static class AnswerExtensions {
         EditedAt = answer.UpdatedAt,
         Upvotes = answer.Upvotes,
         Downvotes = answer.Downvotes,
+          IsAccepted = answer.IsAccepted
       });
     }
     

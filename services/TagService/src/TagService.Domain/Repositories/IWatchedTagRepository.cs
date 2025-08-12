@@ -17,4 +17,5 @@ public interface IWatchedTagRepository {
     Task<IDbContextTransaction> BeginTransactionAsync( CancellationToken token );   
     Task<List<WatchedTag>> GetUserWatchedTagsListAsync( Guid userId, CancellationToken ct );
     void RemoveRange( IEnumerable<WatchedTag> items );
+
 }

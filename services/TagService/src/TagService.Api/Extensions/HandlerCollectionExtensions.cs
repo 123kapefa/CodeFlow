@@ -23,6 +23,7 @@ using TagService.Application.Features.WatchedTags.CreateWatchedTag;
 using TagService.Application.Features.WatchedTags.DeleteWatchedTag;
 using TagService.Application.Features.WatchedTags.GetUserWatchedTags;
 using TagService.Application.Features.WatchedTags.GetWatchedTagsByUserId;
+using TagService.Application.Features.WatchedTags.IsExists;
 using TagService.Domain.Repositories;
 using TagService.Infrastructure.Repositories;
 
@@ -60,7 +61,7 @@ public static class HandlerCollectionExtensions {
         builder.Services.AddScoped<ICommandHandler<DeleteAnswerTagsCommand>, DeleteAnswerTagsHandler>();
         builder.Services.AddScoped<ICommandHandler<CreateOrUpdateParticipationTagsCommand>, CreateOrUpdateParticipationTagsHandler> ();
         builder.Services.AddScoped<ICommandHandler<IEnumerable<WatchedTagDTO>, GetWatchedTagsByUserIdCommand>, GetWatchedTagsByUserIdHandler> ();
-        
+        builder.Services.AddScoped<ICommandHandler<bool, IsExistsCommand>, IsExistsHandler>();
 
         return builder;
     }

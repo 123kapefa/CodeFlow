@@ -106,6 +106,7 @@ public class AggregationController : ControllerBase {
     return Ok (createdQuestion);
   }
 
+
   [HttpPost ("get-questions")]
   public async Task<IActionResult> AggregateQuestionsWithTags (
     [FromQuery] PageParams pageParams,
@@ -207,6 +208,7 @@ public class AggregationController : ControllerBase {
 
       const double w1 = 3, w3 = 1;
       return w1 * matchedCount + w3 * freshness;
+
     }
 
     var ranked = candidates

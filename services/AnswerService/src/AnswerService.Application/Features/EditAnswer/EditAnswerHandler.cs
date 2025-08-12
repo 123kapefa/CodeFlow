@@ -39,8 +39,10 @@ public class EditAnswerHandler : ICommandHandler<EditAnswerCommand> {
 
     var newAnswerChangingHistory = AnswerChangingHistory
      .Create (command.Id, command.Request.EditedUserId, command.Request.Content);
-    
-    var resultUpdate = await _answerRepository.UpdateAsync(answer.Value, newAnswerChangingHistory, ct);
+
+        answer.Value.UserEditorId = command.Request.EditedUserId;
+
+        var resultUpdate = await _answerRepository.UpdateAsync(answer.Value, newAnswerChangingHistory, ct);
     
     return resultUpdate.IsSuccess ? Result.Success () : Result.Error (new ErrorList (resultUpdate.Errors));
   }

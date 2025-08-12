@@ -18,6 +18,9 @@ using Contracts.DTOs.AnswerService;
 using Contracts.Responses.AnswerService;
 
 using FluentValidation;
+using AnswerService.Application.Features.UpdateAnswerVote;
+using AnswerService.Application.Features.GetAnswerHistory;
+using Contracts.DTOs.AnswerService;
 
 namespace AnswerService.Api.Extensions;
 
@@ -27,6 +30,9 @@ public static class HandlerCollectionExtensions {
     
     builder.Services.AddScoped<IAnswerRepository, AnswerRepository> ();
     builder.Services.AddScoped<IAnswerChangingHistoryRepository, AnswerChangingHistoryRepository> ();
+
+    builder.Services.AddScoped<IValidator<CreateAnswerCommand>, CreateAnswerValidator> ();
+    builder.Services.AddScoped<IValidator<EditAnswerCommand>, EditAnswerValidator> ();
     
     builder.Services.AddScoped<ICommandHandler<CreateAnswerResponse, CreateAnswerCommand>, CreateAnswerHandler> ();
     builder.Services.AddScoped<ICommandHandler<EditAnswerCommand>, EditAnswerHandler> ();
@@ -35,9 +41,10 @@ public static class HandlerCollectionExtensions {
     builder.Services.AddScoped<ICommandHandler<UpdateAnswerAcceptCommand>, UpdateAnswerAcceptHandler> ();
     builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<AnswerDto>>, GetAnswersByUserIdCommand>, GetAnswersByUserIdHandler> ();
     builder.Services.AddScoped<ICommandHandler<IEnumerable<AnswerDto>, GetAnswersByQuestionIdCommand>, GetAnswersByQuestionIdHandler> ();
-    builder.Services.AddScoped<ICommandHandler<IEnumerable<Guid>, GetAnswerQuestionIdsByUserIdCommand>, GetAnswerQuestionIdsByUserIdHandler> ();
-    builder.Services.AddScoped<IValidator<CreateAnswerCommand>, CreateAnswerValidator> ();
-    builder.Services.AddScoped<IValidator<EditAnswerCommand>, EditAnswerValidator> ();
+    builder.Services.AddScoped<ICommandHandler<IEnumerable<Guid>, GetAnswerQuestionIdsByUserIdCommand>, GetAnswerQuestionIdsByUserIdHandler> (); 
+    builder.Services.AddScoped<ICommandHandler<UpdateAnswerVoteCommand>, UpdateAnswerVoteHandler>();        
+    builder.Services.AddScoped<ICommandHandler<IEnumerable<AnswerHistoryDTO>, GetAnswerHistoryCommand>, GetAnswerHistoryHandler>();
+      
     return builder;
   }
 
