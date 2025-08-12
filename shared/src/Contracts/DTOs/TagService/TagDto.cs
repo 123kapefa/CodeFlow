@@ -10,7 +10,7 @@ public class TagDTO {
     public int DailyRequestCount { get; set; }    
     public int WeeklyRequestCount { get; set; }
 
-    protected TagDTO() { }
+    public TagDTO() { }
 
     private TagDTO(
         int tagId, 

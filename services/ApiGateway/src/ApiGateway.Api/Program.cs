@@ -9,6 +9,10 @@ builder.Services.AddSingleton<HttpService> ();
 
 builder.AddConfig ();
 builder.AddAuth ();
+builder.AddApiClientsWithResilience ();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
+builder.Services.AddControllers ();
 
 builder.Services.AddHttpClient();
 builder.Services.AddControllers ();
