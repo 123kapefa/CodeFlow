@@ -35,5 +35,5 @@ public static class UserExtensions {
       Reputation = user.UserStatistic.Reputation,
       Tags = []
     });
- 
+
 }
