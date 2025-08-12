@@ -40,7 +40,7 @@ public class CommentRepository : ICommentRepository {
         _logger.LogInformation("GetCommentByIdAsync: комментарий {CommentId} успешно найден", commentId);
         return Result<Comment>.Success(comment);
     }
-
+    
 
     /// <summary> Получить список комментариев. </summary>
     public async Task<Result<IEnumerable<Comment>>> GetCommentsAsync(
@@ -61,6 +61,21 @@ public class CommentRepository : ICommentRepository {
         return Result<IEnumerable<Comment>>.Success(comments);
     }
 
+    public async Task<Result<IEnumerable<Comment>>> GetCommentsByAnswerIdsAsync (IEnumerable<Guid> answerIds, CancellationToken token) {
+        try {
+            _logger.LogInformation ("Поиск комментов по списку Id ответов.");
+            await _commentDbContext.Comments
+               .Where (comment => answerIds.Contains (comment.Id))
+               .ToListAsync (token);
+            
+            _logger.LogInformation ("Комменты найдены.");
+            return Result.Success ();
+        }
+        catch (Exception) {
+            _logger.LogError ("База данных не отвечает");
+            return Result.Error ("База данных не отвечает.");
+        }
+    }
 
     /// <summary> Создать комментарий. </summary>
     public async Task<Result> CreateCommentAsync( Comment comment, CancellationToken token ) {
