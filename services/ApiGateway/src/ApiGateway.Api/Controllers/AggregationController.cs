@@ -123,6 +123,7 @@ public class AggregationController : ControllerBase {
     var tagsListTask = _tags.GetByIdsAsync (tagIds, ct);
     var usersListTask = _users.GetUsersByIdsAsync (userIds, ct);
 
+
     await Task.WhenAll (tagsListTask, usersListTask);
 
 
