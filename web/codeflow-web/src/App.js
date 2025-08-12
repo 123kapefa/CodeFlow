@@ -27,6 +27,7 @@ import QuestionPage from "./pages/Questions/QuestionPage";
 import EditAnswerPage from "./pages/Answer/EditAnswerPage";
 
 import QuestionHistoryPage from "./pages/Questions/QuestionHistoryPage"
+import QuestionsSummaryPage from "./pages/Questions/QuestionsSummaryPage"
 import AnswerHistoryPage from "./pages/Answer/AnswerHistoryPage"
 
 import HelpPage from "./pages/Footer/CodeFlow/HelpPage";
@@ -79,6 +80,7 @@ function App() {
               <Route path="/questions/edit/:id" element={<CreateOrEditQuestion />} />
               <Route path="/answers/edit/:answerId" element={<EditAnswerPage />} />
               <Route path="/questions/:id/history" element={<QuestionHistoryPage />} />
+              <Route path="/questions-summary" element={<QuestionsSummaryPage />} />
               <Route path="/answers/:answerId/history" element={<AnswerHistoryPage />} />
 
               <Route path="/help" element={<HelpPage />} />

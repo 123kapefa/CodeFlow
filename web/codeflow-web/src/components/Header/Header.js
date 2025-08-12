@@ -38,7 +38,7 @@ function Header() {
                   alt="avatar"
                   width={32}
                   height={32}
-                  style={{ borderRadius: '50%', objectFit: 'cover' }}
+                  style={{ borderRadius: 0, objectFit: 'cover' }}
                 />
               </Link>
             </li>
