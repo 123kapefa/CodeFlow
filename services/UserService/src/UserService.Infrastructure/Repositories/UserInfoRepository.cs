@@ -45,6 +45,23 @@ public class UserInfoRepository : IUserInfoRepository {
     return Result<UserInfo>.Success (userInfo);
   }
 
+  public async Task<Result<IEnumerable<UserInfo>>> GetUsersByIdsAsync (IEnumerable<Guid> userIds, CancellationToken token) {
+    _logger.LogInformation ("GetUsersByIdsAsync started. UserId");
+
+    var users = await _dbContext.UsersInfos
+     .Where (x => userIds.Contains (x.UserId))
+     .Include (u => u.UserStatistic)
+     .ToListAsync (token);
+
+    if (users.Count == 0) {
+      _logger.LogWarning ("GetUsersByIdsAsync: пользователи не найдены");
+      return Result<IEnumerable<UserInfo>>.NotFound ("Пользователь не найден");
+    }
+
+    _logger.LogInformation ("GetUsersByIdsAsync: пользователи успешно найдены");
+    return Result<IEnumerable<UserInfo>>.Success (users);
+  }
+
   /// <summary> Получение статистики пользователя по ID </summary>
   public async Task<Result<UserStatistic>> GetUserStatisticByIdAsync (Guid userId, CancellationToken token) {
     _logger.LogInformation ("GetUserStatisticByIdAsync started. UserId: {UserId}", userId);

@@ -10,6 +10,7 @@ using Contracts.Common.Filters;
 using Contracts.DTOs.QuestionService;
 using Contracts.Requests.ApiGateway;
 using Contracts.Requests.QuestionService;
+using Contracts.Responses.QuestionService;
 
 using QuestionService.Application.Features.GetQuestion;
 using QuestionService.Application.Features.GetQuestionShort;
@@ -22,6 +23,7 @@ using QuestionService.Application.Features.UpdateQuestionAccept;
 using QuestionService.Application.Features.UpdateQuestionView;
 using QuestionService.Application.Features.UpdateQuestionVote;
 using QuestionService.Application.Features.GetQuestions;
+using QuestionService.Application.Features.GetQuestionsByIds;
 using QuestionService.Application.Features.UpdateQuestionAnswers;
 using QuestionService.Application.Features.GetUserQuestions;
 using Swashbuckle.AspNetCore.Annotations;
@@ -46,6 +48,19 @@ public class QuestionController : ControllerBase {
         Guid questionId,
         [FromServices] ICommandHandler<QuestionDTO, GetQuestionCommand> handler ) =>
         await handler.Handle(new GetQuestionCommand(questionId), new CancellationToken(false));
+
+    [HttpPost ("get-questions-by-ids")]
+    [SwaggerOperation (
+    Summary = "Получить вопрос по questionId.",
+    Description = "Возвращает полный объект(QuestionDTO) с тегами и историей изменений.",
+    OperationId = "Question_Get", 
+    Tags = new[] { "Question" })]
+    public async Task<Result<PagedResult<IEnumerable<QuestionShortDTO>>>> GetQuestionsByIdsAsync (
+        [FromBody] IEnumerable<Guid> questionIds,
+        [FromQuery] PageParams pageParams,
+        [FromQuery] SortParams sortParams,
+        [FromServices] ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetQuestionsByIdsCommand> handler) =>
+        await handler.Handle (new GetQuestionsByIdsCommand (questionIds, pageParams, sortParams), new CancellationToken (false));
 
 
     [HttpGet("short/{questionId}")] // TODO нужен для теста
@@ -84,9 +99,9 @@ public class QuestionController : ControllerBase {
     [SwaggerOperation (Summary = "Создать вопрос."
         , Description = "Создает запись в таблицы: Questions, QuestionTags и QuestionChangingHistories."
         , OperationId = "Question_Post")]
-    public async Task<Result> CreateQuestionAsync (
+    public async Task<Result<CreatedQuestionResponse>> CreateQuestionAsync (
         [FromBody] CreateQuestionRequest request
-        , [FromServices] ICommandHandler<CreateQuestionCommand> handler) {
+        , [FromServices] ICommandHandler<CreatedQuestionResponse, CreateQuestionCommand> handler) {
         Console.WriteLine("Received JSON:");
         Console.WriteLine(JsonSerializer.Serialize(request));
         return await handler.Handle(new CreateQuestionCommand(request.QuestionDto), new CancellationToken(false));
