@@ -33,7 +33,8 @@ public static class UserExtensions {
       AboutMe = user.AboutMe,
       AvatarUrl = user.AvatarUrl,
       Reputation = user.UserStatistic.Reputation,
-      Tags = []
+      UserId = user.UserId,
+        Tags = []
     });
 
 }
