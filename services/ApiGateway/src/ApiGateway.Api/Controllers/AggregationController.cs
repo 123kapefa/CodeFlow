@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Mvc;
 using Contracts.Requests.ApiGateway;
 using Contracts.Requests.TagService;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace ApiGateway.Api.Controllers;
 
 [ApiController]
@@ -155,6 +157,78 @@ public class AggregationController : ControllerBase {
     };
 
     return Ok (result);
+  }
+
+  [Authorize]
+  [HttpGet ("recommended/{userId:guid}")]
+  public async Task<IActionResult> GetRecommended (
+    [FromRoute] Guid userId,
+    [FromQuery] PageParams pageParams,
+    [FromQuery] SortParams sortParams,
+    CancellationToken ct = default) {
+
+    var watched = await _tags.GetWatchedByUserIdAsync (userId, ct);
+    var watchedTagIds = watched?.Select (t => t.TagId).Distinct ().ToList () ?? new List<int> ();
+
+    if (watchedTagIds.Count == 0) {
+      
+      var questionsList = await _questions.GetListAsync (
+        $"{pageParams.ToQueryString ()}&{sortParams.ToQueryString ()}", ct);
+
+      var qList = questionsList.Value.Take ((int)pageParams.PageSize!).ToList ();
+
+      var userIds = qList.Select (q => q.UserId).Distinct ().ToList ();
+      var tagIds = qList.SelectMany (q => q.QuestionTags.Select (t => t.TagId)).Distinct ().ToList ();
+
+      var tagsTask = _tags.GetByIdsAsync (tagIds, ct);
+      var usersTask = _users.GetUsersByIdsAsync (userIds, ct);
+      await Task.WhenAll (tagsTask, usersTask);
+
+      return Ok (new {
+        items = qList.Select (q => new { question = q, matchedTagIds = Array.Empty<int> (), score = 0d }),
+        tags = await tagsTask,
+        users = await usersTask
+      });
+    }
+    
+    var candidateTake = Math.Max ((int)pageParams.PageSize! * 4, 40);
+    var candidates = new List<QuestionDTO> ();
+    // var candidates = await _questions.GetByTagsAsync (watchedTagIds, "any",
+    //   (int)pageParams.PageSize!, ct);
+
+    var now = DateTime.UtcNow;
+
+    double Score (QuestionDTO q, IReadOnlyCollection<int> watchedIds) {
+      var matchedCount = q.QuestionTags?.Select (t => t.TagId).Distinct ().Count (watchedIds.Contains) ?? 0;
+
+      var ageHours = (now - q.CreatedAt).TotalHours;
+      var freshness = Math.Exp (-ageHours / 72.0);
+
+      const double w1 = 3, w3 = 1;
+      return w1 * matchedCount + w3 * freshness;
+    }
+
+    var ranked = candidates
+     .Select (q => new {
+        question = q,
+        matchedTagIds =
+          q.QuestionTags?.Select (t => t.TagId).Distinct ().Where (watchedTagIds.Contains).ToArray () ??
+          Array.Empty<int> (),
+        score = Score (q, watchedTagIds)
+      }).OrderByDescending (x => x.score).ThenByDescending (x => x.question.CreatedAt).Take ((int)pageParams.PageSize).ToList ();
+
+    var userIdsRec = ranked.Select (x => x.question.UserId).Distinct ().ToList ();
+    var tagIdsRec = ranked.SelectMany (x => x.question.QuestionTags.Select (t => t.TagId)).Distinct ().ToList ();
+
+    var tagsTaskRec = _tags.GetByIdsAsync (tagIdsRec, ct);
+    var usersTaskRec = _users.GetUsersByIdsAsync (userIdsRec, ct);
+    await Task.WhenAll (tagsTaskRec, usersTaskRec);
+
+    return Ok (new {
+      items = ranked,
+      tags = await tagsTaskRec,
+      users = await usersTaskRec
+    });
   }
 
 }
