@@ -13,6 +13,7 @@ using Contracts.Requests.ApiGateway;
 using Contracts.Requests.QuestionService;
 using Contracts.Responses.QuestionService;
 
+using QuestionService.Application.Abstractions;
 using QuestionService.Application.Features.GetQuestion;
 using QuestionService.Application.Features.GetQuestionShort;
 using QuestionService.Application.Features.GetQuestionHistory;
@@ -46,8 +47,30 @@ public class QuestionController : ControllerBase {
     Tags = new[] { "Question" })]
   public async Task<Result<QuestionDTO>> GetQuestionAsync (
     Guid questionId,
-    [FromServices] ICommandHandler<QuestionDTO, GetQuestionCommand> handler) =>
-    await handler.Handle (new GetQuestionCommand (questionId), new CancellationToken (false));
+    [FromServices] IQuestionViewTracker viewTracker,
+    [FromServices] ICommandHandler<QuestionDTO, GetQuestionCommand> getQuestionHandler,
+    [FromServices] ICommandHandler<UpdateQuestionViewCommand> updateQuestionViewHandler) {
+    var question = await getQuestionHandler.Handle (
+      new GetQuestionCommand (questionId), 
+      new CancellationToken (false));
+
+    string viewerKey;
+    if (User.Identity?.IsAuthenticated == true)
+      viewerKey = User.FindFirst ("sub")?.Value ?? User.FindFirst ("userId")?.Value ?? "auth-unknown";
+    else
+      viewerKey = HttpContext.Request.Cookies["aid"] ?? MakeAnonKey (HttpContext);
+
+    if (await viewTracker.TryTrackAsync (questionId, viewerKey, new CancellationToken (false))) {
+ 
+      //await viewTracker.IncrementAsync (questionId, new CancellationToken (false));
+
+      await updateQuestionViewHandler.Handle (
+        new UpdateQuestionViewCommand (questionId), 
+        new CancellationToken (false));
+    }
+
+    return question;
+  }
 
   [HttpPost ("get-questions-by-ids")]
   [SwaggerOperation (Summary = "Получить вопрос по questionId.",
@@ -193,38 +216,12 @@ public class QuestionController : ControllerBase {
     [FromServices] ICommandHandler<ReduceQuestionAnswersCommand> handler) =>
     await handler.Handle (new ReduceQuestionAnswersCommand (questionId), new CancellationToken (false));
 
-    [HttpGet]
-    [SwaggerOperation(
-    Summary = "Получить по заданным параметрам список вопросов .",
-    Description = "Возвращает PagedResult<IEnumerable<QuestionShortDTO>>> .",
-    OperationId = "Questions_Get")]
-    public async Task<Result<PagedResult<IEnumerable<QuestionShortDTO>>>> GetQuestionsAsync(
-      [FromQuery] PageParams pageParams,
-      [FromQuery] SortParams sortParams,
-      [FromQuery] TagFilter tagFilter,
-      [FromServices] ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetQuestionsCommand> handler ) =>
-      await handler.Handle(new GetQuestionsCommand(pageParams, sortParams, tagFilter), new CancellationToken(false));
-
-    [HttpGet("user/{userId}")]
-    [SwaggerOperation(
-    Summary = "Получить по заданным параметрам список вопросов пользователя по userId.",
-    Description = "Возвращает PagedResult<IEnumerable<QuestionShortDTO>>> .",
-    OperationId = "Questions_Get")]
-    public async Task<Result<PagedResult<IEnumerable<QuestionShortDTO>>>> GetUserQuestionsAsync(
-      Guid userId,
-      [FromQuery] PageParams pageParams,
-      [FromQuery] SortParams sortParams,
-      [FromServices] ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetUserQuestionsCommand> handler ) =>
-      await handler.Handle(new GetUserQuestionsCommand(userId, pageParams, sortParams), new CancellationToken(false));
-
-    [HttpPut("{questionId}/answer/reduce")]
-    [SwaggerOperation(
-    Summary = "Изменить AnswersCount в Questions при удлении ответа.",
-    Description = "Возвращает PagedResult<IEnumerable<QuestionShortDTO>>> .",
-    OperationId = "Questions_Put")]
-    public async Task<Result> ReduceQuestionAnswersAsync(
-        Guid questionId, 
-        [FromServices]ICommandHandler<ReduceQuestionAnswersCommand> handler) =>
-        await handler.Handle(new ReduceQuestionAnswersCommand(questionId), new CancellationToken(false));
+  static string MakeAnonKey (HttpContext ctx) {
+    var ip = ctx.Connection.RemoteIpAddress?.ToString () ?? "0.0.0.0";
+    var ua = ctx.Request.Headers.UserAgent.ToString ();
+    var raw = $"{ip}|{ua}";
+    using var sha = System.Security.Cryptography.SHA256.Create ();
+    return Convert.ToHexString (sha.ComputeHash (System.Text.Encoding.UTF8.GetBytes (raw)));
+  }
 
 }

@@ -6,7 +6,7 @@ namespace QuestionService.Application.Extensions;
 
 public static class QuestionExtensions {
 
-  public static QuestionShortDTO ToQuestionDto (this Question question) =>
+  public static QuestionShortDTO ToQuestionShortDto (this Question question) =>
     new QuestionShortDTO {
       Id = question.Id
       , UserId = question.UserId
@@ -36,5 +36,37 @@ public static class QuestionExtensions {
         IsClosed = i.IsClosed,
         QuestionTags = i.QuestionTags.ToQuestionTagsDto ().ToList ()
       }).ToList();
+  
+  public static QuestionDTO ToQuestionDto (this Question question) => 
+    new QuestionDTO { 
+        Id = question.Id,
+        UserId = question.UserId,
+        UserEditorId = question.UserEditorId,
+        Title = question.Title,
+        Content = question.Content,
+        CreatedAt = question.CreatedAt,
+        UpdatedAt = question.UpdatedAt,
+        ViewsCount = question.ViewsCount,
+        AnswersCount = question.AnswersCount,
+        Upvotes = question.Upvotes,
+        Downvotes = question.Downvotes,
+        IsClosed = question.IsClosed,
+        AcceptedAnswerId = question.AcceptedAnswerId,
+        QuestionChangingHistories = 
+        question.QuestionChangingHistories
+        .Select(qh => new QuestionHistoryDTO {
+            UserId = qh.Id,
+            Content = qh.Content,
+            UpdatedAt = qh.UpdatedAt                
+        })
+        .ToList(),
+        QuestionTags = 
+        question.QuestionTags
+        .Select(qt => new QuestionTagDTO {
+            TagId = qt.TagId,
+            WatchedAt = qt.WatchedAt
+        })
+        .ToList()
+    };
 
 }

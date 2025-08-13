@@ -29,7 +29,7 @@ public class UpdateQuestionViewHandler : ICommandHandler<UpdateQuestionViewComma
 
     Result updateResult =
       await _questionServiceRepository.UpdateQuestionAsync (questionResult.Value, cancellationToken);
-
+      await _questionServiceRepository.SaveChangesAsync (cancellationToken);
     if (!updateResult.IsSuccess)
       return Result.Error (new ErrorList (updateResult.Errors));
 
