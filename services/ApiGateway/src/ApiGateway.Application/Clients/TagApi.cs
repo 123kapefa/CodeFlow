@@ -61,5 +61,4 @@ public sealed class TagApi
     
     return response.Result ?? new List<WatchedTagDTO> ();
   }
-  
-}
+  }

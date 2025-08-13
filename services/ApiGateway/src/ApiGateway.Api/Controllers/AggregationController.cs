@@ -165,7 +165,6 @@ public class AggregationController : ControllerBase {
     [FromQuery] PageParams pageParams,
     [FromQuery] SortParams sortParams,
     CancellationToken ct = default) {
-    
     var watched = await _tags.GetWatchedByUserIdAsync (userId, ct);
     var watchedTagIds = watched?.Select (t => t.TagId).Distinct ().ToList () ?? new List<int> ();
 
@@ -284,4 +283,3 @@ public class AggregationController : ControllerBase {
     return Ok (result);
   }
 }
-
