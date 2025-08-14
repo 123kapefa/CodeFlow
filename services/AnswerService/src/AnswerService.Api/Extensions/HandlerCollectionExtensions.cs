@@ -7,6 +7,7 @@ using AnswerService.Application.Features.GetAnswersByUserId;
 using Abstractions.Commands;
 
 using AnswerService.Application.Features.DeleteAnswersByUserId;
+using AnswerService.Application.Features.GetAnswerQuestionIdsByUserId;
 using AnswerService.Application.Features.UpdateAnswerAccept;
 using AnswerService.Domain.Repositories;
 using AnswerService.Infrastructure.Repositories;
@@ -34,7 +35,7 @@ public static class HandlerCollectionExtensions {
     builder.Services.AddScoped<ICommandHandler<UpdateAnswerAcceptCommand>, UpdateAnswerAcceptHandler> ();
     builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<AnswerDto>>, GetAnswersByUserIdCommand>, GetAnswersByUserIdHandler> ();
     builder.Services.AddScoped<ICommandHandler<IEnumerable<AnswerDto>, GetAnswersByQuestionIdCommand>, GetAnswersByQuestionIdHandler> ();
-    
+    builder.Services.AddScoped<ICommandHandler<IEnumerable<Guid>, GetAnswerQuestionIdsByUserIdCommand>, GetAnswerQuestionIdsByUserIdHandler> ();
     builder.Services.AddScoped<IValidator<CreateAnswerCommand>, CreateAnswerValidator> ();
     builder.Services.AddScoped<IValidator<EditAnswerCommand>, EditAnswerValidator> ();
     return builder;
