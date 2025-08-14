@@ -5,6 +5,7 @@ using Contracts.DTOs.TagService;
 using Contracts.Responses.TagService;
 
 using FluentValidation;
+
 using TagService.Application.Features.ParticipationTags.CreateOrUpdateParticipationTags;
 using TagService.Application.Features.ParticipationTags.CreateTags;
 using TagService.Application.Features.ParticipationTags.DeleteAnswerTags;
@@ -61,6 +62,7 @@ public static class HandlerCollectionExtensions {
         builder.Services.AddScoped<ICommandHandler<DeleteAnswerTagsCommand>, DeleteAnswerTagsHandler>();
         builder.Services.AddScoped<ICommandHandler<CreateOrUpdateParticipationTagsCommand>, CreateOrUpdateParticipationTagsHandler> ();
         builder.Services.AddScoped<ICommandHandler<IEnumerable<WatchedTagDTO>, GetWatchedTagsByUserIdCommand>, GetWatchedTagsByUserIdHandler> ();
+
         builder.Services.AddScoped<ICommandHandler<bool, IsExistsCommand>, IsExistsHandler>();
 
         return builder;

@@ -54,11 +54,11 @@ public sealed class TagApi
     return response.Result!.Value;
   }
 
+
   public async Task<IEnumerable<WatchedTagDTO>> GetWatchedByUserIdAsync (Guid userId, CancellationToken ct) {
     HeaderPropagation.CopyAuthAndTrace (_http, _ctx.HttpContext!);
     var response = _http.GetFromJsonAsync<IEnumerable<WatchedTagDTO>> ($"/users/{userId}/watched-tags", ct);
     return response.Result! ?? new List<WatchedTagDTO> ();
   }
-
 
 }

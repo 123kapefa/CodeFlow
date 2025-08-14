@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import "bootstrap/dist/css/bootstrap.min.css";
+
 import { ToastContainer } from "react-toastify";
  
 import Header from "./components/Header/Header";
@@ -62,15 +63,15 @@ function App() {
         <Header isAuthenticated={isAuthenticated} />
         <div className="main">
           <Sidebar />
-          <main className="content">
+          <main className="content mt-3 mb-3">
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Questions  />} />
+              <Route path="/home" element={<Home />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />
               <Route path="/logout" element={<Logout />} />
-              <Route path="/questions" element={<Questions />} />
-              <Route path="/tags/:tagId/questions" element={<Questions />} />
               <Route path="/tags" element={<Tags />} />
+              <Route path="/tags/:tagId/questions" element={<Questions />} />
               <Route path="/users" element={<Users />} />
               <Route path="/users/:userId" element={<UserProfile />} />
               <Route path="/users/user_profile" element={<UserProfile />} />
@@ -78,7 +79,7 @@ function App() {
               <Route path="/questions/:id" element={<QuestionPage />} />
               <Route path="/questions/edit/:id" element={<CreateOrEditQuestion />} />
               <Route path="/answers/edit/:answerId" element={<EditAnswerPage />} />
-              <Route path="/questions/:id/history" element={<QuestionHistoryPage />} />
+              <Route path="/questions/:id/history" element={<QuestionHistoryPage />} />             
               <Route path="/answers/:answerId/history" element={<AnswerHistoryPage />} />
 
               <Route path="/help" element={<HelpPage />} />

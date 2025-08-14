@@ -1,12 +1,8 @@
 using Abstractions.Commands;
-
 using Ardalis.Result;
-
 using Contracts.DTOs.QuestionService;
 using Contracts.Responses.QuestionService;
-
 using FluentValidation;
-
 using QuestionService.Application.Features.CreateQuestion;
 using QuestionService.Application.Features.DeleteQuestion;
 using QuestionService.Application.Features.GetQuestion;

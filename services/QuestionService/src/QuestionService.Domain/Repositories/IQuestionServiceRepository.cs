@@ -42,7 +42,6 @@ public interface IQuestionServiceRepository {
     Task<Result<IEnumerable<QuestionChangingHistory>>> GetQuestionChangingHistoryAsync(Guid questionId, CancellationToken token );
     Task<Result<IEnumerable<QuestionTag>>> GetQuestionTagsAsync( Guid questionId, CancellationToken token );
 
-
     Task<Result> CreateQuestionAsync(Question question, CancellationToken token );    
     Task<Result> CreateQuestionChangingHistoryAsync( QuestionChangingHistory questionChangingHistory, CancellationToken cancellationToken );
 

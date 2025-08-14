@@ -14,8 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 
 using Contracts.Requests.ApiGateway;
 using Contracts.Requests.TagService;
-
 using Microsoft.AspNetCore.Authorization;
+
 
 namespace ApiGateway.Api.Controllers;
 
@@ -24,7 +24,6 @@ namespace ApiGateway.Api.Controllers;
 public class AggregationController : ControllerBase {
 
   private readonly HttpService _httpService;
-
   private readonly UserApi _users;
   private readonly QuestionApi _questions;
   private readonly AnswerApi _answers;
@@ -54,6 +53,7 @@ public class AggregationController : ControllerBase {
     var questionTask = _questions.GetAsync (qid, ct);
     var answersTask = _answers.GetByQuestionAsync (qid, ct);
     var questionCommentsTask = _comments.GetQuestionCommentsAsync (qid, ct);
+
 
     await Task.WhenAll (questionTask, answersTask, questionCommentsTask);
 
@@ -123,16 +123,16 @@ public class AggregationController : ControllerBase {
     var tagsListTask = _tags.GetByIdsAsync (tagIds, ct);
     var usersListTask = _users.GetUsersByIdsAsync (userIds, ct);
 
-
     await Task.WhenAll (tagsListTask, usersListTask);
-
 
     var tagsList = await tagsListTask;
     var usersList = await usersListTask;
 
     var result = new { questionsList, tagsList, usersList, };
+
     return Ok (result);
   }
+
 
 
   [HttpGet ("get-user-summary/{userId:guid}")]

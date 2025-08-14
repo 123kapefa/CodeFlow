@@ -11,7 +11,7 @@ function Header() {
     <div className="container-xxl">
       <header className="topbar p-2">
         <div className="logo">
-          <Link to="/">
+          <Link to="/home">
             <img src="/logo/logo-transparent.png" alt="logo" />
           </Link>
         </div>
@@ -38,7 +38,7 @@ function Header() {
                   alt="avatar"
                   width={32}
                   height={32}
-                  style={{ borderRadius: '50%', objectFit: 'cover' }}
+                  style={{ borderRadius: 0, objectFit: 'cover' }}
                 />
               </Link>
             </li>

@@ -90,13 +90,13 @@ function TagCard({
   return (
     <Card className="h-100 shadow-sm">
       <Card.Body>
-        <div 
+        <div
           ref={targetRef}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={onPopoverHide}
           style={{ display: "inline-block" }}
         >
-          <h5 
+          <h5
             style={{ cursor: "pointer" }}
             onClick={() =>
               navigate(`/tags/${tag.id}/questions`, {
@@ -122,6 +122,9 @@ function TagCard({
             >
               <Popover.Header as="h3">{tag.name}</Popover.Header>
               <Popover.Body>
+                <p className="text-muted" style={{ minHeight: "60px" }}>
+                  {tag.description || "Описание отсутствует"}
+                </p>
                 <p>
                   <b>{tag.countWotchers} watchers</b> &nbsp; {tag.countQuestion}{" "}
                   questions
@@ -150,10 +153,7 @@ function TagCard({
             </Popover>
           )}
         </Overlay>
-
-        <p className="text-muted" style={{ minHeight: "60px" }}>
-          {tag.description || "Описание отсутствует"}
-        </p>
+       
         <small className="text-muted d-block">
           {tag.countQuestion} questions
         </small>

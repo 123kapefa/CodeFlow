@@ -91,8 +91,8 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
     PageParams pageParams,
     SortParams sortParams,
     CancellationToken token) {
-    _logger.LogInformation ("GetQuestionsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}",
-      pageParams, sortParams);
+    _logger.LogInformation ("GetQuestionsByIdsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}"
+      , pageParams, sortParams);
 
     try {
       var questions = await _dbContext.Questions
@@ -101,21 +101,23 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
        .Sort (sortParams)
        .ToPagedAsync (pageParams);
 
-      _logger.LogInformation ("GetQuestionsAsync: получено {Count} вопросов", questions.Value.items.Count ());
+      _logger.LogInformation ("GetQuestionsByIdsAsync: получено {Count} вопросов", questions.Value.items.Count ());
       return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Success (questions);
     }
     catch (Exception ex) {
-      _logger.LogError (ex, "GetQuestionsAsync: ошибка базы данных");
+      _logger.LogError (ex, "GetQuestionsByIdsAsync: ошибка базы данных");
       return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Error ("Ошибка базы данных");
     }
   }
+
+  
 
   public async Task<Result<IEnumerable<Question>>> GetQuestionsByTagsAsync (
     IEnumerable<int> tagIds,
     PageParams pageParams,
     SortParams sortParams,
     CancellationToken token) {
-    _logger.LogInformation ("GetQuestionsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}",
+    _logger.LogInformation ("GetQuestionsByTagsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}",
       pageParams, sortParams);
 
     try {

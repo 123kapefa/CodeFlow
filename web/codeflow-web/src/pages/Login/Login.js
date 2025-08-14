@@ -15,7 +15,7 @@ function Login() {
 
     try {
       await login(email, password);
-      navigate("/questions");
+      navigate("/");
     } catch (err) {
       setError(err.message || "Login failed");
     }

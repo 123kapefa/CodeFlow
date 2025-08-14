@@ -75,6 +75,7 @@ public class TagServiceController : ControllerBase {
       return await handler.Handle (new GetWatchedTagsByUserIdCommand (userId), new CancellationToken (false));
     }
   
+
   [HttpGet ("{tagName}/name")]
   [SwaggerOperation (
     Summary = "Получить тэг по tag.Name.", 
@@ -97,23 +98,10 @@ public class TagServiceController : ControllerBase {
     return await handler.Handle (new CheckUserSubscriptionCommand (userId, tagId), new CancellationToken (false));
   }
 
+
   [HttpGet]
   [SwaggerOperation (
     Summary = "Получить список тегов.", 
-    [HttpGet("watched/{userId}/{tagId}/check")]
-    [SwaggerOperation(Summary = "Проверить подписку пользователя на тэг."
-        , Description = "Возвращает true, если пользователь подписан на указанный тэг, иначе false."
-        , OperationId = "Tag_CheckSubscription")]
-    public async Task<Result<CheckUserSubcriptionResponse>> CheckUserSubscriptionAsync(
-        Guid userId
-        , int tagId
-        , [FromServices] ICommandHandler<CheckUserSubcriptionResponse, CheckUserSubscriptionCommand> handler ) {
-        return await handler.Handle(new CheckUserSubscriptionCommand(userId, tagId), new CancellationToken(false));
-    }
-
-    [HttpGet]
-    [SwaggerOperation(
-    Summary = "Получить список тегов.",
     Description = "Получает список тегов для указанной страницы.",
     OperationId = "Tag_Get")]
   public async Task<Result<PagedResult<IEnumerable<TagDTO>>>> GetTagsAsync (
@@ -134,9 +122,9 @@ public class TagServiceController : ControllerBase {
     await handler.Handle (new CreateTagCommand (tagCreateDTO), new CancellationToken (false));
 
 
-    [HttpPost("create-tags")]
-    [SwaggerOperation(
-    Summary = "Создать тэги.",
+  [HttpPost ("create-tags")]
+  [SwaggerOperation (
+    Summary = "Создать теги.", 
     Description = "Создает записи в таблице tags.",
     OperationId = "Tag_Post")]
   public async Task<Result<EnsureTagsResponse>> CreateTagsAsync (
@@ -160,11 +148,11 @@ public class TagServiceController : ControllerBase {
     Summary = "Обновить или добавить новые тэги при создании вопроса.",
     Description = "Обновляет/добавляет записи в таблице tags,userTagParticipation, userTagParticipationQuestion .",
     OperationId = "Tag_Post")]
-    public async Task<Result> UpdateTagCountQuestionAsync(
-        [FromBody] TagParticipationQuestionRequest request,
-        [FromServices] ICommandHandler<UpdateTagCountQuestionCommand> handler ) =>
-        await handler.Handle(
-            new UpdateTagCountQuestionCommand(request.Tags, request.UserId, request.QuestionId), new CancellationToken(false));
+  public async Task<Result> UpdateTagCountQuestionAsync (
+    [FromBody] TagParticipationQuestionRequest request,
+    [FromServices] ICommandHandler<UpdateTagCountQuestionCommand> handler) =>
+    await handler.Handle (new UpdateTagCountQuestionCommand (request.Tags, request.UserId, request.QuestionId),
+      new CancellationToken (false));
 
 
   [HttpDelete ("{tagId}")]
@@ -224,11 +212,11 @@ public class TagServiceController : ControllerBase {
     Summary = "Обновить/добавить записи в таблице userTagParticipation, userTagParticipationQuestion при создании ответа.",
     Description = "Обновляет/добавляет записи в таблице userTagParticipation, userTagParticipationQuestion .",
     OperationId = "Tag_Post")]
-    public async Task<Result> UpdateParticipationAnswerAsync(
-        [FromBody] TagParticipationAnswerRequest request,
-        [FromServices] ICommandHandler<UpdateParticipationAnswerCommand> handler ) =>
-        await handler.Handle(new UpdateParticipationAnswerCommand(
-            request.Tags, request.UserId, request.QuestionId), new CancellationToken(false));
+  public async Task<Result> UpdateParticipationAnswerAsync (
+    [FromBody] TagParticipationAnswerRequest request,
+    [FromServices] ICommandHandler<UpdateParticipationAnswerCommand> handler) =>
+    await handler.Handle (new UpdateParticipationAnswerCommand (request.Tags, request.UserId, request.QuestionId),
+      new CancellationToken (false));
 
 
   [HttpDelete ("participation/{userId}")]
@@ -246,11 +234,13 @@ public class TagServiceController : ControllerBase {
     Summary = "Откат тегов ответа при удалении ответа.",
     Description = "Уменьшает AnswersWritten и удаляет связи UserTagParticipation‑Question при удалении ответа.",
     OperationId = "Tag_Delete")]
-    public async Task<Result> DeleteAnswerTagsParticipationAsync(
-        [FromBody] DeleteAnswerTagRequest request,
-        [FromServices] ICommandHandler<DeleteAnswerTagsCommand> handler ) =>
-        await handler.Handle(
-            new DeleteAnswerTagsCommand(request.UserId, request.QuestionId, request.TagIds), new CancellationToken(false));
+  public async Task<Result> DeleteAnswerTagsParticipationAsync (
+    [FromBody] DeleteAnswerTagRequest request,
+    [FromServices] ICommandHandler<DeleteAnswerTagsCommand> handler) =>
+    await handler.Handle (new DeleteAnswerTagsCommand (request.UserId, request.QuestionId, request.TagIds),
+      new CancellationToken (false));
+
+
 
     [HttpGet("watched/user/{userId}/tag/{tagId}")]
     [SwaggerOperation(

@@ -1,15 +1,11 @@
 using System.Net.Http.Json;
 using System.Web;
-
 using ApiGateway.Application.Extensions;
-
 using Ardalis.Result;
-
 using Contracts.Common.Filters;
 using Contracts.DTOs.QuestionService;
 using Contracts.Requests.ApiGateway;
 using Contracts.Responses.QuestionService;
-
 using Microsoft.AspNetCore.Http;
 
 namespace ApiGateway.Application.Clients;
@@ -44,20 +40,18 @@ public sealed class QuestionApi {
     return (await response.Result.Content.ReadFromJsonAsync<CreatedQuestionResponse> (cancellationToken: ct))!;
   }
 
-  public async Task<PagedResult<IEnumerable<QuestionShortDTO>>> GetListAsync (string query, CancellationToken ct) {
+
+  public async Task<PagedResult<IEnumerable<QuestionShortDTO>>> GetListAsync (
+    string query,
+    CancellationToken ct) {
     HeaderPropagation.CopyAuthAndTrace (_http, _ctx.HttpContext!);
-    var response = await _http.GetFromJsonAsync<PagedResult<IEnumerable<QuestionShortDTO>>> ($"/questions?{query}", ct);
+    var response =
+      await _http.GetFromJsonAsync<PagedResult<IEnumerable<QuestionShortDTO>>> ($"/questions?{query}", ct);
 
     return response ?? new PagedResult<IEnumerable<QuestionShortDTO>> (
-      new PagedInfo (1, 30, 0, 0), new List<QuestionShortDTO> ());
-  }
-  
-  public async Task<PagedResult<IEnumerable<QuestionShortDTO>>> GetQuestionSummaryListAsync (Guid userId, string query, CancellationToken ct) {
-    HeaderPropagation.CopyAuthAndTrace (_http, _ctx.HttpContext!);
-    var response = await _http.GetFromJsonAsync<PagedResult<IEnumerable<QuestionShortDTO>>> ($"/questions/user/{userId}?{query}", ct);
-
-    return response ?? new PagedResult<IEnumerable<QuestionShortDTO>> (
-      new PagedInfo (1, 30, 0, 0), new List<QuestionShortDTO> ());
+      new PagedInfo(1, 30, 0, 0), 
+      new List<QuestionShortDTO>()
+    );
   }
 
   public async Task<PagedResult<IEnumerable<QuestionShortDTO>>> GetQuestionsByUserIdAsync (
@@ -89,6 +83,7 @@ public sealed class QuestionApi {
     List<Guid> questionIds,
     PageParams pageParams,
     SortParams sortParams,
+
     CancellationToken ct) {
     HeaderPropagation.CopyAuthAndTrace (_http, _ctx.HttpContext!);
 
@@ -100,6 +95,7 @@ public sealed class QuestionApi {
     return questions.Result ??
       new PagedResult<IEnumerable<QuestionShortDTO>> (new PagedInfo (1, 5, 0, 0), new List<QuestionShortDTO> ());
   }
+
 
   public async Task<IEnumerable<QuestionShortDTO>> GetByTagsSortedAsync (
     IEnumerable<int> tagIds,
@@ -115,5 +111,6 @@ public sealed class QuestionApi {
     return questions ?? new List<QuestionShortDTO> ();
     
   }
+
 
 }

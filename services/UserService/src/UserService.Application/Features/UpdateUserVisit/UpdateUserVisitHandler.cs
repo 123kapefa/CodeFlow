@@ -22,9 +22,11 @@ public class UpdateUserVisitHandler : ICommandHandler<UpdateUserVisitCommand> {
         
 
         if(user.Value.LastVisitAt.Date != DateTime.UtcNow.Date) {
-            user.Value.LastVisitAt = DateTime.UtcNow;
+            
             user.Value.VisitCount += 1;
         }
+
+        user.Value.LastVisitAt = DateTime.UtcNow;
 
         Result result = await _userInfoRepository.UpdateUserStatisticAsync(user.Value, cancellationToken);
 

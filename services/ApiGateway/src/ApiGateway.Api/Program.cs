@@ -25,8 +25,6 @@ builder.Services.AddCors(options => {
               .AllowCredentials()); // если шлёшь cookies/авторизацию
 });
 
-builder.Services.AddHttpClient();
-builder.Services.AddControllers ();
 
 var app = builder.Build();
 
@@ -37,8 +35,6 @@ app.UseCors("ReactDev");
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapControllers();
 
 // Anti-spoof: стираем входящие техзаголовки от внешних клиентов
 app.Use(async (ctx, next) =>
