@@ -32,6 +32,7 @@ using QuestionService.Application.Features.GetUserQuestions;
 using Swashbuckle.AspNetCore.Annotations;
 
 using QuestionService.Application.Features.ReduceQuestionAnswers;
+using QuestionService.Application.Features.GetQuestionsByTags;
 
 namespace QuestionService.Api.Contollers;
 
@@ -54,7 +55,22 @@ public class QuestionController : ControllerBase {
       new CancellationToken (false));
 
 
-    string viewerKey;
+        var userId = Request.Headers["X-User-Id"].FirstOrDefault();
+        Console.WriteLine("**");
+        Console.WriteLine("**");
+        Console.WriteLine($"UserId => {userId}");
+        Console.WriteLine("**");
+        Console.WriteLine("**");
+
+
+
+        Console.WriteLine("**");
+        Console.WriteLine("**");
+        Console.WriteLine($"User.Identity?.IsAuthenticated => {User.Identity?.IsAuthenticated}");
+        Console.WriteLine("**");
+        Console.WriteLine("**");
+
+        string viewerKey;
     if (User.Identity?.IsAuthenticated == true)
       viewerKey = User.FindFirst ("sub")?.Value ?? User.FindFirst ("userId")?.Value ?? "auth-unknown";
     else
@@ -214,6 +230,18 @@ public class QuestionController : ControllerBase {
     using var sha = System.Security.Cryptography.SHA256.Create ();
     return Convert.ToHexString (sha.ComputeHash (System.Text.Encoding.UTF8.GetBytes (raw)));
   }
+
+    [HttpPost("get-questions-by-tags")]
+    [SwaggerOperation(Summary = "Получить вопрос по questionId.",
+    Description = "Возвращает полный объект(QuestionDTO) с тегами и историей изменений.", OperationId = "Question_Get",
+    Tags = new[] { "Question" })]
+    public async Task<Result<IEnumerable<QuestionShortDTO>>> GetQuestionsByTagsAsync(
+    [FromBody] IEnumerable<int> tagIds,
+    [FromQuery] PageParams pageParams,
+    [FromQuery] SortParams sortParams,
+    [FromServices] ICommandHandler<IEnumerable<QuestionShortDTO>, GetQuestionsByTagsCommand> handler ) =>
+    await handler.Handle(new GetQuestionsByTagsCommand(tagIds, pageParams, sortParams),
+      new CancellationToken(false));
 
 }
 

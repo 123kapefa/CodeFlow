@@ -2,6 +2,7 @@ using ApiGateway.Api.Extensions;
 using ApiGateway.Application.Services;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Yarp.ReverseProxy.Transforms;
 
 var builder = WebApplication.CreateBuilder (args);
 
@@ -35,6 +36,10 @@ app.UseCors("ReactDev");
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.Use(async ( ctx, next ) => {
+    Console.WriteLine($"GW IsAuth={ctx.User?.Identity?.IsAuthenticated}, sub={ctx.User?.FindFirst("sub")?.Value}");
+    await next();
+});
 
 // Anti-spoof: стираем входящие техзаголовки от внешних клиентов
 app.Use(async (ctx, next) =>

@@ -6,11 +6,12 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
-      <Folder Include="Common\" />
-      <Folder Include="DTOs\" />
-      <Folder Include="DTOs\AuthService\" />
-      <Folder Include="Responses\ApiGateway\" />
+	<ItemGroup>
+		<Folder Include="Common\" />
+		<Folder Include="DTOs\" />
+		<Folder Include="DTOs\AuthService\" />
+		<Folder Include="Responses\ApiGateway\" />
+	</ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Ardalis.Result" Version="10.1.0" />
