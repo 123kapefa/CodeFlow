@@ -70,6 +70,7 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
     CancellationToken token) {
     _logger.LogInformation ("GetQuestionsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}",
       pageParams, sortParams);
+
     try {
       var users = await _dbContext.Questions
        .Include (q => q.QuestionTags)
@@ -91,8 +92,8 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
     PageParams pageParams,
     SortParams sortParams,
     CancellationToken token) {
-    _logger.LogInformation ("GetQuestionsByIdsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}"
-      , pageParams, sortParams);
+    _logger.LogInformation ("GetQuestionsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}",
+      pageParams, sortParams);
 
     try {
       var questions = await _dbContext.Questions
@@ -101,23 +102,21 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
        .Sort (sortParams)
        .ToPagedAsync (pageParams);
 
-      _logger.LogInformation ("GetQuestionsByIdsAsync: получено {Count} вопросов", questions.Value.items.Count ());
+      _logger.LogInformation ("GetQuestionsAsync: получено {Count} вопросов", questions.Value.items.Count ());
       return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Success (questions);
     }
     catch (Exception ex) {
-      _logger.LogError (ex, "GetQuestionsByIdsAsync: ошибка базы данных");
+      _logger.LogError (ex, "GetQuestionsAsync: ошибка базы данных");
       return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Error ("Ошибка базы данных");
     }
   }
-
-  
 
   public async Task<Result<IEnumerable<Question>>> GetQuestionsByTagsAsync (
     IEnumerable<int> tagIds,
     PageParams pageParams,
     SortParams sortParams,
     CancellationToken token) {
-    _logger.LogInformation ("GetQuestionsByTagsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}",
+    _logger.LogInformation ("GetQuestionsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}",
       pageParams, sortParams);
 
     try {
@@ -237,7 +236,7 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
 
       _logger.LogInformation ("GetQuestionChangingHistoryAsync: получено {Count} записей истории вопроса {QuestionId}",
         questionHistory.Count, questionId);
-     return Result<IEnumerable<QuestionChangingHistory>>.Success (questionHistory);
+      return Result<IEnumerable<QuestionChangingHistory>>.Success (questionHistory);
     }
     catch (Exception ex) {
       _logger.LogError (ex, "GetQuestionChangingHistoryAsync: ошибка базы данных");
@@ -273,14 +272,6 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
 
       return Result.Error ("Аргумент запроса не может быть null");
     }
-            return Result.Error("Аргумент запроса не может быть null");
-        }
-            return Result.Error("Аргумент запроса не может быть null");
-        }
-            return Result.Error("Аргумент запроса не может быть null");
-        }
-            return Result.Error("Аргумент запроса не может быть null");
-        }
 
     try {
       await _dbContext.Questions.AddAsync (question, token);

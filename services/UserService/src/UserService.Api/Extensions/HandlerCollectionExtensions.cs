@@ -36,7 +36,7 @@ public static class HandlerCollectionExtensions {
     builder.Services.AddScoped<ICommandHandler<CreateUserInfoCommand>, CreateUserInfoHandler>();
     builder.Services.AddScoped<ICommandHandler<UpdateUserProfileResponse, UpdateUserProfileCommand>, UpdateUserProfileHandler>();
     builder.Services.AddScoped<ICommandHandler<IEnumerable<UserForQuestionDto>, GetUsersByIdsCommand>, GetUsersByIdsHandler>();
-
+        
     builder.Services.AddScoped<IValidator<UpdateUserInfoCommand>, UpdateUserInfoValidator>();
     
     return builder;
