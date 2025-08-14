@@ -33,5 +33,12 @@ public sealed class AnswerApi {
       $"/answers/user/{userId}?page=1&pageSize=5&orderBy=CreatedAt&sortDirection=Ascending", ct);
     return response.Result!.Value;
   }
+  
+  public async Task<IEnumerable<Guid>> GetAnswerQuestionIdsByUserIdAsync (Guid userId, string query,CancellationToken ct) {
+    HeaderPropagation.CopyAuthAndTrace (_http, _ctx.HttpContext!);
+    var response = _http.GetFromJsonAsync<IEnumerable<Guid>> (
+      $"/answers/user/{userId}/question-ids?{query}", ct);
+    return response.Result ?? new List<Guid> ();
+  }
 
 }

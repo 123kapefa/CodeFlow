@@ -16,7 +16,7 @@ public static class QuestionExtensions {
     int count = questions.Count ();
 
     int page = pageParams.Page ?? 1;
-    int pageSize = pageParams.PageSize ?? 15; // 15 30 50
+    int pageSize = pageParams.PageSize ?? 30; // 15 30 50
     int skip = (page - 1) * pageSize;
 
     List<Question> items = questions.Skip (skip).Take (pageSize).ToList ();

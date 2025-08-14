@@ -223,5 +223,66 @@ public class AggregationController : ControllerBase {
 
     return Ok (new { items, users = await usersTaskRec, tags = await tagsTaskRec });
   }
+  
+  [HttpPost ("get-questions-summary/{userId:guid}")]
+  public async Task<IActionResult> AggregateQuestionsSummary (
+    [FromRoute] Guid userId,
+    [FromQuery] PageParams pageParams,
+    [FromQuery] SortParams sortParams,
+    CancellationToken ct) {
+    var questionsList = await _questions.GetQuestionSummaryListAsync (
+      userId,
+      $"{pageParams.ToQueryString ()}&{sortParams.ToQueryString ()}", 
+      ct);
+    
+    var tagIds = questionsList.Value.Select (q => q.QuestionTags.Select (t => t.TagId))
+     .SelectMany (t => t)
+     .Distinct ()
+     .ToList ();
+
+    var tagsListTask = _tags.GetByIdsAsync (tagIds, ct);
+
+    await Task.WhenAll (tagsListTask);
+
+    var tagsList = await tagsListTask;
+
+    var result = new { questionsList, tagsList, };
+
+    return Ok (result);
+  }
+  
+  [HttpPost ("get-answers-summary/{userId:guid}")]
+  public async Task<IActionResult> AggregateAnswersSummary (
+    [FromRoute] Guid userId,
+    [FromQuery] PageParams pageParams,
+    [FromQuery] SortParams sortParams,
+    CancellationToken ct) {
+    
+    var questionIds = await _answers.GetAnswerQuestionIdsByUserIdAsync (
+      userId, 
+      $"{pageParams.ToQueryString ()}&{sortParams.ToQueryString ()}",
+      ct);
+    
+    var questionsList = await _questions.GetQuestionsByIdsAsync (
+      questionIds, ct);
+
+    var userIds = questionsList.Value.Select (q => q.UserId).ToList ();
+    var tagIds = questionsList.Value.Select (q => q.QuestionTags.Select (t => t.TagId))
+     .SelectMany (t => t)
+     .Distinct ()
+     .ToList ();
+
+    var tagsListTask = _tags.GetByIdsAsync (tagIds, ct);
+    var usersListTask = _users.GetUsersByIdsAsync (userIds, ct);
+
+    await Task.WhenAll (tagsListTask, usersListTask);
+
+    var tagsList = await tagsListTask;
+    var usersList = await usersListTask;
+
+    var result = new { questionsList, tagsList, usersList, };
+
+    return Ok (result);
+  }
 }
 

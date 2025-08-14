@@ -5,6 +5,7 @@ using ApiGateway.Application.Extensions;
 
 using Ardalis.Result;
 
+using Contracts.Common.Filters;
 using Contracts.DTOs.QuestionService;
 using Contracts.Requests.ApiGateway;
 using Contracts.Responses.QuestionService;
@@ -50,6 +51,14 @@ public sealed class QuestionApi {
     return response ?? new PagedResult<IEnumerable<QuestionShortDTO>> (
       new PagedInfo (1, 30, 0, 0), new List<QuestionShortDTO> ());
   }
+  
+  public async Task<PagedResult<IEnumerable<QuestionShortDTO>>> GetQuestionSummaryListAsync (Guid userId, string query, CancellationToken ct) {
+    HeaderPropagation.CopyAuthAndTrace (_http, _ctx.HttpContext!);
+    var response = await _http.GetFromJsonAsync<PagedResult<IEnumerable<QuestionShortDTO>>> ($"/questions/user/{userId}?{query}", ct);
+
+    return response ?? new PagedResult<IEnumerable<QuestionShortDTO>> (
+      new PagedInfo (1, 30, 0, 0), new List<QuestionShortDTO> ());
+  }
 
   public async Task<PagedResult<IEnumerable<QuestionShortDTO>>> GetQuestionsByUserIdAsync (
     Guid userId,
@@ -63,7 +72,23 @@ public sealed class QuestionApi {
   }
 
   public async Task<PagedResult<IEnumerable<QuestionShortDTO>>> GetQuestionsByIdsAsync (
+    IEnumerable<Guid> questionIds,
+    CancellationToken ct) {
+    HeaderPropagation.CopyAuthAndTrace (_http, _ctx.HttpContext!);
+
+    var response = _http.PostAsJsonAsync ($"/questions/get-questions-by-ids", questionIds, ct);
+    response.Result.EnsureSuccessStatusCode ();
+    var questions =
+      response.Result.Content.ReadFromJsonAsync<PagedResult<IEnumerable<QuestionShortDTO>>> (cancellationToken: ct);
+
+    return questions.Result ??
+      new PagedResult<IEnumerable<QuestionShortDTO>> (new PagedInfo (1, 5, 0, 0), new List<QuestionShortDTO> ());
+  }
+  
+  public async Task<PagedResult<IEnumerable<QuestionShortDTO>>> GetQuestionsPageByIdsAsync (
     List<Guid> questionIds,
+    PageParams pageParams,
+    SortParams sortParams,
     CancellationToken ct) {
     HeaderPropagation.CopyAuthAndTrace (_http, _ctx.HttpContext!);
 

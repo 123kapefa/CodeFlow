@@ -72,7 +72,10 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
       pageParams, sortParams);
 
     try {
-      var users = await _dbContext.Questions.Include (q => q.QuestionTags).FilterByTag (tagFilter).Sort (sortParams)
+      var users = await _dbContext.Questions
+       .Include (q => q.QuestionTags)
+       .FilterByTag (tagFilter)
+       .Sort (sortParams)
        .ToPagedAsync (pageParams);
 
       _logger.LogInformation ("GetQuestionsAsync: получено {Count} вопросов", users.Value.items.Count ());
@@ -93,8 +96,11 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
       pageParams, sortParams);
 
     try {
-      var questions = await _dbContext.Questions.Include (q => q.QuestionTags).Where (q => questionIds.Contains (q.Id))
-       .Sort (sortParams).ToPagedAsync (pageParams);
+      var questions = await _dbContext.Questions
+       .Include (q => q.QuestionTags)
+       .Where (q => questionIds.Contains (q.Id))
+       .Sort (sortParams)
+       .ToPagedAsync (pageParams);
 
       _logger.LogInformation ("GetQuestionsAsync: получено {Count} вопросов", questions.Value.items.Count ());
       return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Success (questions);
@@ -117,24 +123,37 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
       var tagIdsArr = tagIds.Distinct ().ToArray ();
 
       var ranked = await _dbContext.Questions.AsNoTracking ()
-       .Join (_dbContext.QuestionTags.AsNoTracking ().Where (qt => tagIdsArr.Contains (qt.TagId)), q => q.Id,
-          qt => qt.QuestionId, (q, qt) => new { q, qt }).GroupBy (x => new { x.q.Id, x.q.CreatedAt })
+       .Join (_dbContext.QuestionTags.AsNoTracking ()
+           .Where (qt => tagIdsArr.Contains (qt.TagId)), q => q.Id,
+          qt => qt.QuestionId, (q, qt) => new { q, qt })
+       .GroupBy (x => new { x.q.Id, x.q.CreatedAt })
        .Select (g => new QuestionWithMatch {
           QuestionId = g.Key.Id,
           CreatedAt = g.Key.CreatedAt,
           MatchCount = g.Select (x => x.qt.TagId).Distinct ().Count (),
-        }).OrderByDescending (x => x.MatchCount).ThenByDescending (x => x.CreatedAt).Skip (0)
-       .Take ((int)pageParams.PageSize!).ToListAsync (token);
+        })
+       .OrderByDescending (x => x.MatchCount)
+       .ThenByDescending (x => x.CreatedAt)
+       .Skip (0)
+       .Take ((int)pageParams.PageSize!)
+       .ToListAsync (token);
 
       if (ranked.Count == 0)
         return Result.Error ();
 
-      var ids = ranked.Select (x => x.QuestionId).ToList ();
+      var ids = ranked
+       .Select (x => x.QuestionId)
+       .ToList ();
 
-      var questions = await _dbContext.Questions.AsNoTracking ().Include (q => q.QuestionTags)
-       .Where (q => ids.Contains (q.Id)).Sort (sortParams).ToPagedAsync (pageParams);
+      var questions = await _dbContext.Questions.AsNoTracking ()
+       .Include (q => q.QuestionTags)
+       .Where (q => ids.Contains (q.Id))
+       .Sort (sortParams)
+       .ToPagedAsync (pageParams);
 
-      var order = ids.Select ((id, idx) => new { id, idx }).ToDictionary (x => x.id, x => x.idx);
+      var order = ids
+       .Select ((id, idx) => new { id, idx })
+       .ToDictionary (x => x.id, x => x.idx);
       var questionsList = questions.Value.items.ToList ();
 
       questionsList.Sort ((a, b) => order[a.Id].CompareTo (order[b.Id]));
@@ -167,7 +186,7 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
       }
 
       var questions = await query.Sort (new SortParams ("CreatedAt", SortDirection.Descending)).Take (count)
-       .ToListAsync ();
+       .ToListAsync (token);
 
       _logger.LogInformation ("GetQuestionsWithoutIdsAsync: получено {Count} вопросов", questions.Count);
 
@@ -190,9 +209,10 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
       pageParams, sortParams);
 
     try {
-      var users = await _dbContext.Questions.Where (q => q.UserId == userId).Sort (sortParams)
-       .ToPagedAsync (pageParams);
-
+      var users = await _dbContext.Questions
+       .Where (q => q.UserId == userId)
+       .Include (q => q.QuestionTags)
+       .Sort (sortParams).ToPagedAsync (pageParams);
       _logger.LogInformation ("GetUserQuestionsAsync: получено {Count} вопросов пользователя {UserId}",
         users.Value.items.Count (), userId);
       return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Success (users);
@@ -211,7 +231,8 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
 
     try {
       List<QuestionChangingHistory> questionHistory = await _dbContext.QuestionChangingHistories
-       .Where (q => q.QuestionId == questionId).ToListAsync (token);
+       .Where (q => q.QuestionId == questionId)
+       .ToListAsync (token);
 
       _logger.LogInformation ("GetQuestionChangingHistoryAsync: получено {Count} записей истории вопроса {QuestionId}",
         questionHistory.Count, questionId);
