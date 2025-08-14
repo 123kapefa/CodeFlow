@@ -13,6 +13,7 @@ using QuestionService.Application.Features.GetQuestion;
 using QuestionService.Application.Features.GetQuestionHistory;
 using QuestionService.Application.Features.GetQuestions;
 using QuestionService.Application.Features.GetQuestionsByIds;
+using QuestionService.Application.Features.GetQuestionsByTags;
 using QuestionService.Application.Features.GetQuestionShort;
 using QuestionService.Application.Features.GetQuestionTags;
 using QuestionService.Application.Features.GetUserQuestions;
@@ -50,6 +51,7 @@ public static class HandlerCollectionExtensions {
         builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetQuestionsByIdsCommand>, GetQuestionsByIdsHandler>();
         builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetUserQuestionsCommand>, GetUserQuestionsHandler>();
         builder.Services.AddScoped<ICommandHandler<ReduceQuestionAnswersCommand>, ReduceQuestionAnswersHandler>();
+        builder.Services.AddScoped<ICommandHandler<IEnumerable<QuestionShortDTO>, GetQuestionsByTagsCommand>, GetQuestionsByTagsHandler>();
 
         return builder;
     }

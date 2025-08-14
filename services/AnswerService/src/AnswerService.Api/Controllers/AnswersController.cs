@@ -9,6 +9,7 @@ using Ardalis.Result.AspNetCore;
 
 using Abstractions.Commands;
 
+using AnswerService.Application.Features.GetAnswerQuestionIdsByUserId;
 using AnswerService.Application.Features.UpdateAnswerAccept;
 
 using Contracts.Common.Filters;
@@ -78,6 +79,20 @@ public class AnswersController : ControllerBase {
     [FromRoute] Guid questionId
     , [FromServices] ICommandHandler<IEnumerable<AnswerDto>, GetAnswersByQuestionIdCommand> handler) =>
     await handler.Handle (new GetAnswersByQuestionIdCommand(questionId), new CancellationToken (false));
+  
+  [HttpGet ("user/{userId}/question-ids")]
+  [SwaggerOperation(
+    Summary = "Получить ID вопросов через ответы",
+    Description = "Возвращает все id вопроса в которых пользователь оставлял ответы",
+    OperationId = "Answer_GetByQuestionId")]
+  [SwaggerResponse(200, "Список ID вопросов успешно получен", typeof(GetAnswersResponse))]
+  [SwaggerResponse(404, "ID вопросы не найдены")]
+  public async Task<Result<IEnumerable<Guid>>> GetAnswerQuestionIdsByUserId (
+    [FromRoute] Guid userId,
+    [FromQuery] PageParams pageParams,
+    [FromQuery] SortParams sortParams
+    , [FromServices] ICommandHandler<IEnumerable<Guid>, GetAnswerQuestionIdsByUserIdCommand> handler) =>
+    await handler.Handle (new GetAnswerQuestionIdsByUserIdCommand(userId, pageParams, sortParams), new CancellationToken (false));
 
   [HttpGet ("user/{userId:guid}")]
   [SwaggerOperation(
