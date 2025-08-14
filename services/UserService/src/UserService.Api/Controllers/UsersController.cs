@@ -2,14 +2,22 @@
 using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 
+using Contracts.Common.Filters;
 using Contracts.DTOs.UserService;
+using Contracts.Requests.UserService;
+using Contracts.Responses.UserService;
+
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using UserService.Application.Features.DeleteUser;
 using UserService.Application.Features.GetUserFullInfo;
 using UserService.Application.Features.GetUsers;
+using UserService.Application.Features.GetUsersByIds;
 using UserService.Application.Features.UpdateUserInfo;
-using UserService.Domain.Filters;
+using UserService.Application.Features.UpdateUserProfile;
+
+using PageParams = UserService.Domain.Filters.PageParams;
+using SortParams = UserService.Domain.Filters.SortParams;
 
 namespace UserService.Api.Controllers;
 
@@ -27,9 +35,19 @@ public class UsersController : ControllerBase {
     public async Task<Result<PagedResult<IEnumerable<UserShortDTO>>>> GetUsersAsync(
         [FromQuery] PageParams pageParams,
         [FromQuery] SortParams sortParams,
+        [FromQuery] SearchFilter searchFilter,    
         [FromServices] ICommandHandler<PagedResult<IEnumerable<UserShortDTO>>, GetUsersCommand> handler ) => 
-        await handler.Handle(new GetUsersCommand(pageParams,sortParams), new CancellationToken(false));
+        await handler.Handle(new GetUsersCommand(pageParams,sortParams, searchFilter), new CancellationToken(false));
 
+    [HttpPost ("get-users-by-ids")]
+    [SwaggerOperation(
+    Summary = "Получить список пользователей.",
+    Description = "Получает список пользователей для указанной страницы.",
+    OperationId = "User_Get")]
+    public async Task<Result<IEnumerable<UserForQuestionDto>>> GetUsersByIdsAsync(
+        [FromBody] List<Guid> userIds,
+        [FromServices] ICommandHandler<IEnumerable<UserForQuestionDto>, GetUsersByIdsCommand> handler ) => 
+        await handler.Handle(new GetUsersByIdsCommand(userIds), new CancellationToken(false));
 
     [HttpGet("{userId}")]
     [SwaggerOperation(
@@ -40,21 +58,19 @@ public class UsersController : ControllerBase {
         Guid userId,
         [FromServices] ICommandHandler<UserFullInfoDTO, GetUserFullInfoCommand> handler ) =>
         await handler.Handle(new GetUserFullInfoCommand(userId), new CancellationToken(false));
-
-
-    //TODO УДАЛИТЬ
-    //[HttpPost("create/{userId}/{userName}")] 
-    //[SwaggerOperation(
-    //Summary = "Создать пользователя.",
-    //Description = "Создает пользователя.",
-    //OperationId = "User_Post")]
-    //public async Task<Result> CreateUserInfoAsync(
-    //    Guid userId, 
-    //    string userName,
-    //    [FromServices]ICommandHandler<CreateUserInfoCommand> handler) =>
-    //    await handler.Handle(new CreateUserInfoCommand(userId, userName), new CancellationToken(false));
-
-
+    
+    
+    [HttpPut("user")]
+    [SwaggerOperation(
+    Summary = "Обновить пользователя.",
+    Description = "Обновляет информацию о пользователе.",
+    OperationId = "User_Put")]
+    public async Task<Result<UpdateUserProfileResponse>> UpdateUserInfoProfileAsync(
+        [FromForm] UpdateUserProfileRequest request,
+        [FromServices] ICommandHandler<UpdateUserProfileResponse, UpdateUserProfileCommand> handler ) =>
+        await handler.Handle(new UpdateUserProfileCommand(request), new CancellationToken(false));
+    
+    
     [HttpPut("info")]
     [SwaggerOperation(
     Summary = "Обновить пользователя.",
@@ -64,30 +80,6 @@ public class UsersController : ControllerBase {
       [FromBody] UserInfoUpdateDTO userDto,
       [FromServices] ICommandHandler<UpdateUserInfoCommand> handler ) =>
       await handler.Handle(new UpdateUserInfoCommand(userDto), new CancellationToken(false));
-
-    // TODO УДАЛИТЬ
-    //[HttpPut("reputation/{userId}/{reputation}")] 
-    //[SwaggerOperation(
-    //Summary = "Обновить репутацию пользователя.",
-    //Description = "Обновляет репутацию пользователя.",
-    //OperationId = "User_Put")]
-    //public async Task<Result> UpdateUserReputation(
-    //    Guid userId,
-    //    int reputation,
-    //    [FromServices] ICommandHandler<UpdateUserReputationCommand> handler ) =>
-    //    await handler.Handle(new UpdateUserReputationCommand(userId, reputation), new CancellationToken(false));
-
-
-    // TODO УДАЛИТЬ
-    //[HttpPut("visit/{userId}")] 
-    //[SwaggerOperation(
-    //Summary = "Обновить количество визитов пользователя.",
-    //Description = "Обновляет количество визитов пользователя.",
-    //OperationId = "User_Put")]
-    //public async Task<Result> UpdateUserVisitAsync(
-    //    Guid userId,
-    //    [FromServices] ICommandHandler<UpdateUserVisitCommand> handler ) =>
-    //    await handler.Handle(new UpdateUserVisitCommand(userId), new CancellationToken(false));
 
 
     [HttpDelete("{userId}")]

@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using UserService.Api.Extensions;
+using UserService.Application.Services;
 using UserService.Infrastructure.Data;
+using UserService.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +12,10 @@ builder.AddDatabase ();
 builder.AddCustomSerilog ();
 builder.AddHandlers ();
 builder.AddUserMessaging ();
+builder.AddCloudStorage ();
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IAvatarStorageService, AvatarStorageService> ();
 
 var app = builder.Build();
 
@@ -24,7 +29,7 @@ using(var scope = app.Services.CreateScope()) {
         context.Database.Migrate();
     }
     catch(Exception ex) {
-        Console.WriteLine($"������ ��� ���������� ��������: {ex.Message}");
+        Console.WriteLine($"{ex.Message}");
         throw;
     }
 }
