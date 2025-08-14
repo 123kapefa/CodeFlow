@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,36 +24,50 @@ public static class AuthExtensions {
     Console.WriteLine($"JWT Issuer: {jwtSettings.Issuer}");
     Console.WriteLine($"JWT Audience: {jwtSettings.Audience}");
     Console.WriteLine($"JWT ExpiresInMinutes: {jwtSettings.ExpiresInMinutes}");
-    
-    builder.Services
+
+        JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+
+        builder.Services
      .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-     .AddJwtBearer(options => {
+    .AddJwtBearer(options =>
+    {
+        options.MapInboundClaims = false;  // <— ВАЖНО
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters {
-          ValidateIssuer = true,
-          ValidateAudience = true,
-          ValidateLifetime = true,
-          ValidateIssuerSigningKey = true,
-          ValidIssuer = jwtSettings.Issuer,
-          ValidAudience = jwtSettings.Audience,
-          IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(jwtSettings.Secret)
-          ),
-          ClockSkew = TimeSpan.Zero
-        };
-        options.Events = new JwtBearerEvents {
-          OnAuthenticationFailed = context => {
-            if (context.Exception is SecurityTokenExpiredException) {
-              Console.WriteLine("Токен истёк!");
-            } else {
-              Console.WriteLine($"Ошибка аутентификации: {context.Exception.Message}");
-            }
-            return Task.CompletedTask;
-          }
+            ValidateIssuer = true,
+            ValidIssuer = jwtSettings.Issuer,
+
+            ValidateAudience = true,
+            ValidAudience = jwtSettings.Audience,
+
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
+
+            ClockSkew = TimeSpan.Zero,
+            NameClaimType = "name",
+            RoleClaimType = "role"
         };
 
-      });
-    builder.Services.AddAuthorization(options => {
+        options.Events = new JwtBearerEvents {
+            OnAuthenticationFailed = ctx =>
+            {
+                Console.WriteLine(ctx.Exception is SecurityTokenExpiredException
+                    ? "Токен истёк!"
+                    : $"Ошибка аутентификации: {ctx.Exception.Message}");
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = ctx =>
+            {
+                // разовый дамп клеймов для диагностики
+                Console.WriteLine("Token validated. Claims:");
+                foreach(var c in ctx.Principal!.Claims)
+                    Console.WriteLine($"  {c.Type} = {c.Value}");
+                return Task.CompletedTask;
+            }
+        };
+    });
+        builder.Services.AddAuthorization(options => {
       options.AddPolicy("AuthenticatedPolicy", policy => {
         policy.RequireAuthenticatedUser();
       });

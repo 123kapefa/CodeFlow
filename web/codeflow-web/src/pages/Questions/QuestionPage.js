@@ -784,6 +784,8 @@ import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 import AuthorCard from "../../components/AuthorCard/AuthorCard";
 import "./QuestionPage.css";
 
+
+
 dayjs.extend(relativeTime);
 
 const modules = {
@@ -938,7 +940,7 @@ export default function QuestionPage() {
   const loadQuestion = useCallback(async () => {
     setLoading(true);
     try {
-      const r = await fetch(
+      const r = await fetchAuth(
         "http://localhost:5000/api/aggregate/get-question",
         {
           method: "POST",
