@@ -26,7 +26,6 @@ using QuestionService.Application.Features.UpdateQuestionView;
 using QuestionService.Application.Features.UpdateQuestionVote;
 using QuestionService.Application.Features.GetQuestions;
 using QuestionService.Application.Features.GetQuestionsByIds;
-using QuestionService.Application.Features.GetQuestionsByTags;
 using QuestionService.Application.Features.UpdateQuestionAnswers;
 using QuestionService.Application.Features.GetUserQuestions;
 
@@ -82,18 +81,6 @@ public class QuestionController : ControllerBase {
     [FromQuery] SortParams sortParams,
     [FromServices] ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetQuestionsByIdsCommand> handler) =>
     await handler.Handle (new GetQuestionsByIdsCommand (questionIds, pageParams, sortParams),
-      new CancellationToken (false));
-
-  [HttpPost ("get-questions-by-tags")]
-  [SwaggerOperation (Summary = "Получить вопрос по questionId.",
-    Description = "Возвращает полный объект(QuestionDTO) с тегами и историей изменений.", OperationId = "Question_Get",
-    Tags = new[] { "Question" })]
-  public async Task<Result<IEnumerable<QuestionShortDTO>>> GetQuestionsByTagsAsync (
-    [FromBody] IEnumerable<int> tagIds,
-    [FromQuery] PageParams pageParams,
-    [FromQuery] SortParams sortParams,
-    [FromServices] ICommandHandler<IEnumerable<QuestionShortDTO>, GetQuestionsByTagsCommand> handler) =>
-    await handler.Handle (new GetQuestionsByTagsCommand (tagIds, pageParams, sortParams),
       new CancellationToken (false));
 
   [HttpGet ("short/{questionId}")] // TODO нужен для теста
@@ -225,3 +212,6 @@ public class QuestionController : ControllerBase {
   }
 
 }
+
+// user 1 01985fd7-f48d-79c5-ba32-5b2c14cb7d02  testrabbitmq@gmail.com
+// user 2 01985fdb-9b87-7e8d-91da-bcebf52c9687  user2@gmail.com
