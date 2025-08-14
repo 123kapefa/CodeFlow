@@ -18,13 +18,20 @@ public interface IAnswerRepository {
   Task<Result> AcceptAsync (IEnumerable<Answer> answers, Guid answerId, CancellationToken ct);
 
   Task<Result<(IEnumerable<Answer> items, PagedInfo pageInfo)>> GetByUserIdAsync (
-    Guid userId
-    , PageParams pageParams
-    , SortParams sortParams
-    , CancellationToken ct);
+    Guid userId,
+    PageParams pageParams,
+    SortParams sortParams,
+    CancellationToken ct);
 
   Task<Result<IEnumerable<Answer>>> GetByUserIdAsync (Guid userId, CancellationToken ct);
   Task<Result<IEnumerable<string>>> GetCommentsByAnswerIdAsync (Guid userId, CancellationToken ct);
+
+  Task<Result<IEnumerable<Guid>>> GetQuestionIdsByUserId (
+    Guid userId,
+    PageParams pageParams,
+    SortParams sortParams,
+    CancellationToken ct);
+
   Task SaveAsync (CancellationToken ct);
 
 }

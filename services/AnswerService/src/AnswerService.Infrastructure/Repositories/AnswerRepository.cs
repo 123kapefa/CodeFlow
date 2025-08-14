@@ -249,6 +249,25 @@ public class AnswerRepository : IAnswerRepository {
     throw new Exception ("");
   }
 
+  public async Task<Result<IEnumerable<Guid>>> GetQuestionIdsByUserId (Guid userId, PageParams pageParams, SortParams sortParams, CancellationToken ct) {
+    try {
+      _logger.LogInformation ("Поиск ID вопросов пользователя по его ID: {userId}.", userId);
+      var questions = await _context.Answers
+       .Where (a => a.UserId == userId)
+       .Sort(sortParams)
+       .ToPagedAsync(pageParams);
+
+      
+
+      _logger.LogInformation ("Возврат ID вопросов данного пользователя с таким ID: {userId}.", userId);
+      return Result<IEnumerable<Guid>>.Success (questions.Value.items.Select (a => a.QuestionId).ToList());;
+    }
+    catch (Exception) {
+      _logger.LogError ("База данных не отвечает");
+      return Result<IEnumerable<Guid>>.Error ("База данных не отвечает.");
+    }
+  }
+
   public async Task SaveAsync (CancellationToken ct) => await _context.SaveChangesAsync (ct);
 
 }

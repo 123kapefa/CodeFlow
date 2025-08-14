@@ -6,7 +6,7 @@ public class WatchedTagDTO {
     public int TagId { get; set; }
     public string TagName { get; set; } = string.Empty;
 
-    protected WatchedTagDTO() { }
+    public WatchedTagDTO() { }
 
     private WatchedTagDTO( Guid id, Guid userId, int tagId, string tagName ) {
         Id = id;
