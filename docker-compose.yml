@@ -11,7 +11,32 @@ services:
       - "5672:5672"      # AMQP
       - "15672:15672"    # Web-UI
     networks: [ clonenet ]
+
+  # ────────── Redis ──────────
+  redis:
+    image: redis:7.2
+    container_name: redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks: [ clonenet ]
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10  
     
+    # ────────── Redis UI ──────────
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "5540:5540"
+    networks: [ clonenet ]
+    depends_on:
+      - redis
+  
   # ────────── ApiGateway ──────────
   apigateway:
     build:
@@ -97,6 +122,8 @@ services:
       args:
         PROJECT_NAME: UserService
         DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env
     environment:
       ASPNETCORE_URLS:          http://+:5000
       ConnectionStrings__UserServiceDbContext: 'Host=user-db;Port=5432;Database=userdb;Username=user;Password=secret'
@@ -137,9 +164,11 @@ services:
       Rabbit__Host:             rabbitmq
       Rabbit__User:             guest
       Rabbit__Pass:             guest
+      ConnectionStrings__Redis: 'redis:6379,abortConnect=false,connectRetry=3,connectTimeout=5000'
     depends_on:
       - rabbitmq
       - question-db
+      - redis
 #    ports:
 #      - "5003:5000"
     networks: [ clonenet ]
@@ -254,6 +283,7 @@ volumes:
   answer-db-data:
   comment-db-data:
   tag-db-data:
+  redis-data:
 
 # ────────── общая bridge-сеть ──────────
 networks:

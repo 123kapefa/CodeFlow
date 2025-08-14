@@ -3,6 +3,7 @@ using Abstractions.Commands;
 using Ardalis.Result;
 
 using Contracts.DTOs.QuestionService;
+using Contracts.Responses.QuestionService;
 
 using FluentValidation;
 
@@ -11,6 +12,7 @@ using QuestionService.Application.Features.DeleteQuestion;
 using QuestionService.Application.Features.GetQuestion;
 using QuestionService.Application.Features.GetQuestionHistory;
 using QuestionService.Application.Features.GetQuestions;
+using QuestionService.Application.Features.GetQuestionsByIds;
 using QuestionService.Application.Features.GetQuestionShort;
 using QuestionService.Application.Features.GetQuestionTags;
 using QuestionService.Application.Features.GetUserQuestions;
@@ -37,7 +39,7 @@ public static class HandlerCollectionExtensions {
         builder.Services.AddScoped<ICommandHandler<QuestionShortDTO, GetQuestionShortCommand>, GetQuestionShortHandler>();
         builder.Services.AddScoped<ICommandHandler<IEnumerable<QuestionHistoryDTO>, GetQuestionHistoryCommand>, GetQuestionHistoryHandler>();
         builder.Services.AddScoped<ICommandHandler<IEnumerable<QuestionTagDTO>, GetQuestionTagsCommand>, GetQuestionTagsHandler>();
-        builder.Services.AddScoped<ICommandHandler<CreateQuestionCommand>, CreateQuestionHandler>();
+        builder.Services.AddScoped<ICommandHandler<CreatedQuestionResponse, CreateQuestionCommand>, CreateQuestionHandler>();
         builder.Services.AddScoped<ICommandHandler<UpdateQuestionCommand>, UpdateQuestionHandler>();
         builder.Services.AddScoped<ICommandHandler<DeleteQuestionCommand>, DeleteQuestionHandler>();
         builder.Services.AddScoped<ICommandHandler<UpdateQuestionAcceptCommand>, UpdateQuestionAcceptHandler>();
@@ -45,9 +47,9 @@ public static class HandlerCollectionExtensions {
         builder.Services.AddScoped<ICommandHandler<UpdateQuestionVoteCommand>, UpdateQuestionVoteHandler>();
         builder.Services.AddScoped<ICommandHandler<UpdateQuestionAnswersCommand>, UpdateQuestionAnswersHandler>();
         builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetQuestionsCommand>, GetQuestionsHandler>();
+        builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetQuestionsByIdsCommand>, GetQuestionsByIdsHandler>();
         builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetUserQuestionsCommand>, GetUserQuestionsHandler>();
         builder.Services.AddScoped<ICommandHandler<ReduceQuestionAnswersCommand>, ReduceQuestionAnswersHandler>();
-
 
         return builder;
     }

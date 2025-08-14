@@ -3,6 +3,7 @@ using Abstractions.Commands;
 using Ardalis.Result;
 
 using Contracts.DTOs.UserService;
+using Contracts.Responses.UserService;
 
 using FluentValidation;
 
@@ -10,7 +11,9 @@ using UserService.Application.Features.CreateUserInfo;
 using UserService.Application.Features.DeleteUser;
 using UserService.Application.Features.GetUserFullInfo;
 using UserService.Application.Features.GetUsers;
+using UserService.Application.Features.GetUsersByIds;
 using UserService.Application.Features.UpdateUserInfo;
+using UserService.Application.Features.UpdateUserProfile;
 using UserService.Application.Features.UpdateUserReputation;
 using UserService.Application.Features.UpdateUserVisit;
 using UserService.Domain.Repositories;
@@ -31,6 +34,8 @@ public static class HandlerCollectionExtensions {
     builder.Services.AddScoped<ICommandHandler<UpdateUserVisitCommand>, UpdateUserVisitHandler>();
     builder.Services.AddScoped<ICommandHandler<UserFullInfoDTO, GetUserFullInfoCommand>, GetUserFullInfoHandler>();
     builder.Services.AddScoped<ICommandHandler<CreateUserInfoCommand>, CreateUserInfoHandler>();
+    builder.Services.AddScoped<ICommandHandler<UpdateUserProfileResponse, UpdateUserProfileCommand>, UpdateUserProfileHandler>();
+    builder.Services.AddScoped<ICommandHandler<IEnumerable<UserForQuestionDto>, GetUsersByIdsCommand>, GetUsersByIdsHandler>();
 
     builder.Services.AddScoped<IValidator<UpdateUserInfoCommand>, UpdateUserInfoValidator>();
     
