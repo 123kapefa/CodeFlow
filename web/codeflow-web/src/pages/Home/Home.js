@@ -98,7 +98,7 @@ export default function Home() {
         <Col>
           <h2 className="mb-0 text-start">Welcome back, {user.userName}!</h2>
         </Col>
-        <Col xs="auto">
+        <Col xs="auto mb-2">
           <Button
             as={Link} 
             to="/questions/ask" 

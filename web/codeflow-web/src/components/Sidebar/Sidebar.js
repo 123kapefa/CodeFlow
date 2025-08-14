@@ -1,17 +1,42 @@
-import React from "react";
-import { Link } from 'react-router-dom';
-
-import '../../App.css'
-
+import { NavLink } from "react-router-dom";
 
 function Sidebar() {
+  const cls = ({ isActive }) =>
+    "nav-link d-flex align-items-center px-3 py-2" + (isActive ? " active" : "");
+
   return (
-    <nav className="sidebar mt-1">
-      <ul>
-        <li><Link to="/"><i className="bi bi-house"></i> Home</Link></li>
-        <li><Link to="/questions">Questions</Link></li>
-        <li><Link to="/tags">Tags</Link></li>
-        <li><Link to="/users">Users</Link></li>
+    <nav className="sidebar me-1">
+      <ul className="list-unstyled m-0">
+        <li>
+          {/* для корня обычно ставят end, чтобы он не подсвечивался на всех страницах */}
+          <NavLink to="/home" end className={cls}>
+            <i className="bi bi-house me-2" aria-hidden="true"></i>
+            Home
+          </NavLink>
+        </li>
+
+        <li>
+          {/* без end: будет активен и на /questions/ask, /questions/:id */}
+          <NavLink to="/" className={cls}>
+            <i className="bi bi-question-circle me-2" aria-hidden="true"></i>
+            Questions
+          </NavLink>
+        </li>
+
+        <li>
+          {/* без end: активен на /tags и всех вложенных /tags/... */}
+          <NavLink to="/tags" className={cls}>
+            <i className="bi bi-tags me-2" aria-hidden="true"></i>
+            Tags
+          </NavLink>
+        </li>
+
+        <li>
+          <NavLink to="/users" className={cls}>
+            <i className="bi bi-people me-2" aria-hidden="true"></i>
+            Users
+          </NavLink>
+        </li>
       </ul>
     </nav>
   );

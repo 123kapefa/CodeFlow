@@ -33,7 +33,7 @@ export default function QuestionCard({ q }) {
       : [];
 
   return (
-    <Card className="shadow-sm mb-3 border-0">
+    <Card className="shadow-sm mb-3 border-1">
       <Card.Body className="p-3">
         <div className="d-flex">
           {/* левая колонка со счетчиками */}

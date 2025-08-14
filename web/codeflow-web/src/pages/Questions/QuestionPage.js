@@ -319,8 +319,7 @@ export default function QuestionPage() {
       }
 
       setCommentText("");
-      setOpenCommentFor(null);
-      console.log("КОМЕНТ ОСТАВЛЕН");
+      setOpenCommentFor(null);      
       await loadQuestion();
     } catch (e) {
       console.error("Create comment failed:", e);

@@ -163,7 +163,7 @@ function Questions() {
           </h2>
         </Col>
 
-        <Col xs="auto">
+        <Col xs="auto mb-5">
           <Button as={Link} to="/questions/ask" variant="outline-primary">
             Ask Question
           </Button>

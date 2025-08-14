@@ -6,6 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import App from "./App";
 import "./index.css";
 import { AuthProvider } from "./features/Auth/AuthProvider ";
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

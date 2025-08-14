@@ -11,7 +11,7 @@ function Header() {
     <div className="container-xxl">
       <header className="topbar p-2">
         <div className="logo">
-          <Link to="/">
+          <Link to="/home">
             <img src="/logo/logo-transparent.png" alt="logo" />
           </Link>
         </div>
