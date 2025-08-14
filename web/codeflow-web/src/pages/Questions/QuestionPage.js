@@ -1,14 +1,6 @@
 import { useNavigate, useParams, Link } from "react-router-dom";
 import React, { useEffect, useState, useCallback } from "react";
-import {
-  Container,
-  Spinner,
-  Badge,
-  Card,
-  Button,
-  Form,
-  Col,
-} from "react-bootstrap";
+import { Container, Spinner, Badge, Card, Button, Form } from "react-bootstrap";
 import { ClockHistory } from "react-bootstrap-icons";
 
 import ReactQuill from "react-quill";
@@ -95,19 +87,85 @@ export default function QuestionPage() {
   const [answerHtml, setAnswerHtml] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Кому сейчас пишем комментарий: "question" | "<answerId>" | null
   const [openCommentFor, setOpenCommentFor] = useState(null);
-  // Текст комментария
   const [commentText, setCommentText] = useState("");
   const [commentSubmitting, setCommentSubmitting] = useState(false);
 
-  const [votingQ, setVotingQ] = useState(false); // голосование за вопрос
-  const [votingA, setVotingA] = useState({}); // голосование за ответы: { [answerId]: boolean }
-  const [acceptingA, setAcceptingA] = useState({}); // { [answerId]: boolean }
+  const [votingQ, setVotingQ] = useState(false);
+  const [votingA, setVotingA] = useState({});
+  const [acceptingA, setAcceptingA] = useState({});
 
   const { user } = useAuth();
   const fetchAuth = useAuthFetch();
   const navigate = useNavigate();
+
+  // ── helpers ────────────────────────────────────────────────────────────────
+  const normalizeResponse = (res) => {
+    // Справочники
+    const usersMap = Object.fromEntries(
+      (res.users ?? []).map((u) => [u.userId, u])
+    );
+    const tagsMap = Object.fromEntries((res.tags ?? []).map((t) => [t.id, t]));
+
+    // Вопрос + автор
+    const qAuthor = usersMap[res.question.userId] ?? {};
+    const question = {
+      ...res.question,
+      authorName: qAuthor.username ?? "unknown",
+      authorReputation: qAuthor.reputation ?? 0,
+      authorAvatarUrl: qAuthor.avatarUrl ?? null,
+    };
+
+    // Ответы + авторы
+    const answers = (res.answers ?? []).map((a) => {
+      const au = usersMap[a.userId] ?? {};
+      return {
+        ...a,
+        authorName: au.username ?? "unknown",
+        authorReputation: au.reputation ?? 0,
+        authorAvatarUrl: au.avatarUrl ?? null,
+      };
+    });
+
+    // Комментарии к вопросу: в ответе сервера authorId
+    const questionComments = (res.questionComments ?? []).map((c) => {
+      const uid = c.authorId ?? c.userId; // на всякий случай, если формат поменяется
+      const cu = usersMap[uid] ?? {};
+      return {
+        ...c,
+        authorName: cu.username ?? "user",
+        authorReputation: cu.reputation ?? 0,
+        authorAvatarUrl: cu.avatarUrl ?? null,
+      };
+    });
+
+    // Комментарии к ответам: объект { [answerId]: Comment[] } с authorId
+    const answerComments = {};
+    if (res.answerComments) {
+      for (const [answerId, list] of Object.entries(res.answerComments)) {
+        answerComments[answerId] = (list ?? []).map((c) => {
+          const uid = c.authorId ?? c.userId;
+          const cu = usersMap[uid] ?? {};
+          return {
+            ...c,
+            authorName: cu.username ?? "user",
+            authorReputation: cu.reputation ?? 0,
+            authorAvatarUrl: cu.avatarUrl ?? null,
+          };
+        });
+      }
+    }
+
+    return {
+      question,
+      answers,
+      tagsMap,
+      questionComments,
+      answerComments,
+      users: res.users ?? [],
+      tags: res.tags ?? [],
+    };
+  };
 
   // ЗАГРУЗКА ВОПРОСА
   const loadQuestion = useCallback(async () => {
@@ -127,8 +185,8 @@ export default function QuestionPage() {
       if (!r.ok) throw new Error(`HTTP error ${r.status}`);
       const text = await r.text();
       if (!text) throw new Error("Empty response");
-      const res = JSON.parse(text);
-      setData(res);
+      const raw = JSON.parse(text);
+      setData(normalizeResponse(raw));
     } catch (err) {
       console.error("Ошибка при получении вопроса:", err.message);
     } finally {
@@ -140,7 +198,7 @@ export default function QuestionPage() {
     loadQuestion();
   }, [loadQuestion]);
 
-  // Подсветка кода в контенте вопроса/ответов
+  // Подсветка кода
   useEffect(() => {
     if (!data) return;
     document.querySelectorAll("pre.ql-syntax").forEach((block) => {
@@ -166,18 +224,18 @@ export default function QuestionPage() {
       return;
     }
 
-    const { question, tags } = data;
+    const { question, tagsMap } = data;
 
     const tagsPayload =
       (question?.questionTags ?? []).map((t) => ({
         tagId: t.tagId,
-        name: tags?.[`tag-${t.tagId}`]?.name || "",
+        name: tagsMap?.[t.tagId]?.name || "",
       })) || [];
 
     const payload = {
       questionId: question.id,
       userId: user.userId,
-      content: answerHtml, // HTML из редактора
+      content: answerHtml,
       tags: tagsPayload,
     };
 
@@ -205,17 +263,17 @@ export default function QuestionPage() {
     }
   };
 
-  // НАПИСАТЬ КОМЕНТ
+  // КОММЕНТЫ
   const postComment = async ({ type, targetId, content }) => {
-    // тип — "Question" или "Answer" (как в твоём примере)
+    // СФОРМИРУЕМ PAYLOAD В ТОЧНОМ ФОРМАТЕ СЕРВЕРА (PascalCase):
     const payload = {
-      authorId: user.id ?? user.userId, // из контекста авторизации
-      content,
-      type, // "Question" | "Answer"
-      targetId, // guid вопроса или ответа
+      AuthorId: user.id ?? user.userId,
+      Content: content,
+      Type: type, // "Question" | "Answer" (точно как на сервере)
+      TargetId: targetId, // GUID вопроса или ответа
     };
 
-    const res = await fetchAuth("http://localhost:5000/api/comments/", {
+    const res = await fetchAuth("http://localhost:5000/api/comments", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -227,7 +285,6 @@ export default function QuestionPage() {
     return res;
   };
 
-  // ОТПРАВКА КОМЕНТА
   const handleCommentSubmit = async () => {
     if (commentSubmitting) return;
     if (!user) {
@@ -245,21 +302,25 @@ export default function QuestionPage() {
         const res = await postComment({
           type: "Question",
           targetId: data.question.id,
-          content: trimmed, // обычно plain text; если хочешь HTML — реши на бэке
+          content: trimmed,
         });
         if (!res.ok) throw new Error(await res.text());
       } else {
         const res = await postComment({
           type: "Answer",
-          targetId: openCommentFor, // это id ответа
+          targetId: openCommentFor,
           content: trimmed,
         });
-        if (!res.ok) throw new Error(await res.text());
+        if (!res.ok) {
+          const t = await res.text();
+          console.error("POST /comments failed", res.status, t);
+          throw new Error(t || `HTTP ${res.status}`);
+        }
       }
 
       setCommentText("");
-      setOpenCommentFor(null);
-      await loadQuestion(); // обновляем списки комментариев
+      setOpenCommentFor(null);      
+      await loadQuestion();
     } catch (e) {
       console.error("Create comment failed:", e);
       alert("Не удалось создать комментарий");
@@ -268,7 +329,7 @@ export default function QuestionPage() {
     }
   };
 
-  // ГОЛОСОВАНИЕ ЗА ВОПРОС
+  // ГОЛОСОВАНИЯ
   const voteQuestion = async (value) => {
     if (!user) {
       navigate("/login");
@@ -297,7 +358,6 @@ export default function QuestionPage() {
       );
 
       if (!res.ok) {
-        // откат, если сервер не принял
         await loadQuestion();
         const errText = await res.text();
         throw new Error(errText || `HTTP ${res.status}`);
@@ -310,7 +370,7 @@ export default function QuestionPage() {
     }
   };
 
-  // ГОЛОСОВАНИЕ ЗА ОТВЕТ
+  // ГОЛОСОВАНИЯ
   const voteAnswer = async (answerId, value) => {
     if (!user) {
       navigate("/login");
@@ -321,24 +381,19 @@ export default function QuestionPage() {
     try {
       setVotingA((m) => ({ ...m, [answerId]: true }));
 
-      // оптимистично обновим локально
       setData((prev) => ({
         ...prev,
-        answers: {
-          ...prev.answers,
-          answers: prev.answers.answers.map((a) =>
-            a.id === answerId
-              ? {
-                  ...a,
-                  upvotes: a.upvotes + (value === 1 ? 1 : 0),
-                  downvotes: a.downvotes + (value === -1 ? 1 : 0),
-                }
-              : a
-          ),
-        },
+        answers: prev.answers.map((a) =>
+          a.id === answerId
+            ? {
+                ...a,
+                upvotes: a.upvotes + (value === 1 ? 1 : 0),
+                downvotes: a.downvotes + (value === -1 ? 1 : 0),
+              }
+            : a
+        ),
       }));
 
-      // ВАЖНО: эндпоинт для ответов
       const res = await fetchAuth(
         `http://localhost:5000/api/answers/${answerId}/vote/${value}`,
         {
@@ -348,7 +403,7 @@ export default function QuestionPage() {
       );
 
       if (!res.ok) {
-        await loadQuestion(); // откат до серверного состояния
+        await loadQuestion();
         const errText = await res.text();
         throw new Error(errText || `HTTP ${res.status}`);
       }
@@ -360,14 +415,14 @@ export default function QuestionPage() {
     }
   };
 
-  // ВЫБОР ПРАВИЛЬНОГО ОТВЕТА
+  // ПРИНЯТИЕ ОТВЕТА
   const acceptAnswer = async (answerId) => {
     if (!user) {
       navigate("/login");
       return;
     }
 
-    // только автор вопроса может принять ответ
+    const { question } = data;
     if ((user.id ?? user.userId) !== question.userId) {
       alert("Только автор вопроса может принять ответ.");
       return;
@@ -378,7 +433,6 @@ export default function QuestionPage() {
     try {
       setAcceptingA((m) => ({ ...m, [answerId]: true }));
 
-      // запрос к правильному эндпоинту
       const res = await fetchAuth(
         `http://localhost:5000/api/questions/${question.id}/answer-accept`,
         {
@@ -399,6 +453,7 @@ export default function QuestionPage() {
         throw new Error(errText || `HTTP ${res.status}`);
       }
 
+      // локально отметим
       setData((prev) => ({
         ...prev,
         question: {
@@ -406,14 +461,11 @@ export default function QuestionPage() {
           acceptedAnswerId: answerId,
           isClosed: true,
         },
-        answers: {
-          ...prev.answers,
-          answers: prev.answers.answers.map((a) =>
-            a.id === answerId
-              ? { ...a, isAccepted: true, accepted: true }
-              : { ...a, isAccepted: false, accepted: false }
-          ),
-        },
+        answers: prev.answers.map((a) =>
+          a.id === answerId
+            ? { ...a, isAccepted: true }
+            : { ...a, isAccepted: false }
+        ),
       }));
 
       await loadQuestion();
@@ -436,18 +488,16 @@ export default function QuestionPage() {
     return <Container className="my-5">Question not found</Container>;
   }
 
-  const { question, answers, tags } = data;
+  const { question, answers, tagsMap } = data;
   const createdAtText = `Asked ${dayjs(question.createdAt).fromNow()}`;
   const updatedAtText = question.updatedAt
     ? `Modified ${dayjs(question.updatedAt).fromNow()}`
     : null;
   const viewsText = `Viewed ${question.viewsCount.toLocaleString()} times`;
 
-  // Удобные геттеры для списков комментариев
   const questionComments = data.questionComments ?? [];
-  const answerCommentsMap = data.answerComments ?? {};
   const getAnswerComments = (answerId) =>
-    answerCommentsMap[`comments-for-answer-${answerId}`] ?? [];
+    (data.answerComments && data.answerComments[answerId]) ?? [];
 
   return (
     <Container className="my-4 question-page">
@@ -513,8 +563,9 @@ export default function QuestionPage() {
                 dangerouslySetInnerHTML={{ __html: question.content }}
               />
               <div className="post-tags">
-                {question.questionTags.map((t) => {
-                  const tagName = tags[`tag-${t.tagId}`]?.name ?? "unknown";
+                {(question.questionTags ?? []).map((t) => {
+                  const tag = tagsMap?.[t.tagId];
+                  const tagName = tag?.name ?? "unknown";
                   return (
                     <Badge
                       key={t.tagId}
@@ -551,7 +602,7 @@ export default function QuestionPage() {
           kind="asked"
           dt={question.createdAt}
           userId={question.userId}
-          name={question.authorName} // может быть undefined — ок
+          name={question.authorName}
           reputation={question.authorReputation}
           avatarUrl={question.authorAvatarUrl}
         />
@@ -561,14 +612,17 @@ export default function QuestionPage() {
       <div className="mt-3 text-center comment-block">
         {questionComments.length > 0 && (
           <ul className="list-unstyled mb-2">
-            {questionComments.map((c) => (
-              <li key={c.id} className="mb-1">
-                <span>{c.content}</span>
-                <span className="text-muted small ms-2">
-                  – {c.authorName ?? "user"} {dayjs(c.createdAt).fromNow()}
-                </span>
-              </li>
-            ))}
+            <ul className="list-unstyled mb-2">
+              {questionComments.map((c) => (
+                <li key={c.id} className="mb-1">
+                  <span>{c.content}</span>
+                  <span className="text-muted small ms-2">
+                    – <Link className="text-decoration-none" to={`/users/${c.authorId}`}>{c.authorName}</Link>{" "}
+                    {dayjs(c.createdAt).fromNow()}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </ul>
         )}
 
@@ -596,9 +650,9 @@ export default function QuestionPage() {
 
       {/* Ответы */}
       <h2 className="answers-title text-start pt-5">
-        {answers.answers.length} Answers
+        {answers.length} Answers
       </h2>
-      {answers.answers.map((a) => (
+      {answers.map((a) => (
         <React.Fragment key={a.id}>
           <article className="post">
             <div className="vote-col">
@@ -624,10 +678,8 @@ export default function QuestionPage() {
                 ▼
               </Button>
 
-              {/* Кнопка / галочка выбора правильного ответа */}
               <div className="text-center mt-1">
                 {a.isAccepted ? (
-                  // Всегда показываем галочку, если ответ принят
                   <span
                     style={{ color: "green", fontSize: "20px" }}
                     title="Принятый ответ"
@@ -635,7 +687,6 @@ export default function QuestionPage() {
                     ✔
                   </span>
                 ) : (
-                  // Если ответ ещё не принят — показываем кнопку только автору вопроса
                   user?.userId === question.userId && (
                     <Button
                       variant="outline-success"
@@ -675,7 +726,6 @@ export default function QuestionPage() {
             </div>
           </article>
 
-          {/* Футер ответа — ОТДЕЛЬНЫЙ РЯД, как у вопроса */}
           <div className="post-footer">
             <div className="post-actions">
               <Button
@@ -697,7 +747,7 @@ export default function QuestionPage() {
             <AuthorCard
               kind="answered"
               dt={a.createdAt}
-              userId={a.userId} // <<< ИМЕННО из ответа
+              userId={a.userId}
               name={a.authorName}
               reputation={a.authorReputation}
               avatarUrl={a.authorAvatarUrl}
@@ -710,10 +760,10 @@ export default function QuestionPage() {
               <ul className="list-unstyled mb-2">
                 {getAnswerComments(a.id).map((c) => (
                   <li key={c.id} className="mb-1">
-                    {/* <span dangerouslySetInnerHTML={{ __html: c.content ?? "" }} /> */}
                     <span>{c.content}</span>
                     <span className="text-muted small ms-2">
-                      – {c.authorName ?? "user"} {dayjs(c.createdAt).fromNow()}
+                      – <Link className="text-decoration-none" to={`/users/${c.authorId}`}>{c.authorName}</Link>{" "}
+                      {dayjs(c.createdAt).fromNow()}
                     </span>
                   </li>
                 ))}

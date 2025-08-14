@@ -1,0 +1,68 @@
+.qso-item {
+  display: grid;
+  /* левая колонка — контент, правая — компактная дата */
+  grid-template-columns: 1fr auto;
+  /* 1-я строка метрики, 2-я — заголовок+теги; дата встанет во 2-ю строку справа */
+  grid-template-rows: auto auto;
+  column-gap: 1rem;
+  row-gap: .35rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #e6e6e6;
+  border-radius: .5rem;
+}
+
+/* верхний левый ряд: votes / answers / views */
+.qso-left {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;            /* чтобы красиво переносилось на узких экранах */
+  min-width: 0;
+}
+.qso-metric strong { margin-right: .25rem; }
+.qso-views { color: #b94a48; } /* красный для views */
+
+.qso-badge-ans { padding: .35rem .5rem; font-weight: 600; }
+
+/* под метриками: заголовок и теги */
+.qso-main {
+  grid-column: 1;
+  grid-row: 2;
+  min-width: 0;               /* чтобы длинные заголовки обрезались */
+}
+.qso-title {
+  display: inline-block;
+  font-size: 1.05rem;
+  color: #2a6ebb;
+  text-decoration: none;
+  margin-bottom: .25rem;
+}
+.qso-title:hover { text-decoration: underline; }
+.qso-tags { margin-top: .25rem; }
+.qso-tag { margin-right: .35rem; margin-top: .25rem; border-radius: .25rem; }
+
+/* справа внизу — дата */
+.qso-right {
+  grid-column: 2;
+  grid-row: 2;        /* нижняя строка */
+  align-self: end;    /* прижать к низу ячейки */
+  justify-self: end;  /* прижать к правому краю */
+  white-space: nowrap;
+}
+
+/* мобильная адаптация */
+@media (max-width: 576px) {
+  .qso-item {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto; /* метрики, контент, дата */
+  }
+  .qso-right {
+    grid-column: 1;
+    grid-row: 3;
+    justify-self: start;
+    align-self: start;
+    margin-top: .25rem;
+  }
+}

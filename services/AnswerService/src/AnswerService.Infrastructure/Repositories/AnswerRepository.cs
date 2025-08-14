@@ -13,8 +13,9 @@ namespace AnswerService.Infrastructure.Repositories;
 
 public class AnswerRepository : IAnswerRepository {
 
-  private readonly AnswerServiceDbContext _context;
-  private readonly ILogger<AnswerRepository> _logger;
+    private readonly AnswerServiceDbContext _context;
+    private readonly ILogger<AnswerRepository> _logger;
+
 
   public AnswerRepository (AnswerServiceDbContext context, ILogger<AnswerRepository> logger) {
     _context = context;
@@ -38,8 +39,9 @@ public class AnswerRepository : IAnswerRepository {
     catch (Exception) {
       _logger.LogError ("База данных не отвечает");
       return Result<IEnumerable<Answer>>.Error ("База данных не отвечает.");
+
     }
-  }
+
 
   public async Task<Result<Answer>> GetByIdAsync (Guid id, CancellationToken ct) {
     try {
@@ -102,14 +104,39 @@ public class AnswerRepository : IAnswerRepository {
     catch (Exception) {
       _logger.LogError ("База данных не отвечает");
       return Result.Error ("База данных не отвечает.");
+
     }
-  }
 
+    public async Task<Result> CreateAsync(
+      Answer answer
+      , AnswerChangingHistory answerChangingHistory
+      , CancellationToken ct ) {
+        try {
+            _logger.LogInformation("Добавление ответа");
 
-    public async Task<Result> UpdateAsync( IEnumerable<Answer> answers, CancellationToken ct ) {
+            _context.Attach(answerChangingHistory);
+            _context.Entry(answerChangingHistory).State = EntityState.Added;
+
+            answer.AnswerChangingHistoriesChanges.Add(answerChangingHistory);
+            answer.CreatedAt = DateTime.UtcNow;
+
+            await _context.Answers.AddAsync(answer, ct);
+
+            //await _context.SaveChangesAsync (ct);
+
+            _logger.LogInformation("Ответ успешно добавлен.");
+            return Result.Success();
+        }
+        catch(Exception) {
+            _logger.LogError("База данных не отвечает");
+            return Result.Error("База данных не отвечает.");
+        }
+    }
+
+    public async Task<Result> UpdateAsync( Answer answer, CancellationToken ct ) {
         try {
             _logger.LogInformation("Обновление ответа.");
-            _context.Answers.UpdateRange(answers);
+            _context.Answers.Update(answer);
             await _context.SaveChangesAsync(ct);
 
             _logger.LogInformation("Ответ успешно обновлен.");
@@ -119,34 +146,112 @@ public class AnswerRepository : IAnswerRepository {
             _logger.LogError("База данных не отвечает");
             return Result.Error("База данных не отвечает.");
         }
-    }    
-
-
-
-  public async Task<Result> UpdateAsync (
+    }
+    public async Task<Result> UpdateAsync(
     Answer answer
     , AnswerChangingHistory answerChangingHistory
-    , CancellationToken ct) {
-    try {
-      _logger.LogInformation ("Обновление ответа.");
+    , CancellationToken ct ) {
+        try {
+            _logger.LogInformation("Обновление ответа.");
 
-      _context.Attach (answerChangingHistory);
-      _context.Entry (answerChangingHistory).State = EntityState.Added;
+            _context.Attach(answerChangingHistory);
+            _context.Entry(answerChangingHistory).State = EntityState.Added;
 
-      answer.AnswerChangingHistoriesChanges.Add (answerChangingHistory);
-      answer.Content = answerChangingHistory.Content;
+            answer.AnswerChangingHistoriesChanges.Add(answerChangingHistory);
+            answer.Content = answerChangingHistory.Content;
 
-      _context.Answers.Update (answer);
-      await _context.SaveChangesAsync (ct);
+            _context.Answers.Update(answer);
+            await _context.SaveChangesAsync(ct);
 
-      _logger.LogInformation ("Ответ успешно обновлен.");
-      return Result.Success ();
+            _logger.LogInformation("Ответ успешно обновлен.");
+            return Result.Success();
+        }
+        catch(Exception) {
+            _logger.LogError("База данных не отвечает");
+            return Result.Error("База данных не отвечает.");
+        }
+    } 
+
+
+    public async Task<Result> AcceptAsync( IEnumerable<Answer> answers, Guid answerId, CancellationToken ct ) {
+        try {
+            _logger.LogInformation("Поиск правильно ответа.");
+            foreach(var answer in answers) {
+                if(answer.Id == answerId) {
+                    answer.IsAccepted = true;
+                }
+
+                answer.IsAccepted = false;
+            }
+
+            await _context.SaveChangesAsync(ct);
+
+            _logger.LogInformation("Правильный ответ выбран.");
+            return Result.Success();
+        }
+        catch(Exception) {
+            _logger.LogError("База данных не отвечает");
+            return Result.Error("База данных не отвечает.");
+        }
     }
-    catch (Exception) {
-      _logger.LogError ("База данных не отвечает");
-      return Result.Error ("База данных не отвечает.");
+
+
+    public async Task<Result<(IEnumerable<Answer> items, PagedInfo pageInfo)>> GetByUserIdAsync(
+      Guid userId
+      , PageParams pageParams
+      , SortParams sortParams
+      , CancellationToken ct ) {
+        try {
+            _logger.LogInformation("Поиск ответов пользователя с таким ID: {userId}.", userId);
+            var answers = await _context.Answers
+             .Where(a => a.UserId == userId)
+             .Sort(sortParams)
+             .ToPagedAsync(pageParams);
+
+            // if (answers.Value.pageInfo.TotalRecords == 0) {
+            //   _logger.LogError ("Ответы данного пользователя c таким ID: {userId} не найдены.", userId);
+            //   return Result<(IEnumerable<Answer> items, PagedInfo pageInfo)>.Error ("Ответы данного пользователя не найдены.");
+            // }
+
+            _logger.LogInformation("Возврат ответов данного пользователя с таким ID: {userId}.", userId);
+            return Result<(IEnumerable<Answer> items, PagedInfo pageInfo)>.Success(answers);
+        }
+        catch(Exception) {
+            _logger.LogError("База данных не отвечает");
+            return Result<(IEnumerable<Answer> items, PagedInfo pageInfo)>.Error("База данных не отвечает.");
+        }
     }
-  }
+
+    public async Task<Result<IEnumerable<Answer>>> GetByUserIdAsync(
+      Guid userId
+      , CancellationToken ct ) {
+        try {
+            _logger.LogInformation("Поиск ответов пользователя с таким ID: {userId}.", userId);
+            var answers = await _context.Answers
+             .Where(a => a.UserId == userId)
+
+             .ToListAsync(ct);
+
+            if(answers.Count == 0) {
+                _logger.LogError("Ответы данного пользователя c таким ID: {userId} не найдены.", userId);
+                return Result<IEnumerable<Answer>>.Error("Ответы данного пользователя не найдены.");
+            }
+            _logger.LogInformation("Возврат ответов данного пользователя с таким ID: {userId}.", userId);
+            return Result<IEnumerable<Answer>>.Success(answers);
+        }
+        catch(Exception) {
+            _logger.LogError("База данных не отвечает");
+            return Result<IEnumerable<Answer>>.Error("База данных не отвечает.");
+        }
+    }
+
+    // TODO добавить получение комментариев определенного ответа
+    public async Task<Result<IEnumerable<string>>> GetCommentsByAnswerIdAsync( Guid userId, CancellationToken ct ) {
+        throw new Exception("");
+    }
+
+
+  
 
   public async Task<Result> DeleteAsync (Answer answer, CancellationToken ct) {
     try {
@@ -176,27 +281,7 @@ public class AnswerRepository : IAnswerRepository {
     }
   }
 
-  public async Task<Result> AcceptAsync (IEnumerable<Answer> answers, Guid answerId, CancellationToken ct) {
-    try {
-      _logger.LogInformation ("Поиск правильно ответа.");
-      foreach (var answer in answers) {
-        if (answer.Id == answerId) {
-          answer.IsAccepted = true;
-        }
 
-        answer.IsAccepted = false;
-      }
-
-      await _context.SaveChangesAsync (ct);
-
-      _logger.LogInformation ("Правильный ответ выбран.");
-      return Result.Success ();
-    }
-    catch (Exception) {
-      _logger.LogError ("База данных не отвечает");
-      return Result.Error ("База данных не отвечает.");
-    }
-  }
 
   public async Task<Result<(IEnumerable<Answer> items, PagedInfo pageInfo)>> GetByUserIdAsync (
     Guid userId
@@ -248,10 +333,6 @@ public class AnswerRepository : IAnswerRepository {
     }
   }
   
-  // TODO добавить получение комментариев определенного ответа
-  public async Task<Result<IEnumerable<string>>> GetCommentsByAnswerIdAsync (Guid userId, CancellationToken ct) {
-    throw new Exception ("");
-  }
 
   public async Task<Result<IEnumerable<Guid>>> GetQuestionIdsByUserId (Guid userId, PageParams pageParams, SortParams sortParams, CancellationToken ct) {
     try {

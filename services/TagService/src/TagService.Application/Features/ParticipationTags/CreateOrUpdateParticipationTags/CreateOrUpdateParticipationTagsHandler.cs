@@ -5,7 +5,7 @@ using Abstractions.Commands;
 using Ardalis.Result;
 
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Logging;
+
 using TagService.Domain.Entities;
 using TagService.Domain.Repositories;
 
@@ -15,15 +15,15 @@ public class CreateOrUpdateParticipationTagsHandler : ICommandHandler<CreateOrUp
 
   private readonly ITagRepository _tagRepository;
   private readonly IUserTagParticipationRepository _participationRepository;
-    private readonly ILogger<CreateOrUpdateParticipationTagsHandler> _logger;
 
-    public CreateOrUpdateParticipationTagsHandler( ITagRepository tagRepository, IUserTagParticipationRepository participationRepository, ILogger<CreateOrUpdateParticipationTagsHandler> logger ) {
-        _tagRepository = tagRepository;
-        _participationRepository = participationRepository;
-        _logger = logger;
-    }
+  public CreateOrUpdateParticipationTagsHandler (
+    ITagRepository tagRepository
+    , IUserTagParticipationRepository participationRepository) {
+    _tagRepository = tagRepository;
+    _participationRepository = participationRepository;
+  }
 
-    public async Task<Result> Handle (
+  public async Task<Result> Handle (
     CreateOrUpdateParticipationTagsCommand command
     , CancellationToken cancellationToken) {
     DateTime now = DateTime.UtcNow;
@@ -108,7 +108,6 @@ public class CreateOrUpdateParticipationTagsHandler : ICommandHandler<CreateOrUp
       await _tagRepository.SaveChangesAsync (cancellationToken);
       await tx.CommitAsync (cancellationToken);
       return Result.Success ();
-
     }
     catch (Exception) {
       await tx.RollbackAsync (cancellationToken);

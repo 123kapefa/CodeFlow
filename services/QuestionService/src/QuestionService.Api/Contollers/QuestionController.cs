@@ -53,11 +53,13 @@ public class QuestionController : ControllerBase {
       new GetQuestionCommand (questionId), 
       new CancellationToken (false));
 
+
     string viewerKey;
     if (User.Identity?.IsAuthenticated == true)
       viewerKey = User.FindFirst ("sub")?.Value ?? User.FindFirst ("userId")?.Value ?? "auth-unknown";
     else
       viewerKey = HttpContext.Request.Cookies["aid"] ?? MakeAnonKey (HttpContext);
+
 
     if (await viewTracker.TryTrackAsync (questionId, viewerKey, new CancellationToken (false))) {
  
@@ -110,6 +112,7 @@ public class QuestionController : ControllerBase {
     [FromServices] ICommandHandler<IEnumerable<QuestionTagDTO>, GetQuestionTagsCommand> handler) =>
     await handler.Handle (new GetQuestionTagsCommand (questionId), new CancellationToken (false));
 
+
   [HttpPost]
   [SwaggerOperation (Summary = "Создать вопрос.",
     Description = "Создает запись в таблицы: Questions, QuestionTags и QuestionChangingHistories.",
@@ -121,6 +124,7 @@ public class QuestionController : ControllerBase {
     Console.WriteLine (JsonSerializer.Serialize (request));
     return await handler.Handle (new CreateQuestionCommand (request.QuestionDto), new CancellationToken (false));
   }
+
 
   [HttpPut]
   [SwaggerOperation (Summary = "Обновить вопрос.",
