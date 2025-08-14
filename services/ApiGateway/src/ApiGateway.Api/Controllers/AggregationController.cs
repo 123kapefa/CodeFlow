@@ -166,123 +166,69 @@ public class AggregationController : ControllerBase {
     [FromQuery] PageParams pageParams,
     [FromQuery] SortParams sortParams,
     CancellationToken ct = default) {
-    
+
     var watched = await _tags.GetWatchedByUserIdAsync (userId, ct);
     var watchedTagIds = watched?.Select (t => t.TagId).Distinct ().ToList () ?? new List<int> ();
 
     if (watchedTagIds.Count == 0) {
-
+      
       var questionsList = await _questions.GetListAsync (
         $"{pageParams.ToQueryString ()}&{sortParams.ToQueryString ()}", ct);
 
-      var qList = questionsList.Value.ToList ();
-      var userIds = qList
-       .Select (q => q.UserId)
-       .Distinct ()
-       .ToList ();
-      var tagIds = qList
-       .SelectMany (q => q.QuestionTags.Select (t => t.TagId))
-       .Distinct ()
-       .ToList ();
+      var qList = questionsList.Value.Take ((int)pageParams.PageSize!).ToList ();
 
-      var usersTask = _users.GetUsersByIdsAsync (userIds, ct);
+      var userIds = qList.Select (q => q.UserId).Distinct ().ToList ();
+      var tagIds = qList.SelectMany (q => q.QuestionTags.Select (t => t.TagId)).Distinct ().ToList ();
+
       var tagsTask = _tags.GetByIdsAsync (tagIds, ct);
-      await Task.WhenAll (usersTask, tagsTask);
+      var usersTask = _users.GetUsersByIdsAsync (userIds, ct);
+      await Task.WhenAll (tagsTask, usersTask);
 
       return Ok (new {
-        items =
-          qList.Select (q => new { question = q, matchedTagIds = Array.Empty<int> (), matchCount = 0, score = 0d }),
-        users = await usersTask,
-        tags = await tagsTask
+        items = qList.Select (q => new { question = q, matchedTagIds = Array.Empty<int> (), score = 0d }),
+        tags = await tagsTask,
+        users = await usersTask
       });
     }
     
-    var candidates = await _questions.GetByTagsSortedAsync (
-      watchedTagIds,
-      $"{pageParams.ToQueryString ()}&{sortParams.ToQueryString ()}",
-      ct);
+    var candidateTake = Math.Max ((int)pageParams.PageSize! * 4, 40);
+    var candidates = new List<QuestionDTO> ();
+    // var candidates = await _questions.GetByTagsAsync (watchedTagIds, "any",
+    //   (int)pageParams.PageSize!, ct);
 
     var now = DateTime.UtcNow;
-    var items = candidates.Select (q =>
-    {
-      var matched = q.QuestionTags?.Select (t => t.TagId).Distinct ().Where (watchedTagIds.Contains).ToArray () ??
-        Array.Empty<int> ();
+
+    double Score (QuestionDTO q, IReadOnlyCollection<int> watchedIds) {
+      var matchedCount = q.QuestionTags?.Select (t => t.TagId).Distinct ().Count (watchedIds.Contains) ?? 0;
 
       var ageHours = (now - q.CreatedAt).TotalHours;
       var freshness = Math.Exp (-ageHours / 72.0);
-      var score = matched.Length * 3 + freshness;
 
-      return new { question = q, matchedTagIds = matched, matchCount = matched.Length, score };
-    }).ToList ();
+      const double w1 = 3, w3 = 1;
+      return w1 * matchedCount + w3 * freshness;
+    }
 
-    var userIdsRec = items.Select (x => x.question.UserId).Distinct ().ToList ();
-    var tagIdsRec = items.SelectMany (x => x.question.QuestionTags.Select (t => t.TagId)).Distinct ().ToList ();
-    var usersTaskRec = _users.GetUsersByIdsAsync (userIdsRec, ct);
+    var ranked = candidates
+     .Select (q => new {
+        question = q,
+        matchedTagIds =
+          q.QuestionTags?.Select (t => t.TagId).Distinct ().Where (watchedTagIds.Contains).ToArray () ??
+          Array.Empty<int> (),
+        score = Score (q, watchedTagIds)
+      }).OrderByDescending (x => x.score).ThenByDescending (x => x.question.CreatedAt).Take ((int)pageParams.PageSize).ToList ();
+
+    var userIdsRec = ranked.Select (x => x.question.UserId).Distinct ().ToList ();
+    var tagIdsRec = ranked.SelectMany (x => x.question.QuestionTags.Select (t => t.TagId)).Distinct ().ToList ();
+
     var tagsTaskRec = _tags.GetByIdsAsync (tagIdsRec, ct);
-    await Task.WhenAll (usersTaskRec, tagsTaskRec);
+    var usersTaskRec = _users.GetUsersByIdsAsync (userIdsRec, ct);
+    await Task.WhenAll (tagsTaskRec, usersTaskRec);
 
-    return Ok (new { items, users = await usersTaskRec, tags = await tagsTaskRec });
+    return Ok (new {
+      items = ranked,
+      tags = await tagsTaskRec,
+      users = await usersTaskRec
+    });
   }
-  
-  [HttpPost ("get-questions-summary/{userId:guid}")]
-  public async Task<IActionResult> AggregateQuestionsSummary (
-    [FromRoute] Guid userId,
-    [FromQuery] PageParams pageParams,
-    [FromQuery] SortParams sortParams,
-    CancellationToken ct) {
-    var questionsList = await _questions.GetQuestionSummaryListAsync (
-      userId,
-      $"{pageParams.ToQueryString ()}&{sortParams.ToQueryString ()}", 
-      ct);
-    
-    var tagIds = questionsList.Value.Select (q => q.QuestionTags.Select (t => t.TagId))
-     .SelectMany (t => t)
-     .Distinct ()
-     .ToList ();
 
-    var tagsListTask = _tags.GetByIdsAsync (tagIds, ct);
-
-    await Task.WhenAll (tagsListTask);
-
-    var tagsList = await tagsListTask;
-
-    var result = new { questionsList, tagsList, };
-
-    return Ok (result);
-  }
-  
-  [HttpPost ("get-answers-summary/{userId:guid}")]
-  public async Task<IActionResult> AggregateAnswersSummary (
-    [FromRoute] Guid userId,
-    [FromQuery] PageParams pageParams,
-    [FromQuery] SortParams sortParams,
-    CancellationToken ct) {
-    
-    var questionIds = await _answers.GetAnswerQuestionIdsByUserIdAsync (
-      userId, 
-      $"{pageParams.ToQueryString ()}&{sortParams.ToQueryString ()}",
-      ct);
-    
-    var questionsList = await _questions.GetQuestionsByIdsAsync (
-      questionIds, ct);
-
-    var userIds = questionsList.Value.Select (q => q.UserId).ToList ();
-    var tagIds = questionsList.Value.Select (q => q.QuestionTags.Select (t => t.TagId))
-     .SelectMany (t => t)
-     .Distinct ()
-     .ToList ();
-
-    var tagsListTask = _tags.GetByIdsAsync (tagIds, ct);
-    var usersListTask = _users.GetUsersByIdsAsync (userIds, ct);
-
-    await Task.WhenAll (tagsListTask, usersListTask);
-
-    var tagsList = await tagsListTask;
-    var usersList = await usersListTask;
-
-    var result = new { questionsList, tagsList, usersList, };
-
-    return Ok (result);
-  }
 }
-
