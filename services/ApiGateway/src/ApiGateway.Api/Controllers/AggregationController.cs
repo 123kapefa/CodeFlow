@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Mvc;
 using Contracts.Requests.ApiGateway;
 using Contracts.Requests.TagService;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace ApiGateway.Api.Controllers;
 
 [ApiController]
@@ -157,4 +159,69 @@ public class AggregationController : ControllerBase {
     return Ok (result);
   }
 
+  [Authorize]
+  [HttpGet ("recommended/{userId:guid}")]
+  public async Task<IActionResult> GetRecommended (
+    [FromRoute] Guid userId,
+    [FromQuery] PageParams pageParams,
+    [FromQuery] SortParams sortParams,
+    CancellationToken ct = default) {
+    
+    var watched = await _tags.GetWatchedByUserIdAsync (userId, ct);
+    var watchedTagIds = watched?.Select (t => t.TagId).Distinct ().ToList () ?? new List<int> ();
+
+    if (watchedTagIds.Count == 0) {
+
+      var questionsList = await _questions.GetListAsync (
+        $"{pageParams.ToQueryString ()}&{sortParams.ToQueryString ()}", ct);
+
+      var qList = questionsList.Value.ToList ();
+      var userIds = qList
+       .Select (q => q.UserId)
+       .Distinct ()
+       .ToList ();
+      var tagIds = qList
+       .SelectMany (q => q.QuestionTags.Select (t => t.TagId))
+       .Distinct ()
+       .ToList ();
+
+      var usersTask = _users.GetUsersByIdsAsync (userIds, ct);
+      var tagsTask = _tags.GetByIdsAsync (tagIds, ct);
+      await Task.WhenAll (usersTask, tagsTask);
+
+      return Ok (new {
+        items =
+          qList.Select (q => new { question = q, matchedTagIds = Array.Empty<int> (), matchCount = 0, score = 0d }),
+        users = await usersTask,
+        tags = await tagsTask
+      });
+    }
+    
+    var candidates = await _questions.GetByTagsSortedAsync (
+      watchedTagIds,
+      $"{pageParams.ToQueryString ()}&{sortParams.ToQueryString ()}",
+      ct);
+
+    var now = DateTime.UtcNow;
+    var items = candidates.Select (q =>
+    {
+      var matched = q.QuestionTags?.Select (t => t.TagId).Distinct ().Where (watchedTagIds.Contains).ToArray () ??
+        Array.Empty<int> ();
+
+      var ageHours = (now - q.CreatedAt).TotalHours;
+      var freshness = Math.Exp (-ageHours / 72.0);
+      var score = matched.Length * 3 + freshness;
+
+      return new { question = q, matchedTagIds = matched, matchCount = matched.Length, score };
+    }).ToList ();
+
+    var userIdsRec = items.Select (x => x.question.UserId).Distinct ().ToList ();
+    var tagIdsRec = items.SelectMany (x => x.question.QuestionTags.Select (t => t.TagId)).Distinct ().ToList ();
+    var usersTaskRec = _users.GetUsersByIdsAsync (userIdsRec, ct);
+    var tagsTaskRec = _tags.GetByIdsAsync (tagIdsRec, ct);
+    await Task.WhenAll (usersTaskRec, tagsTaskRec);
+
+    return Ok (new { items, users = await usersTaskRec, tags = await tagsTaskRec });
+  }
 }
+

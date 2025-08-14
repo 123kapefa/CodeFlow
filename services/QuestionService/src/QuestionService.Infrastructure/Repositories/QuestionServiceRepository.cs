@@ -22,6 +22,15 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
     _logger = logger;
   }
 
+  private sealed class QuestionWithMatch {
+
+    public Guid QuestionId { get; set; }
+    public int MatchCount { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public Question Question { get; set; }
+
+  }
+
   /// <summary> Получить вопрос.(не полный) </summary>
   public async Task<Result<Question>> GetQuestionShortAsync (Guid questionId, CancellationToken token) {
     _logger.LogInformation ("GetQuestionShortAsync started. QuestionId: {QuestionId}", questionId);
@@ -55,18 +64,15 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
 
   /// <summary> Получить список вопросов. </summary>
   public async Task<Result<(IEnumerable<Question> items, PagedInfo pageInfo)>> GetQuestionsAsync (
-    PageParams pageParams
-    , SortParams sortParams
-    , TagFilter tagFilter
-    , CancellationToken token) {
-    _logger.LogInformation ("GetQuestionsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}"
-      , pageParams, sortParams);
+    PageParams pageParams,
+    SortParams sortParams,
+    TagFilter tagFilter,
+    CancellationToken token) {
+    _logger.LogInformation ("GetQuestionsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}",
+      pageParams, sortParams);
 
     try {
-      var users = await _dbContext.Questions
-       .Include (q => q.QuestionTags)
-       .FilterByTag (tagFilter)
-       .Sort (sortParams)
+      var users = await _dbContext.Questions.Include (q => q.QuestionTags).FilterByTag (tagFilter).Sort (sortParams)
        .ToPagedAsync (pageParams);
 
       _logger.LogInformation ("GetQuestionsAsync: получено {Count} вопросов", users.Value.items.Count ());
@@ -83,15 +89,12 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
     PageParams pageParams,
     SortParams sortParams,
     CancellationToken token) {
-    _logger.LogInformation ("GetQuestionsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}"
-      , pageParams, sortParams);
+    _logger.LogInformation ("GetQuestionsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}",
+      pageParams, sortParams);
 
     try {
-      var questions = await _dbContext.Questions
-       .Include (q => q.QuestionTags)
-       .Where (q => questionIds.Contains (q.Id))
-       .Sort (sortParams)
-       .ToPagedAsync (pageParams);
+      var questions = await _dbContext.Questions.Include (q => q.QuestionTags).Where (q => questionIds.Contains (q.Id))
+       .Sort (sortParams).ToPagedAsync (pageParams);
 
       _logger.LogInformation ("GetQuestionsAsync: получено {Count} вопросов", questions.Value.items.Count ());
       return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Success (questions);
@@ -102,22 +105,96 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
     }
   }
 
+  public async Task<Result<IEnumerable<Question>>> GetQuestionsByTagsAsync (
+    IEnumerable<int> tagIds,
+    PageParams pageParams,
+    SortParams sortParams,
+    CancellationToken token) {
+    _logger.LogInformation ("GetQuestionsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}",
+      pageParams, sortParams);
+
+    try {
+      var tagIdsArr = tagIds.Distinct ().ToArray ();
+
+      var ranked = await _dbContext.Questions.AsNoTracking ()
+       .Join (_dbContext.QuestionTags.AsNoTracking ().Where (qt => tagIdsArr.Contains (qt.TagId)), q => q.Id,
+          qt => qt.QuestionId, (q, qt) => new { q, qt }).GroupBy (x => new { x.q.Id, x.q.CreatedAt })
+       .Select (g => new QuestionWithMatch {
+          QuestionId = g.Key.Id,
+          CreatedAt = g.Key.CreatedAt,
+          MatchCount = g.Select (x => x.qt.TagId).Distinct ().Count (),
+        }).OrderByDescending (x => x.MatchCount).ThenByDescending (x => x.CreatedAt).Skip (0)
+       .Take ((int)pageParams.PageSize!).ToListAsync (token);
+
+      if (ranked.Count == 0)
+        return Result.Error ();
+
+      var ids = ranked.Select (x => x.QuestionId).ToList ();
+
+      var questions = await _dbContext.Questions.AsNoTracking ().Include (q => q.QuestionTags)
+       .Where (q => ids.Contains (q.Id)).Sort (sortParams).ToPagedAsync (pageParams);
+
+      var order = ids.Select ((id, idx) => new { id, idx }).ToDictionary (x => x.id, x => x.idx);
+      var questionsList = questions.Value.items.ToList ();
+
+      questionsList.Sort ((a, b) => order[a.Id].CompareTo (order[b.Id]));
+
+      _logger.LogInformation ("GetQuestionsAsync: получено {Count} вопросов", questions.Value.items.Count ());
+      return Result<IEnumerable<Question>>.Success (questionsList);
+    }
+    catch (Exception ex) {
+      _logger.LogError (ex, "GetQuestionsAsync: ошибка базы данных");
+      return Result<IEnumerable<Question>>.Error ("Ошибка базы данных");
+    }
+  }
+
+  public async Task<Result<IEnumerable<Question>>> GetQuestionsWithoutIdsAsync (
+    IEnumerable<Guid> ids,
+    int count,
+    CancellationToken token) {
+    _logger.LogInformation (
+      "GetQuestionsWithoutIdsAsync started. RequestedCount={Count}, ExcludedIdsCount={ExcludedCount}", count,
+      ids?.Count () ?? 0);
+
+    try {
+      if (count <= 0)
+        return Result<IEnumerable<Question>>.Success (Array.Empty<Question> ());
+
+      var query = _dbContext.Questions.AsQueryable ();
+
+      if (ids != null && ids.Any ()) {
+        query = query.Where (q => !ids.Contains (q.Id));
+      }
+
+      var questions = await query.Sort (new SortParams ("CreatedAt", SortDirection.Descending)).Take (count)
+       .ToListAsync ();
+
+      _logger.LogInformation ("GetQuestionsWithoutIdsAsync: получено {Count} вопросов", questions.Count);
+
+      return Result<IEnumerable<Question>>.Success (questions);
+    }
+    catch (Exception ex) {
+      _logger.LogError (ex, "GetQuestionsWithoutIdsAsync: ошибка базы данных");
+      return Result<IEnumerable<Question>>.Error ("Ошибка базы данных");
+    }
+  }
+
   /// <summary> Получить список вопросов пользователя. </summary>
   public async Task<Result<(IEnumerable<Question> items, PagedInfo pageInfo)>> GetUserQuestionsAsync (
-    Guid userId
-    , PageParams pageParams
-    , SortParams sortParams
-    , CancellationToken token) {
+    Guid userId,
+    PageParams pageParams,
+    SortParams sortParams,
+    CancellationToken token) {
     _logger.LogInformation (
-      "GetUserQuestionsAsync started. UserId: {UserId}, PageParams: {@PageParams}, SortParams: {@SortParams}", userId
-      , pageParams, sortParams);
+      "GetUserQuestionsAsync started. UserId: {UserId}, PageParams: {@PageParams}, SortParams: {@SortParams}", userId,
+      pageParams, sortParams);
 
     try {
       var users = await _dbContext.Questions.Where (q => q.UserId == userId).Sort (sortParams)
        .ToPagedAsync (pageParams);
 
-      _logger.LogInformation ("GetUserQuestionsAsync: получено {Count} вопросов пользователя {UserId}"
-        , users.Value.items.Count (), userId);
+      _logger.LogInformation ("GetUserQuestionsAsync: получено {Count} вопросов пользователя {UserId}",
+        users.Value.items.Count (), userId);
       return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Success (users);
     }
     catch (Exception ex) {
@@ -128,16 +205,16 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
 
   /// <summary> Получить историю изменений вопроса. </summary>
   public async Task<Result<IEnumerable<QuestionChangingHistory>>> GetQuestionChangingHistoryAsync (
-    Guid questionId
-    , CancellationToken token) {
+    Guid questionId,
+    CancellationToken token) {
     _logger.LogInformation ("GetQuestionChangingHistoryAsync started. QuestionId: {QuestionId}", questionId);
 
     try {
       List<QuestionChangingHistory> questionHistory = await _dbContext.QuestionChangingHistories
        .Where (q => q.QuestionId == questionId).ToListAsync (token);
 
-      _logger.LogInformation ("GetQuestionChangingHistoryAsync: получено {Count} записей истории вопроса {QuestionId}"
-        , questionHistory.Count, questionId);
+      _logger.LogInformation ("GetQuestionChangingHistoryAsync: получено {Count} записей истории вопроса {QuestionId}",
+        questionHistory.Count, questionId);
       return Result<IEnumerable<QuestionChangingHistory>>.Success (questionHistory);
     }
     catch (Exception ex) {
@@ -155,8 +232,8 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
       List<QuestionTag> questionTags = await _dbContext.QuestionTags
        .Where (qt => qt.QuestionId == questionId).ToListAsync (token);
 
-      _logger.LogInformation ("GetQuestionTagsAsync: получено {Count} тэгов для вопроса {QuestionId}"
-        , questionTags.Count, questionId);
+      _logger.LogInformation ("GetQuestionTagsAsync: получено {Count} тэгов для вопроса {QuestionId}",
+        questionTags.Count, questionId);
       return Result<IEnumerable<QuestionTag>>.Success (questionTags);
     }
     catch (Exception ex) {
@@ -194,10 +271,10 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
 
   /// <summary> Создать историю изменений вопроса. </summary>
   public async Task<Result> CreateQuestionChangingHistoryAsync (
-    QuestionChangingHistory questionChangingHistory
-    , CancellationToken cancellationToken) {
-    _logger.LogInformation ("CreateQuestionChangingHistoryAsync started. QuestionId: {QuestionId}"
-      , questionChangingHistory?.QuestionId);
+    QuestionChangingHistory questionChangingHistory,
+    CancellationToken cancellationToken) {
+    _logger.LogInformation ("CreateQuestionChangingHistoryAsync started. QuestionId: {QuestionId}",
+      questionChangingHistory?.QuestionId);
 
     if (questionChangingHistory == null) {
       _logger.LogWarning ("CreateQuestionChangingHistoryAsync: аргумент истории равен null");
@@ -208,19 +285,19 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
       await _dbContext.QuestionChangingHistories.AddAsync (questionChangingHistory, cancellationToken);
       await _dbContext.SaveChangesAsync (cancellationToken);
 
-      _logger.LogInformation ("CreateQuestionChangingHistoryAsync: история изменений для вопроса {QuestionId} создана"
-        , questionChangingHistory.QuestionId);
+      _logger.LogInformation ("CreateQuestionChangingHistoryAsync: история изменений для вопроса {QuestionId} создана",
+        questionChangingHistory.QuestionId);
       return Result.Success ();
     }
     catch (DbUpdateConcurrencyException ex) {
-      _logger.LogError (ex
-        , "CreateQuestionChangingHistoryAsync: ошибка конкуренции при создании истории вопроса {QuestionId}"
-        , questionChangingHistory.QuestionId);
+      _logger.LogError (ex,
+        "CreateQuestionChangingHistoryAsync: ошибка конкуренции при создании истории вопроса {QuestionId}",
+        questionChangingHistory.QuestionId);
       return Result.Error ("Ошибка во время создания истории изменений вопроса");
     }
     catch (DbUpdateException ex) {
-      _logger.LogError (ex, "CreateQuestionChangingHistoryAsync: ошибка БД при создании истории вопроса {QuestionId}"
-        , questionChangingHistory.QuestionId);
+      _logger.LogError (ex, "CreateQuestionChangingHistoryAsync: ошибка БД при создании истории вопроса {QuestionId}",
+        questionChangingHistory.QuestionId);
       return Result.Error ("Ошибка БД");
     }
   }
@@ -241,8 +318,8 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
       return Result.Success ();
     }
     catch (DbUpdateConcurrencyException ex) {
-      _logger.LogError (ex, "UpdateQuestionAsync: вопрос {QuestionId} был изменён или удалён другим пользователем"
-        , question.Id);
+      _logger.LogError (ex, "UpdateQuestionAsync: вопрос {QuestionId} был изменён или удалён другим пользователем",
+        question.Id);
       return Result.Error ("Вопрос был изменён или удалён другим пользователем");
     }
     catch (DbUpdateException ex) {
@@ -253,9 +330,9 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
 
   /// <summary> Обновление тэгов вопроса </summary>
   public async Task<Result> UpdateQuestionTagsAsync (
-    Guid questionId
-    , List<QuestionTag> questionTags
-    , CancellationToken token) {
+    Guid questionId,
+    List<QuestionTag> questionTags,
+    CancellationToken token) {
     _logger.LogInformation ("UpdateQuestionTagsAsync started. QuestionId: {QuestionId}", questionId);
 
     Result<IEnumerable<QuestionTag>> res = await GetQuestionTagsAsync (questionId, token);
@@ -271,9 +348,9 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
       return Result.Success ();
     }
     catch (DbUpdateConcurrencyException ex) {
-      _logger.LogError (ex
-        , "UpdateQuestionTagsAsync: тэги вопроса {QuestionId} были изменены или удалены другим пользователем"
-        , questionId);
+      _logger.LogError (ex,
+        "UpdateQuestionTagsAsync: тэги вопроса {QuestionId} были изменены или удалены другим пользователем",
+        questionId);
       return Result.Error ("Тэг был изменён или удалён другим пользователем");
     }
     catch (DbUpdateException ex) {
@@ -306,8 +383,8 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
       return Result.Success ();
     }
     catch (DbUpdateConcurrencyException ex) {
-      _logger.LogError (ex, "DeleteQuestionAsync: вопрос {QuestionId} был изменён или удалён другим пользователем"
-        , questionId);
+      _logger.LogError (ex, "DeleteQuestionAsync: вопрос {QuestionId} был изменён или удалён другим пользователем",
+        questionId);
       return Result.Error ("Вопрос был изменён или удалён другим пользователем");
     }
     catch (DbUpdateException ex) {

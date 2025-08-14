@@ -29,6 +29,7 @@ using TagService.Application.Features.WatchedTags.CheckUserSubscription;
 using TagService.Application.Features.WatchedTags.CreateWatchedTag;
 using TagService.Application.Features.WatchedTags.DeleteWatchedTag;
 using TagService.Application.Features.WatchedTags.GetUserWatchedTags;
+using TagService.Application.Features.WatchedTags.GetWatchedTagsByUserId;
 
 using PageParams = TagService.Domain.Filters.PageParams;
 using SortParams = TagService.Domain.Filters.SortParams;
@@ -61,6 +62,17 @@ public class TagServiceController : ControllerBase {
     return await handler.Handle (new GetTagsByIdsCommand (request.TagIds), new CancellationToken (false));
   }
 
+    [HttpGet ("/tags/{userId}/watched-tags")]
+    [SwaggerOperation (
+      Summary = "Получить список тегов по списку ID",
+      Description = "Принимает список ID тегов и возвращает соответствующие объекты TagDTO.",
+      OperationId = "Tag_GetByIds")]
+    public async Task<Result<IEnumerable<WatchedTagDTO>>> GetWatchedTagsByUserIdAsync (
+      [FromRoute] Guid userId,
+      [FromServices] ICommandHandler<IEnumerable<WatchedTagDTO>, GetWatchedTagsByUserIdCommand> handler) {
+      return await handler.Handle (new GetWatchedTagsByUserIdCommand (userId), new CancellationToken (false));
+    }
+  
   [HttpGet ("{tagName}/name")]
   [SwaggerOperation (
     Summary = "Получить тэг по tag.Name.", 
