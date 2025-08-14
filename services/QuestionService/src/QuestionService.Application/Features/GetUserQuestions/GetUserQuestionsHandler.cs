@@ -5,6 +5,8 @@ using Abstractions.Commands;
 
 using Contracts.DTOs.QuestionService;
 
+using QuestionService.Application.Extensions;
+
 namespace QuestionService.Application.Features.GetUserQuestions;
 
 public class GetUserQuestionsHandler :
@@ -27,20 +29,10 @@ public class GetUserQuestionsHandler :
         if(!result.IsSuccess)
             return Result.Error(new ErrorList(result.Errors));
 
-        IEnumerable<QuestionShortDTO> userQuestions = result.Value.items.Select(i => new QuestionShortDTO {
-            Id = i.Id,
-            UserId = i.UserId,
-            Title = i.Title,
-            Content = i.Content,
-            CreatedAt = i.CreatedAt,
-            ViewsCount = i.ViewsCount,
-            AnswersCount = i.AnswersCount,
-            Upvotes = i.Upvotes,
-            Downvotes = i.Downvotes,
-            IsClosed = i.IsClosed
-        }).ToList();
-
         return Result<PagedResult<IEnumerable<QuestionShortDTO>>>
-            .Success(new PagedResult<IEnumerable<QuestionShortDTO>>(result.Value.pageInfo, userQuestions));
+            .Success(new PagedResult<IEnumerable<QuestionShortDTO>>(
+                result.Value.pageInfo, 
+                result.Value.items.ToQuestionsShortDto())
+            );
     }
 }
