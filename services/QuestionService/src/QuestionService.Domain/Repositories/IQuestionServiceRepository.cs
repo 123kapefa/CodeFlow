@@ -18,6 +18,17 @@ public interface IQuestionServiceRepository {
         PageParams pageParams, 
         SortParams sortParams,
         CancellationToken token );
+    
+    Task<Result<IEnumerable<Question>>> GetQuestionsByTagsAsync(
+        IEnumerable<int> tagIds,
+        PageParams pageParams, 
+        SortParams sortParams,
+        CancellationToken token );
+    
+    Task<Result<IEnumerable<Question>>> GetQuestionsWithoutIdsAsync(
+        IEnumerable<Guid> ids,
+        int count,
+        CancellationToken token );
 
     Task<Result<(IEnumerable<Question> items, PagedInfo pageInfo)>> GetUserQuestionsAsync( 
         Guid userId,
