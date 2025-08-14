@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
-import "./QuestionSummaryCard.css";
+import "./QuestionCardSO.css";
 
 function formatCompact(n) {
   if (n == null) return "0";

@@ -77,6 +77,25 @@ body,
   border-radius: 3px;
 }
 
+/* базовый стиль ссылок в сайдбаре */
+.sidebar .nav-link {
+  color: #495057;
+  border-radius: 8px;
+  transition: background .15s ease, color .15s ease;
+}
+.sidebar .nav-link:hover {
+  text-decoration: none;
+  background: #f8f9fa;
+}
+
+/* активная ссылка */
+.sidebar .nav-link.active {
+  background: #e7eaf3;          /* мягкий фон */
+  color:black;               /* цвет как у primary */
+  font-weight: 600;
+  border-right: 3px solid gray;
+}
+
 /* ─────────── Dynamic content zone ─────────── */
 .content {
   padding: 1rem 2rem;

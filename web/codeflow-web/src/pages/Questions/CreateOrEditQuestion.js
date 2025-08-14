@@ -537,7 +537,7 @@ export default function CreateOrEditQuestion() {
         if (!res.ok) throw new Error(await res.text() || "Не удалось отправить вопрос");
 
         toast.success("Вопрос создан 🎉", {
-          onClose: () => navigate("/questions"),
+          onClose: () => navigate("/"),
           autoClose: 1000,
         });
       }

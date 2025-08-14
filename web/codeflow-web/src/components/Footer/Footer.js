@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from 'react-router-dom';
 
 import '../../App.css'
 
@@ -10,7 +9,7 @@ function Footer() {
         <section>
           <h4>CodeFlow</h4>
           <ul>
-            <li><a href="/questions">Questions</a></li>
+            <li><a href="/">Questions</a></li>
             <li><a href="/help">Help</a></li>          
           </ul>
         </section>
