@@ -7,24 +7,21 @@ function Sidebar() {
   return (
     <nav className="sidebar me-1">
       <ul className="list-unstyled m-0">
-        <li>
-          {/* для корня обычно ставят end, чтобы он не подсвечивался на всех страницах */}
+        <li>          
           <NavLink to="/home" end className={cls}>
             <i className="bi bi-house me-2" aria-hidden="true"></i>
             Home
           </NavLink>
         </li>
 
-        <li>
-          {/* без end: будет активен и на /questions/ask, /questions/:id */}
+        <li>        
           <NavLink to="/" className={cls}>
             <i className="bi bi-question-circle me-2" aria-hidden="true"></i>
             Questions
           </NavLink>
         </li>
 
-        <li>
-          {/* без end: активен на /tags и всех вложенных /tags/... */}
+        <li>         
           <NavLink to="/tags" className={cls}>
             <i className="bi bi-tags me-2" aria-hidden="true"></i>
             Tags

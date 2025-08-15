@@ -9,7 +9,7 @@ function AuthorCard({ kind, dt, userId, name, reputation, avatarUrl }) {
 
   const avatarSrc = avatarUrl?.trim()
     ? avatarUrl
-    : "/avatar/avatar_default.png"; // 🔹 дефолтная картинка
+    : "/avatar/avatar_default.png"; // дефолтная картинка
 
   return (
     <div

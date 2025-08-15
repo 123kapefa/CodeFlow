@@ -56,25 +56,36 @@ public class QuestionController : ControllerBase {
 
 
         var userId = Request.Headers["X-User-Id"].FirstOrDefault();
+  
+        var sub = User.FindFirst("sub")?.Value;
+
         Console.WriteLine("**");
         Console.WriteLine("**");
         Console.WriteLine($"UserId => {userId}");
         Console.WriteLine("**");
         Console.WriteLine("**");
 
-
+        // флаг аутентификации
+        var isAuth = User.Identity?.IsAuthenticated == true;
 
         Console.WriteLine("**");
         Console.WriteLine("**");
-        Console.WriteLine($"User.Identity?.IsAuthenticated => {User.Identity?.IsAuthenticated}");
+        Console.WriteLine($"User.Identity?.IsAuthenticated => {isAuth}");
         Console.WriteLine("**");
         Console.WriteLine("**");
 
         string viewerKey;
-    if (User.Identity?.IsAuthenticated == true)
-      viewerKey = User.FindFirst ("sub")?.Value ?? User.FindFirst ("userId")?.Value ?? "auth-unknown";
-    else
-      viewerKey = HttpContext.Request.Cookies["aid"] ?? MakeAnonKey (HttpContext);
+
+        if(isAuth) {
+            Console.WriteLine("**");
+            Console.WriteLine("**");
+            Console.WriteLine($"========isAuth========");
+            Console.WriteLine("**");
+            Console.WriteLine("**");
+            viewerKey = User.FindFirst(sub)?.Value ?? User.FindFirst("userId")?.Value ?? "auth-unknown";
+        }
+        else
+            viewerKey = HttpContext.Request.Cookies["aid"] ?? MakeAnonKey(HttpContext);
 
 
     if (await viewTracker.TryTrackAsync (questionId, viewerKey, new CancellationToken (false))) {

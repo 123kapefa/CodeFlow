@@ -35,5 +35,12 @@
       <ProjectReference Include="..\..\..\..\shared\src\Abstractions\Abstractions.csproj" />
       <ProjectReference Include="..\..\..\..\shared\src\Messaging\Messaging.csproj" />
   </ItemGroup>
+  
+
+  <ItemGroup>
+    <Reference Include="Auth">
+      <HintPath>..\..\..\..\shared\src\Auth\bin\Debug\net9.0\Auth.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>

@@ -43,6 +43,9 @@ import Culture from "./pages/Footer/Network/Culture"
 import Life from "./pages/Footer/Network/Life"
 import Science from "./pages/Footer/Network/Science"
 
+import PasswordChangeConfirm from "../src/components/UserProfile/ProfileSettings/PasswordChangeConfirm"
+import EmailChangeConfirm from "../src/components/UserProfile/ProfileSettings/EmailChangeConfirm"
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!Cookies.get("jwt"));
@@ -94,6 +97,9 @@ function App() {
               <Route path="/culture" element={<Culture />} />
               <Route path="/life" element={<Life />} />
               <Route path="/science" element={<Science />} />
+
+              <Route path="/password-change-confirm" element={<PasswordChangeConfirm />} />
+              <Route path="/email-change-confirm" element={<EmailChangeConfirm />} />
               
             </Routes>
           </main>

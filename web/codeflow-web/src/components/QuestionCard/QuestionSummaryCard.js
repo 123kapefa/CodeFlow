@@ -1,6 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+
 import "./QuestionCardSO.css";
 
 function formatCompact(n) {
@@ -12,15 +13,21 @@ function formatCompact(n) {
 }
 
 export default function QuestionSummaryCard({ q, tagsMap }) {
-  const votes = (q.upvotes ?? 0) - (q.downvotes ?? 0);
-  const answers = q.answersCount ?? 0;
-  const views = q.viewsCount ?? 0;
+  const navigate = useNavigate();
 
-  //  если вопрос закрыт ИЛИ есть acceptedAnswerId
+  const votes   = (q.upvotes ?? 0) - (q.downvotes ?? 0);
+  const answers = q.answersCount ?? 0;
+  const views   = q.viewsCount ?? 0;
+
+  // решён/закрыт
   const solved = q.isClosed === true || !!q.acceptedAnswerId;
 
-  const tagName = (t) =>
-    t.tagName ?? (tagsMap ? tagsMap[t.tagId] : null) ?? `tag-${t.tagId}`;
+  const tagName = (t) => t.tagName ?? (tagsMap ? tagsMap[t.tagId] : null) ?? `tag-${t.tagId}`;
+
+  const goTag = (t) => {
+    const name = tagName(t);
+    navigate(`/tags/${t.tagId}/questions`, { state: { tagName: name } });
+  };
 
   return (
     <div className="qso-item list-group-item">
@@ -29,13 +36,8 @@ export default function QuestionSummaryCard({ q, tagsMap }) {
           <strong>{formatCompact(votes)}</strong> votes
         </span>
 
-        <span
-          className={`badge qso-badge-ans ${
-            solved ? "bg-success" : "bg-light text-dark border"
-          }`}
-        >
-          {solved ? "✓ " : ""}
-          {answers} {answers === 1 ? "answer" : "answers"}
+        <span className={`badge qso-badge-ans ${solved ? "bg-success" : "bg-light text-dark border"}`}>
+          {solved ? "✓ " : ""}{answers} {answers === 1 ? "answer" : "answers"}
         </span>
 
         <span className="qso-metric qso-views">
@@ -53,6 +55,14 @@ export default function QuestionSummaryCard({ q, tagsMap }) {
             <span
               key={t.tagId}
               className="badge bg-light text-dark border qso-tag"
+              style={{ cursor: "pointer" }}
+              title={`View questions with "${tagName(t)}"`}
+              role="button"
+              tabIndex={0}
+              onClick={() => goTag(t)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") goTag(t);
+              }}
             >
               {tagName(t)}
             </span>
