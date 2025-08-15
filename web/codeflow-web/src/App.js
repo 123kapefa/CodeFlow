@@ -44,6 +44,7 @@ import Life from "./pages/Footer/Network/Life"
 import Science from "./pages/Footer/Network/Science"
 
 import PasswordChangeConfirm from "../src/components/UserProfile/ProfileSettings/PasswordChangeConfirm"
+import EmailChangeConfirm from "../src/components/UserProfile/ProfileSettings/EmailChangeConfirm"
 
 
 function App() {
@@ -98,6 +99,7 @@ function App() {
               <Route path="/science" element={<Science />} />
 
               <Route path="/password-change-confirm" element={<PasswordChangeConfirm />} />
+              <Route path="/email-change-confirm" element={<EmailChangeConfirm />} />
               
             </Routes>
           </main>
