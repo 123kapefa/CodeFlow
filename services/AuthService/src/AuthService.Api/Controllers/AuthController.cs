@@ -82,12 +82,11 @@ public class AuthController : ControllerBase {
     , [FromServices] ICommandHandler<PasswordChangeCommand> handler) =>
     await handler.Handle (new PasswordChangeCommand(userId, request), new CancellationToken (false));
   
-  [HttpPost ("password-change-confirm/{email}/{token}")]
+  [HttpPost ("password-change-confirm")]
   public async Task<Result> PasswordChangeConfirm (
-    [FromRoute] string email
-    , [FromRoute] string token
+    [FromBody]PasswordChangeConfirmRequest request
     , [FromServices] ICommandHandler<PasswordChangeConfirmCommand> handler) =>
-    await handler.Handle (new PasswordChangeConfirmCommand(email, token), new CancellationToken (false));
+    await handler.Handle (new PasswordChangeConfirmCommand(request.Email, request.Token), new CancellationToken (false));
   
   [HttpDelete ("{userId:guid}")]
   public async Task<Result> DeleteUser (

@@ -1,28 +1,29 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Container, Spinner, ButtonGroup, ToggleButton } from "react-bootstrap";
-import QuestionSummaryCard from "../../components/QuestionCard/QuestionSummaryCard"; 
+
+import QuestionSummaryCard from "../../components/QuestionCard/QuestionSummaryCard";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
+
 const API = "http://localhost:5000";
 
-export default function QuestionsSummaryPage({ userId }) {
-  const authFetch = useAuthFetch();      // добавит Bearer + рефреш при 401
+export default function AnswersSummaryPage({ userId }) {
+     const authFetch = useAuthFetch(); 
   const [loading, setLoading] = useState(true);
-  const [questions, setQuestions] = useState([]);
+  const [items, setItems] = useState([]);
   const [pageInfo, setPageInfo] = useState(null);
   const [tagsMap, setTagsMap] = useState({});
 
   // сортировка и пагинация
-  const [orderBy, setOrderBy] = useState("CreatedAt");     // CreatedAt | AnswersCount | Views | Score (если поддерживается)
-  const [sortDir, setSortDir] = useState("Descending");    // "Descending" | "Ascending"
+  const [orderBy, setOrderBy] = useState("CreatedAt");      // CreatedAt | AnswersCount
+  const [sortDir, setSortDir] = useState("Descending");     // "Descending" | "Ascending"
   const [page, setPage] = useState(1);
   const pageSize = 30;
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      // ВНИМАНИЕ: агрегатор ждёт page/pageSize/orderBy/sortDirection (нижний регистр)
       const url =
-        `${API}/api/aggregate/get-questions-summary/${userId}` +
+        `${API}/api/aggregate/get-answers-summary/${userId}` +
         `?page=${page}&pageSize=${pageSize}&orderBy=${orderBy}&sortDirection=${sortDir}`;
 
       const res = await authFetch(url, {
@@ -30,20 +31,20 @@ export default function QuestionsSummaryPage({ userId }) {
         headers: { Accept: "application/json" },
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
       const json = await res.json();
-      // ожидаем { questionsList: { pagedInfo, value }, tagsList: [...] }
-      const list = json?.questionsList ?? {};
-      setQuestions(list?.value ?? []);
-      setPageInfo(list?.pagedInfo ?? null);
 
+      // данные в questionsList
+      setItems(json?.questionsList?.value ?? []);
+      setPageInfo(json?.questionsList?.pagedInfo ?? null);
+
+      // карта id -> name из tagsList (чтобы подписать теги в карточке)
       const map = Object.create(null);
       for (const t of json?.tagsList ?? []) map[t.id] = t.name;
       setTagsMap(map);
     } finally {
       setLoading(false);
     }
-  }, [authFetch, userId, page, pageSize, orderBy, sortDir]);
+  }, [userId, page, pageSize, orderBy, sortDir]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -66,21 +67,12 @@ export default function QuestionsSummaryPage({ userId }) {
       {/* заголовок: слева количество, справа сортировки */}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div className="text-muted">
-          {(pageInfo?.totalRecords ?? 0).toLocaleString()} questions
+          {(pageInfo?.totalRecords ?? 0).toLocaleString()} answers
         </div>
 
         <ButtonGroup>
           <ToggleButton
-            id="sort-answers"
-            type="radio"
-            variant={orderBy === "AnswersCount" ? "primary" : "outline-secondary"}
-            checked={orderBy === "AnswersCount"}
-            onChange={() => setSort("AnswersCount", "Descending")}
-          >
-            Answered
-          </ToggleButton>
-          <ToggleButton
-            id="sort-newest"
+            id="answers-sort-newest"
             type="radio"
             variant={orderBy === "CreatedAt" ? "primary" : "outline-secondary"}
             checked={orderBy === "CreatedAt"}
@@ -88,20 +80,27 @@ export default function QuestionsSummaryPage({ userId }) {
           >
             Newest
           </ToggleButton>
+          <ToggleButton
+            id="answers-sort-most"
+            type="radio"
+            variant={orderBy === "AnswersCount" ? "primary" : "outline-secondary"}
+            checked={orderBy === "AnswersCount"}
+            onChange={() => setSort("AnswersCount", "Descending")}
+          >
+            Most answers
+          </ToggleButton>
         </ButtonGroup>
       </div>
 
       <div className="list-group">
-        {questions.length === 0 ? (
-          <div className="list-group-item text-muted">Нет вопросов</div>
+        {items.length === 0 ? (
+          <div className="list-group-item text-muted">Пока нет ответов</div>
         ) : (
-          questions.map((q) => (
+          items.map((q) => (
             <QuestionSummaryCard key={q.id} q={q} tagsMap={tagsMap} />
           ))
         )}
       </div>
-
-      {/* при необходимости добавь пагинацию ниже */}
     </Container>
   );
 }
