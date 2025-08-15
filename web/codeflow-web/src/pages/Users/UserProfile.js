@@ -305,7 +305,7 @@ export default function UserProfile() {
           <>
             <PasswordChangeForm userId={ownerId} />
             <div className="my-4" />
-            <EmailChangeForm userId={ownerId} oldEmail={profile.email} />
+            <EmailChangeForm userId={ownerId} />
           </>
         );
       default:

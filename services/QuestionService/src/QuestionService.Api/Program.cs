@@ -1,3 +1,4 @@
+using Auth.Extensions;
 using Messaging.Extensions;
 using Microsoft.EntityFrameworkCore;
 using QuestionService.Api.Extensions;
@@ -7,7 +8,11 @@ using QuestionService.Infrastructure.Repositories;
 
 using StackExchange.Redis;
 
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddJwtAuth(builder.Configuration);
+//builder.Services.AddGatewayHeaderAuth();
 
 builder.AddBase ();
 builder.AddCustomSwagger ();
@@ -69,6 +74,8 @@ using(var scope = app.Services.CreateScope()) {
         throw;
     }
 }
+
+app.UseJwtAuth();
 
 app.MapControllers ();
 

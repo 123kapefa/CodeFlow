@@ -1,5 +1,3 @@
-//
-
 import { useState, useMemo } from "react";
 import { Container, Spinner, Alert, Button, Card } from "react-bootstrap";
 import { useSearchParams, useNavigate } from "react-router-dom";
@@ -10,12 +8,14 @@ import { useAuth } from "../../../features/Auth/AuthProvider ";
 
 const API = "http://localhost:5000";
 
-export default function PasswordChangeConfirm() {
+export default function EmailChangeConfirm() {
   const fetchAuth = useAuthFetch();
   const { logout } = useAuth();
+   const { user, loading } = useAuth();
 
   const [qs] = useSearchParams();
-  const email = qs.get("email");
+
+  const newEmail = qs.get("email");
   const token = qs.get("token");
 
   const [busy, setBusy] = useState(false);
@@ -24,15 +24,15 @@ export default function PasswordChangeConfirm() {
   const navigate = useNavigate();
 
   const emailMasked = useMemo(() => {
-    if (!email) return "";
-    const [name, domain] = email.split("@");
-    if (!domain) return email;
+    if (!newEmail) return "";
+    const [name, domain] = newEmail.split("@");
+    if (!domain) return newEmail;
     const safe =
       name.length <= 2
         ? name
         : name[0] + "*".repeat(name.length - 2) + name.slice(-1);
     return `${safe}@${domain}`;
-  }, [email]);
+  }, [newEmail]);
 
   const handleConfirm = async () => {
     setBusy(true);
@@ -40,18 +40,18 @@ export default function PasswordChangeConfirm() {
     setMsg("");
 
     try {
-      if (!email || !token) {
+      if (!newEmail || !token) {
         throw new Error("Missing email or token.");
       }
 
       // отправляем именно JSON в тело (не в сегмент пути)
-      const resp = await fetchAuth(`${API}/api/auth/password-change-confirm`, {
+      const resp = await fetchAuth(`${API}/api/auth/email-change-confirm/${user.userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({ email, token }),
+        body: JSON.stringify({ newEmail, token }),
         credentials: "include", // не обязательно, но безвредно
       });
 
@@ -64,7 +64,7 @@ export default function PasswordChangeConfirm() {
 
       (async () => {
         await logout();
-        toast.success("Пароль изменен. Залогинься, бро!")
+        toast.success("Email изменен. Залогинься, бро!")
         navigate("/login", { replace: true });
       })();
     } catch (e) {
@@ -76,7 +76,7 @@ export default function PasswordChangeConfirm() {
   };
 
   // базовые проверки query
-  if (!email || !token) {
+  if (!newEmail || !token) {
     return (
       <Container className="py-5 text-center">
         <Alert variant="danger">
@@ -92,7 +92,7 @@ export default function PasswordChangeConfirm() {
   return (
     <Container className="py-5" style={{ maxWidth: 640 }}>
       <Card className="p-4">
-        <h4 className="mb-3 text-center">Подтверждение смены пароля</h4>
+        <h4 className="mb-3 text-center">Подтверждение смены email</h4>
         <p className="text-muted text-center">
           Аккаунт: <strong>{emailMasked}</strong>
         </p>
@@ -100,7 +100,7 @@ export default function PasswordChangeConfirm() {
         {status === "ok" && (
           <>
             <Alert variant="success" className="text-center">
-              Пароль успешно изменён.
+              Email успешно изменён.
             </Alert>
             <div className="text-center">
               <Button onClick={() => navigate("/login")}>
