@@ -18,13 +18,13 @@ export async function RefreshToken() {
     const data = await resp.json(); // { accessToken, refreshToken, expiresInSeconds }
 
     
-    const accessDays = data.expiresInSeconds ? data.expiresInSeconds / 86400 : 1 / 24; // по умолчанию 1 час
+    const accessDays = data.expiresInSeconds ? data.expiresInSeconds / 86400 : 1 / 24; 
 
     Cookies.set('jwt', data.accessToken, {
       expires: accessDays,
       path: '/',
       sameSite: 'Lax',
-      // secure: true   // ВКЛЮЧАЙ только в проде по HTTPS
+      // secure: true   
     });
 
     if (data.refreshToken) {
