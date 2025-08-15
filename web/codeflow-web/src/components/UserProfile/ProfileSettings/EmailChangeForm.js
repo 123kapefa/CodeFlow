@@ -3,7 +3,8 @@ import { Button, Form, Alert, Spinner } from "react-bootstrap";
 import Cookies from "js-cookie";
 import { RefreshToken } from "../../../features/RefreshToken/RefreshToken";
 
-export default function EmailChangeForm({ userId, oldEmail }) {
+export default function EmailChangeForm({ userId }) {
+  const [oldEmail, setOldEmail] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [confirmNewEmail, setConfirmNewEmail] = useState("");
   const [error, setError] = useState("");
@@ -25,6 +26,8 @@ export default function EmailChangeForm({ userId, oldEmail }) {
       setError("Emails do not match.");
       return;
     }
+
+    console.log(oldEmail)
 
     setLoading(true);
 
@@ -69,12 +72,22 @@ export default function EmailChangeForm({ userId, oldEmail }) {
     <Form
       onSubmit={handleSubmit}
       className="p-3 border rounded mx-auto text-center"
-      
     >
       <h5 className="mb-3">Change Email</h5>
 
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">{success}</Alert>}
+
+      <Form.Group className="mb-3">
+        <Form.Label className="w-100 text-center">Old email</Form.Label>
+        <Form.Control
+          type="email"
+          className="mx-auto"
+          style={{ maxWidth: "300px" }}
+          value={oldEmail}
+          onChange={(e) => setOldEmail(e.target.value)}
+        />
+      </Form.Group>
 
       <Form.Group className="mb-3">
         <Form.Label className="w-100 text-center">New email</Form.Label>

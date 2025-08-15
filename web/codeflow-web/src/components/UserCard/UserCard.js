@@ -13,7 +13,7 @@ const UserCard = ({ user }) => {
    <Col xl={3} lg={3} md={4} sm={6} xs={12} className="mb-4">
       {/* ссылка охватывает ВЕСЬ контент карточки */}
       <Link
-        to={`/users/${user.userId}`}          // путь к UserProfilePage
+        to={`/users/${user.userId}`}         
         className="text-decoration-none text-reset"
       >
         <div className="d-flex">

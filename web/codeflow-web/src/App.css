@@ -15,11 +15,25 @@ body,
 .topbar {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1rem; /* расстояние между элементами */  
   padding: 0 1rem;
   border-bottom: 1px solid #e4e4e4;
   background: #fff;
 }
+
+.topbar .logo {
+  flex: 0 0 auto; /* логотип фиксированной ширины */
+}
+
+.topbar .search {
+  flex: 1; /* растягиваем строку поиска на всё доступное пространство */
+  margin-left: 2rem; /* смещаем правее от логотипа */
+}
+
+.topbar .search input {
+  width: 100%;
+}
+
 .topbar .logo img {
   height: 28px;
 }
@@ -196,3 +210,12 @@ body,
   align-items: center;
   gap: 0.5rem; /* расстояние между чекбоксом и текстом */
 }
+
+
+.btn-group { flex-wrap: wrap; }
+.pagination { flex-wrap: wrap; }
+
+.question-card { min-width: 0; }
+.question-card pre,
+.question-card code { white-space: pre-wrap; word-break: break-word; }
+.question-card img { max-width: 100%; height: auto; }

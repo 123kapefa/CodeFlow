@@ -179,7 +179,7 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
       if (count <= 0)
         return Result<IEnumerable<Question>>.Success (Array.Empty<Question> ());
 
-      var query = _dbContext.Questions.AsQueryable ();
+      var query = _dbContext.Questions.Include(q => q.QuestionTags).AsQueryable ();
 
       if (ids != null && ids.Any ()) {
         query = query.Where (q => !ids.Contains (q.Id));

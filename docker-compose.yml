@@ -158,6 +158,8 @@ services:
       args:
         PROJECT_NAME: QuestionService
         DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env
     environment:
       ASPNETCORE_URLS:          http://+:5000
       ConnectionStrings__QuestionServiceDbContext: 'Host=question-db;Port=5432;Database=questiondb;Username=question;Password=secret'

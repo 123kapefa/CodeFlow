@@ -18,8 +18,7 @@ export default function EditProfileForm({ profile, onSaved }) {
   const [okMsg, setOkMsg]           = useState('');
 
   const { refreshUser } = useAuth();
-
-  // превью: файл > objectURL, иначе текущий avatarUrl, иначе дефолт
+ 
   const previewSrc = useMemo(() => {
     if (removeAvatar) return '/avatar/avatar_default.png';
     if (avatarFile)   return URL.createObjectURL(avatarFile);
@@ -51,8 +50,7 @@ export default function EditProfileForm({ profile, onSaved }) {
 
       const doPut = () =>
         fetch('http://localhost:5000/api/users/user', {
-          method: 'PUT',
-          // ВАЖНО: НЕ ставим Content-Type вручную, иначе сломается boundary!
+          method: 'PUT',          
           headers: {
             Authorization: `Bearer ${Cookies.get('jwt') || ''}`,
           },

@@ -13,6 +13,7 @@ import PasswordChangeForm from "../../components/UserProfile/ProfileSettings/Pas
 import EmailChangeForm from "../../components/UserProfile/ProfileSettings/EmailChangeForm";
 
 import QuestionsSummaryPage from "../Questions/QuestionsSummaryPage"
+import AnswersSummaryPage from "../Answer/AnswersSummaryPage";
 import TagsSummaryPage from "../Tags/TagsSummaryPage"
 
 import { RefreshToken } from "../../features/RefreshToken/RefreshToken";
@@ -248,7 +249,7 @@ export default function UserProfile() {
   const renderActivityBody = () => {
     switch (activityTab) {
       case "answers":
-        return <AnswersList userId={userId} />;
+        return <AnswersSummaryPage userId={userId} />;
       case "questions":
         return <QuestionsSummaryPage userId={userId} />;
       case "tags":
@@ -304,7 +305,7 @@ export default function UserProfile() {
           <>
             <PasswordChangeForm userId={ownerId} />
             <div className="my-4" />
-            <EmailChangeForm userId={ownerId} oldEmail={profile.email} />
+            <EmailChangeForm userId={ownerId} />
           </>
         );
       default:

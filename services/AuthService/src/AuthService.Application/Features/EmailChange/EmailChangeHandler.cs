@@ -40,7 +40,15 @@ public class EmailChangeHandler : ICommandHandler<EmailChangeCommand> {
 
   public async Task<Result> Handle (EmailChangeCommand command, CancellationToken ct) {
     var validationResult = await _validator.ValidateAsync(command, ct);
-    if (!validationResult.IsValid)
+
+        Console.WriteLine("***");
+        Console.WriteLine("***");
+        Console.WriteLine($"EmailChangeHandler OldEmail => {command.Request.OldEmail}");
+        Console.WriteLine($"EmailChangeHandler NewEmail => {command.Request.NewEmail}");
+        Console.WriteLine("***");
+        Console.WriteLine("***");
+
+        if (!validationResult.IsValid)
       return Result.Invalid (validationResult.AsErrors ());
     
     var user = await _userManager.FindByIdAsync (command.UserId.ToString ());
@@ -51,13 +59,15 @@ public class EmailChangeHandler : ICommandHandler<EmailChangeCommand> {
       return Result.Error("Неверная указана старая почта.");
 
     var token = await _userManager.GenerateChangeEmailTokenAsync (user, command.Request.NewEmail);
-    
-    var frontend = _configuration["Frontend:Url"]!.TrimEnd ('/');
-    var url = $"{frontend}/confirm-email-change?" + $"userId={WebUtility.UrlEncode (command.UserId.ToString ())}" +
-      $"&newEmail={WebUtility.UrlEncode (command.Request.NewEmail)}" + $"&token={WebUtility.UrlEncode (token)}";
 
-    var body = $"Чтобы подтвердить новую почту <b>{command.Request.NewEmail}</b>, перейдите по ссылке:<br>" +
-      $"<a href=\"{HtmlEncoder.Default.Encode (url)}\">Подтвердить новую почту</a>";
+        var encodedToken = Uri.EscapeDataString(token);
+
+      
+    var url = $"http://localhost:3000/email-change-confirm?email={command.Request.NewEmail}&token={encodedToken}";
+
+    var body = $"Чтобы подтвердить новую почту перейдите по ссылке:<br>" +
+      $"<a href='{url}' >Подтвердить новую почту</a>";
+
     
     await _emailSender.SendEmailAsync (command.Request.NewEmail, "Подтвердите смену e-mail", body);
 

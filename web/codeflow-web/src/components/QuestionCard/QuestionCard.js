@@ -17,6 +17,19 @@ function AnswersPill({ answers, isClosed }) {
   );
 }
 
+function formatAsked(q) {
+  const iso = q.createdAt ?? q.askedAt; // поддержим оба
+  if (iso) {
+    try {
+      // dd/MM/yyyy
+      return new Date(iso).toLocaleDateString("en-GB");
+    } catch (_) {
+      /* no-op */
+    }
+  } 
+  return q.answeredAgo ?? "";
+}
+
 export default function QuestionCard({ q }) {
   if (!q) return null;
 
@@ -96,7 +109,7 @@ export default function QuestionCard({ q }) {
                 alt={q.author}
                 width={24}
                 height={24}
-                className="rounded" // квадратная форма
+                className="rounded" 
                 style={{ objectFit: "cover" }}
               />
 
@@ -113,7 +126,7 @@ export default function QuestionCard({ q }) {
               </div>
 
               {/* Время */}
-              <div className="small text-muted">asked {q.answeredAgo}</div>
+              <div className="small text-muted">asked {formatAsked(q)}</div>
             </div>
           </div>
         </div>
