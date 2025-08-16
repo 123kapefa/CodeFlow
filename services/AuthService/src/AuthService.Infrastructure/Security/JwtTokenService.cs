@@ -30,6 +30,7 @@ public class JwtTokenService : ITokenService {
       Subject = new ClaimsIdentity (new[] {
           new Claim (JwtRegisteredClaimNames.Sub, userId.ToString ()), 
           new Claim (JwtRegisteredClaimNames.Email, email)
+          
         }),
       Issuer = _settings.Issuer, 
       Audience = _settings.Audience,

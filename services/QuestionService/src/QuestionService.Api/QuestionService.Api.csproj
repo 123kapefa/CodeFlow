@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Ardalis.Result.AspNetCore" Version="10.1.0" />
+    <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="MassTransit" Version="8.5.1" />
     <PackageReference Include="MassTransit.EntityFrameworkCore" Version="8.5.1" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.0" />
@@ -34,13 +35,7 @@
       <ProjectReference Include="..\..\..\..\shared\src\Contracts\Contracts.csproj" />
       <ProjectReference Include="..\..\..\..\shared\src\Abstractions\Abstractions.csproj" />
       <ProjectReference Include="..\..\..\..\shared\src\Messaging\Messaging.csproj" />
-  </ItemGroup>
-  
-
-  <ItemGroup>
-    <Reference Include="Auth">
-      <HintPath>..\..\..\..\shared\src\Auth\bin\Debug\net9.0\Auth.dll</HintPath>
-    </Reference>
+      <ProjectReference Include="..\..\..\..\shared\src\Auth\Auth.csproj" />
   </ItemGroup>
 
 </Project>
