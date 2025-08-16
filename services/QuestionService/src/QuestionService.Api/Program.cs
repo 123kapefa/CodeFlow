@@ -11,9 +11,6 @@ using StackExchange.Redis;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddJwtAuth(builder.Configuration);
-//builder.Services.AddGatewayHeaderAuth();
-
 builder.AddBase ();
 builder.AddCustomSwagger ();
 builder.AddDatabase ();
@@ -22,15 +19,6 @@ builder.AddHandlers ();
 builder.AddQuestionMessaging ();
 builder.Services.AddMessaging();
 
-builder.Services.AddSingleton<IConnectionMultiplexer>(_ => {
-    var cs = builder.Configuration.GetConnectionString("Redis")
-     ?? throw new InvalidOperationException("Redis connection string is missing");
-    return ConnectionMultiplexer.Connect(cs);
-});
-
-builder.Services.AddSingleton<IQuestionViewTracker, RedisQuestionViewTracker>();
-builder.Services.AddSingleton<IQuestionViewCounter, RedisBufferedQuestionViewCounter>();
-// builder.Services.AddHostedService<ViewBufferFlushService>();
 
 
 builder.Services.AddControllers();
