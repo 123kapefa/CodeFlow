@@ -13,7 +13,7 @@ export default function WatchedTagsCard({ tags = [], className = '' }) {
 
       <Card.Body>
         {tags.length ? (
-          <div className="d-flex flex-wrap">
+          <div className="d-flex flex-wrap justify-content-center">
             {tags.map((t) => (
               <Badge
                 key={t.id}
