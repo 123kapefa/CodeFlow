@@ -1,3 +1,7 @@
+using Auth.Extensions;
+
+using StackExchange.Redis;
+
 namespace QuestionService.Api.Extensions;
 
 public static class BaseExtensions {
@@ -7,6 +11,18 @@ public static class BaseExtensions {
     builder.Services.AddEndpointsApiExplorer ();
     builder.Services.AddOpenApi ();
 
+    if (builder.Environment.IsDevelopment()) {
+      DotNetEnv.Env.TraversePath().Load();
+    }
+    
+    builder.Services.AddJwtAuth(builder.Configuration);
+    
+    builder.Services.AddSingleton<IConnectionMultiplexer>(_ => {
+      var cs = builder.Configuration.GetConnectionString("Redis")
+     ?? throw new InvalidOperationException("Redis connection string is missing");
+      return ConnectionMultiplexer.Connect(cs);
+    });
+    
     return builder;
   }
 
