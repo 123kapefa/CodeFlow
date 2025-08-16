@@ -3,6 +3,8 @@ using Ardalis.Result;
 using Contracts.DTOs.QuestionService;
 using Contracts.Responses.QuestionService;
 using FluentValidation;
+
+using QuestionService.Application.Abstractions;
 using QuestionService.Application.Features.CreateQuestion;
 using QuestionService.Application.Features.DeleteQuestion;
 using QuestionService.Application.Features.GetQuestion;
@@ -31,7 +33,10 @@ public static class HandlerCollectionExtensions {
         builder.Services.AddScoped<IQuestionServiceRepository, QuestionServiceRepository>();
         builder.Services.AddScoped<IValidator<CreateQuestionCommand>, CreateQuestionValidator>();
         builder.Services.AddScoped<IValidator<UpdateQuestionCommand>, UpdateQuestionValidator>();
-
+        
+        builder.Services.AddSingleton<IQuestionViewTracker, RedisQuestionViewTracker>();
+        builder.Services.AddSingleton<IQuestionViewCounter, RedisBufferedQuestionViewCounter>();
+        
         builder.Services.AddScoped<ICommandHandler<QuestionDTO, GetQuestionCommand>, GetQuestionHandler>();
         builder.Services.AddScoped<ICommandHandler<QuestionShortDTO, GetQuestionShortCommand>, GetQuestionShortHandler>();
         builder.Services.AddScoped<ICommandHandler<IEnumerable<QuestionHistoryDTO>, GetQuestionHistoryCommand>, GetQuestionHistoryHandler>();
@@ -48,7 +53,7 @@ public static class HandlerCollectionExtensions {
         builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetUserQuestionsCommand>, GetUserQuestionsHandler>();
         builder.Services.AddScoped<ICommandHandler<ReduceQuestionAnswersCommand>, ReduceQuestionAnswersHandler>();
         builder.Services.AddScoped<ICommandHandler<IEnumerable<QuestionShortDTO>, GetQuestionsByTagsCommand>, GetQuestionsByTagsHandler>();
-
+        
         return builder;
     }
 
