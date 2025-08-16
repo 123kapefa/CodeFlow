@@ -25,6 +25,7 @@ const formats = [
   "header","bold","italic","underline","code-block","list","bullet","link",
 ];
 
+
 export default function CreateOrEditQuestion() {
   const navigate = useNavigate();
   const { id } = useParams();               // если есть — режим редактирования
