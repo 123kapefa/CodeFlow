@@ -25,6 +25,7 @@ const formats = [
   "header","bold","italic","underline","code-block","list","bullet","link",
 ];
 
+
 export default function CreateOrEditQuestion() {
   const navigate = useNavigate();
   const { id } = useParams();               // если есть — режим редактирования
@@ -80,7 +81,7 @@ export default function CreateOrEditQuestion() {
 
         // безопасность: только автор 
         if (user && (user.userId !== data.question.userId)) {
-          toast.error("Вы не являетесь автором этого вопроса");
+          toast.error("Вы не можете редактировать этот вопрос.", { toastId: "not-author" });
           navigate(`/questions/${id}`);
           return;
         }
@@ -159,7 +160,7 @@ export default function CreateOrEditQuestion() {
         });
         if (!res.ok) throw new Error(await res.text() || "Не удалось обновить вопрос");
 
-        toast.success("Изменения сохранены 🎉", {
+        toast.success("Изменения сохранены.", {
           onClose: () => navigate(`/questions/${id}`),
           autoClose: 1000,
         });
@@ -186,7 +187,7 @@ export default function CreateOrEditQuestion() {
         });
         if (!res.ok) throw new Error(await res.text() || "Не удалось отправить вопрос");
 
-        toast.success("Вопрос создан 🎉", {
+        toast.success("Вопрос создан.", {
           onClose: () => navigate("/"),
           autoClose: 1000,
         });

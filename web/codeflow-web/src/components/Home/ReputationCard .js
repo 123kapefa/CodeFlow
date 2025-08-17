@@ -10,8 +10,8 @@ export default function ReputationCard({ score = 1, className = '' }) {
         <h3 className="fw-bold mb-2">{score}</h3>
         <small className="text-muted">
           Earn reputation by&nbsp;
-          <a href="#ask">asking</a>, <a href="#answer">answering</a> &amp;&nbsp;
-          <a href="#edit">editing</a>.
+          <a href="/help">asking</a>, <a href="/help">answering</a> &amp;&nbsp;
+          <a href="/help">editing</a>.
         </small>
       </Card.Body>
     </Card>
