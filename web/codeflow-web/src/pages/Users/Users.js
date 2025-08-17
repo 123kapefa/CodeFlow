@@ -56,7 +56,7 @@ export default function UsersPage() {
     (async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${API_BASE}//users?${query}`, { signal: ctrl.signal });
+        const res = await fetch(`${API_BASE}/users?${query}`, { signal: ctrl.signal });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const dto = await res.json(); // { value: User[], pagedInfo: { totalPages, ... } }
