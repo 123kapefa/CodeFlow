@@ -1,28 +1,204 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+// import { createContext, useContext, useEffect, useMemo, useState } from "react";
+// import Cookies from "js-cookie";
+// import { jwtDecode } from "jwt-decode";
+// import { RefreshToken } from "../RefreshToken/RefreshToken";
+// import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
+// import { useCallback } from "react";
+
+// const AuthContext = createContext(null);
+
+// export const AuthProvider = ({ children }) => {
+//   const [user, setUser] = useState(null); // профиль
+//   const [loading, setLoading] = useState(true);
+
+//   /* единый обёрнутый fetch */
+//   const authFetch = useAuthFetch();
+
+//   const refreshUser = useCallback(async () => {
+//     const at = Cookies.get("jwt");
+//     if (!at) {
+//       setUser(null);
+//       return;
+//     }
+//     const { sub: id } = jwtDecode(at);
+//     const res = await authFetch(`http://localhost:5000/api/users/${id}`);
+//     if (res.ok) setUser(await res.json());
+//   }, [authFetch]);
+
+//   /* ── 1. «Тихий» bootstrap при старте ── */
+//   useEffect(() => {
+//     let cancelled = false;
+
+//     (async () => {
+//       try {
+//         /* если нет refresh_token – сразу гость */
+//         if (!Cookies.get("refresh_token")) {
+//           if (!cancelled) setUser(null);
+//           return;
+//         }
+
+//         /* пробуем обновить access*/
+//         await RefreshToken();
+
+//         const at = Cookies.get("jwt");
+//         if (!at) {
+//           if (!cancelled) setUser(null);
+//           return;
+//         }
+
+//         const { sub: id } = jwtDecode(at);
+//         const res = await authFetch(`http://localhost:5000/api/users/${id}`);
+
+//         if (!cancelled) {
+//           if (res.ok) setUser(await res.json());
+//           else setUser(null);
+//         }
+//       } catch {
+//         if (!cancelled) setUser(null);
+//       } finally {
+//         if (!cancelled) setLoading(false);
+//       }
+//     })();
+
+//     return () => {
+//       cancelled = true;
+//     };
+//   }, [authFetch]);
+
+//   /* ── 2. login ── */
+//   const login = async (email, password) => {
+//     const res = await fetch("http://localhost:5000/api/auth/login", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Accept: "application/json",
+//       },
+//       body: JSON.stringify({ email, password }),
+//       credentials: "include",
+//     });
+
+//     if (!res.ok) throw new Error("Неверный логин или пароль");
+//     const data = await res.json();
+
+//     /* кладём токены */
+//     Cookies.set("jwt", data.accessToken, {
+//       path: "/",
+//       sameSite: "Lax",
+//       expires: (data.expiresInSeconds ?? 3600) / 86400,
+//     });
+//     if (data.refreshToken) {
+//       Cookies.set("refresh_token", data.refreshToken, {
+//         path: "/",
+//         sameSite: "Lax",
+//         expires: 30,
+//       });
+//     }
+
+//     /* грузим профиль тем же authFetch */
+//     const { sub: id } = jwtDecode(data.accessToken);
+//     const profRes = await authFetch(`http://localhost:5000/api/users/${id}`);
+//     if (!profRes.ok) throw new Error("Profile load failed");
+//     setUser(await profRes.json());
+//   };
+
+//   /* ── 3. logout ── */
+//   const logout = async () => {
+//     try {
+//       const rt = Cookies.get("refresh_token");
+//       if (rt) {
+//         await fetch("http://localhost:5000/api/auth/logout", {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//             Accept: "application/json",
+//           },
+//           credentials: "include",
+//           body: JSON.stringify(rt),
+//         });
+//       }
+//     } catch (e) {
+//       console.warn("Logout error:", e);
+//     } finally {
+//       /* локально выходим в любом случае */
+//       Cookies.remove("jwt", { path: "/" });
+//       Cookies.remove("refresh_token", { path: "/" });
+//       setUser(null);
+//     }
+//   };
+
+//   /* ── что отдаём наружу ── */
+//   const value = useMemo(
+//     () => ({ user, loading, login, logout, authFetch, refreshUser }),
+//     [user, loading, authFetch, refreshUser]
+//   );
+
+//   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+// };
+
+// export const useAuth = () => useContext(AuthContext);
+
+
+import { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { RefreshToken } from "../RefreshToken/RefreshToken";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
-import { useCallback } from "react";
 
 const AuthContext = createContext(null);
 
+// Ключ для локального кэша профиля (чтобы UI не моргал и не редиректил при F5)
+const USER_LS_KEY = "cf.user";
+
+function readJsonLS(key) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+function writeJsonLS(key, value) {
+  try {
+    if (value == null) localStorage.removeItem(key);
+    else localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    /* игнорируем квоты/инкогнито */
+  }
+}
+
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // профиль
+  // 1) мгновенная ре-гидрация профиля из localStorage (устраняет "мигание" и ложный редирект)
+  const [user, setUser] = useState(() => readJsonLS(USER_LS_KEY));
   const [loading, setLoading] = useState(true);
 
-  /* единый обёрнутый fetch */
+  // единый обёрнутый fetch (как у тебя)
   const authFetch = useAuthFetch();
+
+  // синхронизация user ↔ localStorage
+  useEffect(() => {
+    writeJsonLS(USER_LS_KEY, user);
+  }, [user]);
+
+  // безопасное извлечение id из JWT
+  const getUserIdFromAccess = (token) => {
+    try {
+      const { sub } = jwtDecode(token);
+      return sub ?? null;
+    } catch {
+      return null;
+    }
+  };
 
   const refreshUser = useCallback(async () => {
     const at = Cookies.get("jwt");
-    if (!at) {
+    const id = at ? getUserIdFromAccess(at) : null;
+    if (!id) {
       setUser(null);
       return;
     }
-    const { sub: id } = jwtDecode(at);
     const res = await authFetch(`http://localhost:5000/api/users/${id}`);
     if (res.ok) setUser(await res.json());
+    else setUser(null);
   }, [authFetch]);
 
   /* ── 1. «Тихий» bootstrap при старте ── */
@@ -31,32 +207,41 @@ export const AuthProvider = ({ children }) => {
 
     (async () => {
       try {
-        /* если нет refresh_token – сразу гость */
+        // Если нет refresh — сразу гость (но не сносим user из LS до конца проверки)
         if (!Cookies.get("refresh_token")) {
-          if (!cancelled) setUser(null);
+          if (!cancelled) {
+            setUser(null);
+            setLoading(false);
+          }
           return;
         }
 
-        /* пробуем обновить access*/
+        // Пробуем обновить access (ставит новую куку "jwt", если ок)
         await RefreshToken();
 
         const at = Cookies.get("jwt");
-        if (!at) {
-          if (!cancelled) setUser(null);
+        const id = at ? getUserIdFromAccess(at) : null;
+        if (!id) {
+          if (!cancelled) {
+            setUser(null);
+            setLoading(false);
+          }
           return;
         }
 
-        const { sub: id } = jwtDecode(at);
+        // Подтягиваем профиль
         const res = await authFetch(`http://localhost:5000/api/users/${id}`);
 
         if (!cancelled) {
           if (res.ok) setUser(await res.json());
           else setUser(null);
+          setLoading(false);
         }
       } catch {
-        if (!cancelled) setUser(null);
-      } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setUser(null);
+          setLoading(false);
+        }
       }
     })();
 
@@ -78,15 +263,18 @@ export const AuthProvider = ({ children }) => {
     });
 
     if (!res.ok) throw new Error("Неверный логин или пароль");
+
+    // сервер может вернуть access/refresh — если да, кладём, как и раньше
     const data = await res.json();
 
-    /* кладём токены */
-    Cookies.set("jwt", data.accessToken, {
-      path: "/",
-      sameSite: "Lax",
-      expires: (data.expiresInSeconds ?? 3600) / 86400,
-    });
-    if (data.refreshToken) {
+    if (data?.accessToken) {
+      Cookies.set("jwt", data.accessToken, {
+        path: "/",
+        sameSite: "Lax", // если фронт и бэк на одном origin; иначе нужен None+Secure
+        expires: (data.expiresInSeconds ?? 3600) / 86400,
+      });
+    }
+    if (data?.refreshToken) {
       Cookies.set("refresh_token", data.refreshToken, {
         path: "/",
         sameSite: "Lax",
@@ -94,11 +282,8 @@ export const AuthProvider = ({ children }) => {
       });
     }
 
-    /* грузим профиль тем же authFetch */
-    const { sub: id } = jwtDecode(data.accessToken);
-    const profRes = await authFetch(`http://localhost:5000/api/users/${id}`);
-    if (!profRes.ok) throw new Error("Profile load failed");
-    setUser(await profRes.json());
+    // сразу подтянем профиль тем же способом
+    await refreshUser();
   };
 
   /* ── 3. logout ── */
@@ -113,20 +298,19 @@ export const AuthProvider = ({ children }) => {
             Accept: "application/json",
           },
           credentials: "include",
-          body: JSON.stringify(rt),
+          body: JSON.stringify(rt), // оставил как у тебя; если бэк ждёт {refreshToken}, поправь тут
         });
       }
     } catch (e) {
       console.warn("Logout error:", e);
     } finally {
-      /* локально выходим в любом случае */
       Cookies.remove("jwt", { path: "/" });
       Cookies.remove("refresh_token", { path: "/" });
       setUser(null);
     }
   };
 
-  /* ── что отдаём наружу ── */
+  /* ── наружу ── */
   const value = useMemo(
     () => ({ user, loading, login, logout, authFetch, refreshUser }),
     [user, loading, authFetch, refreshUser]
