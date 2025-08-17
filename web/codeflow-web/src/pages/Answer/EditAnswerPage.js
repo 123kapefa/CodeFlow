@@ -9,7 +9,7 @@ import { InfoCircle } from "react-bootstrap-icons";
 import { useAuth } from "../../features/Auth/AuthProvider ";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 
-const API = "http://localhost:5000";
+import { API_BASE } from "../../config";
 
 const modules = {
   toolbar: [
@@ -77,7 +77,7 @@ export default function EditAnswerPage() {
       (async () => {
         try {
           const r = await fetch(
-            `http://localhost:5000/api/answers/${answerId}`,
+            `${API_BASE}/answers/${answerId}`,
             {
               headers: { Accept: "application/json" },
             }
@@ -127,7 +127,7 @@ export default function EditAnswerPage() {
         content, // HTML из редактора
       };
 
-      const res = await authFetch(`${API}/api/answers/edit/${answerId}`, {
+      const res = await authFetch(`${API_BASE}/answers/edit/${answerId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

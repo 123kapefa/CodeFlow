@@ -2,7 +2,9 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Container, Spinner, ButtonGroup, ToggleButton } from "react-bootstrap";
 import QuestionSummaryCard from "../../components/QuestionCard/QuestionSummaryCard"; 
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
-const API = "http://localhost:5000";
+
+import { API_BASE } from "../../config";
+
 
 export default function QuestionsSummaryPage({ userId }) {
   const authFetch = useAuthFetch();      // добавит Bearer + рефреш при 401
@@ -22,7 +24,7 @@ export default function QuestionsSummaryPage({ userId }) {
     try {
       // ВНИМАНИЕ: агрегатор ждёт page/pageSize/orderBy/sortDirection (нижний регистр)
       const url =
-        `${API}/api/aggregate/get-questions-summary/${userId}` +
+        `${API_BASE}/aggregate/get-questions-summary/${userId}` +
         `?page=${page}&pageSize=${pageSize}&orderBy=${orderBy}&sortDirection=${sortDir}`;
 
       const res = await authFetch(url, {

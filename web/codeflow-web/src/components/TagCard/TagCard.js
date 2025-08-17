@@ -1,181 +1,11 @@
-// import React, { useState, useRef, useEffect } from "react";
-// import { Card, Overlay, Popover, Button } from "react-bootstrap";
-// import { useNavigate } from "react-router-dom";
-// import { useAuth } from "../../features/Auth/AuthProvider ";
-// import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
-
-// function TagCard({
-//   tag,
-//   isWatched: isWatchedFromProps,
-//   showPopoverId,
-//   onPopoverShow,
-//   onPopoverHide,
-// }) {
-//   const [isWatched, setIsWatched] = useState(undefined);
-//   const { user } = useAuth();
-//   const authFetch = useAuthFetch();
-//   const targetRef = useRef(null);
-//   const navigate = useNavigate();
-
-//   // Синхронизируем локальное состояние с пропсом
-//   useEffect(() => {
-//     setIsWatched(undefined);
-//   }, [isWatchedFromProps]);
-
-//   // Функция проверки
-//   const fetchIsWatched = async () => {
-//     if (!user) {
-//       setIsWatched(false);
-//       return;
-//     }
-//     try {
-//       const res = await authFetch(
-//         `http://localhost:5000/api/tags/watched/user/${user.userId}/tag/${tag.id}`
-//       );
-//       if (!res.ok) throw new Error("Ошибка при проверке отслеживания");
-
-//       const data = await res.json();
-//       setIsWatched(data);
-//     } catch (e) {
-//       setIsWatched(false);
-//       console.error(e);
-//     }
-//   };
-
-//   const handleMouseEnter = () => {
-//     onPopoverShow(tag.id);
-//     // если статус ещё не определён, то проверяем
-//     if (isWatched === undefined) {
-//       fetchIsWatched();
-//     }
-//   };
-
-//   const handleWatchTag = async (e) => {
-//     e.stopPropagation();
-//     if (!user) {
-//       navigate("/login");
-//       return;
-//     }
-//     try {
-//       const response = await authFetch(
-//         `http://localhost:5000/api/tags/watched/${user.userId}/${tag.id}`,
-//         { method: "POST" }
-//       );
-//       if (!response.ok) throw new Error("Ошибка при добавлении");
-
-//       setIsWatched(true);
-//     } catch {
-//       alert("Не удалось добавить тэг в отслеживаемые.");
-//     }
-//   };
-
-//   const handleUnwatchTag = async (e) => {
-//     e.stopPropagation();
-//     if (!user) {
-//       navigate("/login");
-//       return;
-//     }
-//     try {
-//       const response = await authFetch(
-//         `http://localhost:5000/api/tags/watched/${tag.id}/${user.userId}`,
-//         { method: "DELETE" }
-//       );
-//       if (!response.ok) throw new Error("Ошибка при удалении");
-//       setIsWatched(false);
-//     } catch {
-//       alert("Не удалось удалить тэг из отслеживаемых.");
-//     }
-//   };
-
-//   return (
-//     <Card className="h-100 shadow-sm">
-//       <Card.Body>
-//         <div
-//           ref={targetRef}
-//           onMouseEnter={handleMouseEnter}
-//           onMouseLeave={onPopoverHide}
-//           style={{ display: "inline-block" }}
-//         >
-//           <h5
-//             style={{ cursor: "pointer" }}
-//             onClick={() =>
-//               navigate(`/tags/${tag.id}/questions`, {
-//                 state: { tagName: tag.name },
-//               })
-//             }
-//           >
-//             <span className="badge bg-secondary tag-badge">{tag.name}</span>
-//           </h5>
-//         </div>
-
-//         <Overlay
-//           target={targetRef.current}
-//           show={showPopoverId === tag.id}
-//           placement="bottom"
-//         >
-//           {(props) => (
-//             <Popover
-//               id={`popover-${tag.id}`}
-//               {...props}
-//               onMouseEnter={handleMouseEnter}
-//               onMouseLeave={onPopoverHide}
-//             >
-//               <Popover.Header as="h3">{tag.name}</Popover.Header>
-//               <Popover.Body>
-//                 <p className="text-muted" style={{ minHeight: "60px" }}>
-//                   {tag.description || "Описание отсутствует"}
-//                 </p>
-//                 <p>
-//                   <b>{tag.countWotchers} watchers</b> &nbsp; {tag.countQuestion}{" "}
-//                   questions
-//                 </p>
-
-//                 <div className="d-flex justify-content-center">
-//                   {isWatched ? (
-//                     <Button
-//                       variant="danger"
-//                       size="sm"
-//                       onClick={handleUnwatchTag}
-//                     >
-//                       Unwatch tag
-//                     </Button>
-//                   ) : (
-//                     <Button
-//                       variant="primary"
-//                       size="sm"
-//                       onClick={handleWatchTag}
-//                     >
-//                       Watch tag
-//                     </Button>
-//                   )}
-//                 </div>
-//               </Popover.Body>
-//             </Popover>
-//           )}
-//         </Overlay>
-
-//         <small className="text-muted d-block">
-//           {tag.countQuestion} questions
-//         </small>
-//         <small className="text-muted d-block">
-//           {tag.weeklyRequestCount} asked this week
-//         </small>
-//         <small className="text-muted d-block">
-//           {tag.dailyRequestCount} asked today
-//         </small>
-//       </Card.Body>
-//     </Card>
-//   );
-// }
-
-// export default TagCard;
-
 import React, { useState, useRef, useEffect } from "react";
 import { Card, Overlay, Popover, Button, Modal, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../features/Auth/AuthProvider ";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
+
+import { API_BASE } from "../../config";
 
 function TagCard({
   tag,
@@ -215,7 +45,7 @@ function TagCard({
     }
     try {
       const res = await authFetch(
-        `http://localhost:5000/api/tags/watched/user/${user.userId}/tag/${tag.id}`
+        `${API_BASE}/tags/watched/user/${user.userId}/tag/${tag.id}`
       );
       if (!res.ok) throw new Error("Ошибка при проверке отслеживания");
       const data = await res.json();
@@ -236,7 +66,7 @@ function TagCard({
     if (!user) return navigate("/login");
     try {
       const response = await authFetch(
-        `http://localhost:5000/api/tags/watched/${user.userId}/${tag.id}`,
+        `${API_BASE}/tags/watched/${user.userId}/${tag.id}`,
         { method: "POST" }
       );
       if (!response.ok) throw new Error("Ошибка при добавлении");
@@ -251,7 +81,7 @@ function TagCard({
     if (!user) return navigate("/login");
     try {
       const response = await authFetch(
-        `http://localhost:5000/api/tags/watched/${tag.id}/${user.userId}`,
+        `${API_BASE}/tags/watched/${tag.id}/${user.userId}`,
         { method: "DELETE" }
       );
       if (!response.ok) throw new Error("Ошибка при удалении");
@@ -273,7 +103,7 @@ function TagCard({
   const saveEdit = async () => {
     setSaving(true);
     try {
-      const res = await authFetch(`http://localhost:5000/api/tags/${tag.id}`, {
+      const res = await authFetch(`${API_BASE}/tags/${tag.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -297,19 +127,6 @@ function TagCard({
 
   return (
     <Card className="h-100 shadow-sm position-relative">
-      {/* Кнопка-карандаш (только для 1000+) */}
-      {canEdit && (
-        <Button
-          variant="link"
-          className="position-absolute top-0 end-0 p-2 text-muted"
-          title="Edit tag"
-          onClick={openEdit}
-          onMouseEnter={(e) => e.stopPropagation()}
-        >
-          <i className="bi bi-pencil" style={{ fontSize: "0.8rem" }}></i>
-        </Button>
-      )}
-
       <Card.Body>
         {/* Заголовок по центру */}
         <div
@@ -344,7 +161,24 @@ function TagCard({
               onMouseLeave={onPopoverHide}
               style={{ minWidth: "15vw", ...props.style }}
             >
-              <Popover.Header as="h3">{displayName}</Popover.Header>
+              <Popover.Header as="h3">
+                {/* Кнопка-карандаш (только для 1000+) */}
+                {canEdit && (
+                  <Button
+                    variant="link"
+                    className="position-absolute top-0 end-0 p-2 text-muted"
+                    title="Edit tag"
+                    onClick={openEdit}
+                    onMouseEnter={(e) => e.stopPropagation()}
+                  >
+                    <i
+                      className="bi bi-pencil"
+                      style={{ fontSize: "0.8rem" }}
+                    ></i>
+                  </Button>
+                )}
+                {displayName}
+              </Popover.Header>
               <Popover.Body>
                 <p className="text-muted" style={{ minHeight: "60px" }}>
                   {displayDesc || "Описание отсутствует"}

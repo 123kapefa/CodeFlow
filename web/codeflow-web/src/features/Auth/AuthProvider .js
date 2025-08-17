@@ -144,6 +144,8 @@ import { jwtDecode } from "jwt-decode";
 import { RefreshToken } from "../RefreshToken/RefreshToken";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 
+import { API_BASE } from "../../config";
+
 const AuthContext = createContext(null);
 
 // Ключ для локального кэша профиля (чтобы UI не моргал и не редиректил при F5)
@@ -196,7 +198,7 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       return;
     }
-    const res = await authFetch(`http://localhost:5000/api/users/${id}`);
+    const res = await authFetch(`${API_BASE}/users/${id}`);
     if (res.ok) setUser(await res.json());
     else setUser(null);
   }, [authFetch]);
@@ -230,7 +232,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         // Подтягиваем профиль
-        const res = await authFetch(`http://localhost:5000/api/users/${id}`);
+        const res = await authFetch(`${API_BASE}/users/${id}`);
 
         if (!cancelled) {
           if (res.ok) setUser(await res.json());
@@ -252,7 +254,7 @@ export const AuthProvider = ({ children }) => {
 
   /* ── 2. login ── */
   const login = async (email, password) => {
-    const res = await fetch("http://localhost:5000/api/auth/login", {
+    const res = await fetch(`${API_BASE}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -291,7 +293,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const rt = Cookies.get("refresh_token");
       if (rt) {
-        await fetch("http://localhost:5000/api/auth/logout", {
+        await fetch(`${API_BASE}/auth/logout`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

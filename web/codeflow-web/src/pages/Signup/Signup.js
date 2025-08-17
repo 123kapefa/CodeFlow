@@ -3,6 +3,8 @@ import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 import { Button, Form, Container, Row, Col, Card } from "react-bootstrap";
 
+import { API_BASE } from "../../config";
+
 
 function Signup() {
   const [userName, setUserName] = useState("");
@@ -15,7 +17,7 @@ function Signup() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
+      const response = await fetch(`${API_BASE}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userName, email, password }),

@@ -15,6 +15,8 @@ import { jwtDecode } from "jwt-decode";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 import { useAuth } from "../../features/Auth/AuthProvider ";
 
+import { API_BASE } from "../../config";
+
 function Tags() {
   const [tags, setTags] = useState([]);
   const [search, setSearch] = useState("");
@@ -42,7 +44,7 @@ function Tags() {
         }
 
         const response = await fetch(
-          `http://localhost:5000/api/tags?Page=${page}&PageSize=36&OrderBy=${orderField}&SortDirection=${sortDirection}&SearchValue=${search}`
+          `${API_BASE}/tags?Page=${page}&PageSize=36&OrderBy=${orderField}&SortDirection=${sortDirection}&SearchValue=${search}`
         );
 
         if (!response.ok) throw new Error("Ошибка загрузки тегов");

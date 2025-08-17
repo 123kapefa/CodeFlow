@@ -36,6 +36,28 @@ services:
     networks: [ clonenet ]
     depends_on:
       - redis
+
+  #   ────────── React ──────────
+  # react-build:
+  #   build:
+  #     context: ./web/codeflow-web
+  #     dockerfile: Dockerfile.prod  см. ниже
+  #   container_name: react-build
+  #   просто собираем артефакты, публиковать порт не нужно
+  #   networks: [ clonenet ]
+
+    # ────────── Nginx ──────────
+  nginx:
+    build:
+      context: ./web/codeflow-web
+      dockerfile: Dockerfile.nginx   # multi-stage: build React -> copy to nginx
+    container_name: nginx
+    depends_on:
+      - apigateway
+    ports:
+      - "80:80"
+      # - "443:443"  # при желании
+    networks: [ clonenet ] 
   
   # ────────── ApiGateway ──────────
   apigateway:
@@ -286,6 +308,7 @@ volumes:
   comment-db-data:
   tag-db-data:
   redis-data:
+  react-build-dist:
 
 # ────────── общая bridge-сеть ──────────
 networks:
