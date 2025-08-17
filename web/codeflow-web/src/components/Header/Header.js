@@ -2,7 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from '../../features/Auth/AuthProvider ';
 
-import "../../App.css";
+
+import "./Header.css"
 
 function Header() {
   const { user, logout, loading } = useAuth();  

@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import { ToastContainer } from "react-toastify";
- 
+
 import Header from "./components/Header/Header";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Footer from "./components/Footer/Footer";
@@ -27,25 +27,26 @@ import QuestionPage from "./pages/Questions/QuestionPage";
 
 import EditAnswerPage from "./pages/Answer/EditAnswerPage";
 
-import QuestionHistoryPage from "./pages/Questions/QuestionHistoryPage"
-import AnswerHistoryPage from "./pages/Answer/AnswerHistoryPage"
+import QuestionHistoryPage from "./pages/Questions/QuestionHistoryPage";
+import AnswerHistoryPage from "./pages/Answer/AnswerHistoryPage";
 
 import HelpPage from "./pages/Footer/CodeFlow/HelpPage";
-import Teams from "./pages/Footer/Products/Teams"
-import Advertising from "./pages/Footer/Products/Advertising"
-import Talent from "./pages/Footer/Products/Talent"
-import About from "./pages/Footer/Company/About"
-import Press from "./pages/Footer/Company/Press"
-import WorkHere from "./pages/Footer/Company/WorkHere"
-import Legal from "./pages/Footer/Company/Legal"
-import Technology from "./pages/Footer/Network/Technology"
-import Culture from "./pages/Footer/Network/Culture"
-import Life from "./pages/Footer/Network/Life"
-import Science from "./pages/Footer/Network/Science"
+import Teams from "./pages/Footer/Products/Teams";
+import Advertising from "./pages/Footer/Products/Advertising";
+import Talent from "./pages/Footer/Products/Talent";
+import About from "./pages/Footer/Company/About";
+import Press from "./pages/Footer/Company/Press";
+import WorkHere from "./pages/Footer/Company/WorkHere";
+import Legal from "./pages/Footer/Company/Legal";
+import Technology from "./pages/Footer/Network/Technology";
+import Culture from "./pages/Footer/Network/Culture";
+import Life from "./pages/Footer/Network/Life";
+import Science from "./pages/Footer/Network/Science";
 
-import PasswordChangeConfirm from "../src/components/UserProfile/ProfileSettings/PasswordChangeConfirm"
-import EmailChangeConfirm from "../src/components/UserProfile/ProfileSettings/EmailChangeConfirm"
+import PasswordChangeConfirm from "../src/components/UserProfile/ProfileSettings/PasswordChangeConfirm";
+import EmailChangeConfirm from "../src/components/UserProfile/ProfileSettings/EmailChangeConfirm";
 
+import RequireAuth from "../src/features/Auth/RequireAuth";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!Cookies.get("jwt"));
@@ -68,8 +69,15 @@ function App() {
           <Sidebar />
           <main className="content mt-3 mb-3">
             <Routes>
-              <Route path="/" element={<Questions  />} />
-              <Route path="/home" element={<Home />} />
+              <Route path="/" element={<Questions />} />
+              <Route
+                path="/home"
+                element={
+                  <RequireAuth>
+                    <Home />
+                  </RequireAuth>
+                }
+              />
               <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />
               <Route path="/logout" element={<Logout />} />
@@ -80,10 +88,22 @@ function App() {
               <Route path="/users/user_profile" element={<UserProfile />} />
               <Route path="/questions/ask" element={<CreateOrEditQuestion />} />
               <Route path="/questions/:id" element={<QuestionPage />} />
-              <Route path="/questions/edit/:id" element={<CreateOrEditQuestion />} />
-              <Route path="/answers/edit/:answerId" element={<EditAnswerPage />} />
-              <Route path="/questions/:id/history" element={<QuestionHistoryPage />} />             
-              <Route path="/answers/:answerId/history" element={<AnswerHistoryPage />} />
+              <Route
+                path="/questions/edit/:id"
+                element={<CreateOrEditQuestion />}
+              />
+              <Route
+                path="/answers/edit/:answerId"
+                element={<EditAnswerPage />}
+              />
+              <Route
+                path="/questions/:id/history"
+                element={<QuestionHistoryPage />}
+              />
+              <Route
+                path="/answers/:answerId/history"
+                element={<AnswerHistoryPage />}
+              />
 
               <Route path="/help" element={<HelpPage />} />
               <Route path="/teams" element={<Teams />} />
@@ -98,9 +118,14 @@ function App() {
               <Route path="/life" element={<Life />} />
               <Route path="/science" element={<Science />} />
 
-              <Route path="/password-change-confirm" element={<PasswordChangeConfirm />} />
-              <Route path="/email-change-confirm" element={<EmailChangeConfirm />} />
-              
+              <Route
+                path="/password-change-confirm"
+                element={<PasswordChangeConfirm />}
+              />
+              <Route
+                path="/email-change-confirm"
+                element={<EmailChangeConfirm />}
+              />
             </Routes>
           </main>
         </div>
