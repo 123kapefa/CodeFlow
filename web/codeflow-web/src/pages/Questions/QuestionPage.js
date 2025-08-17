@@ -250,7 +250,7 @@ export default function QuestionPage() {
 
     try {
       setSubmitting(true);
-      const res = await fetchAuth(`${API_BASE}}/answers`, {
+      const res = await fetchAuth(`${API_BASE}/answers`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
