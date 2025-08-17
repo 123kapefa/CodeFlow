@@ -4,6 +4,8 @@ import Cookies from 'js-cookie';
 import { RefreshToken } from '../../../features/RefreshToken/RefreshToken';
 import { useAuth } from '../../../features/Auth/AuthProvider ';
 
+import { API_BASE } from "../../../config";
+
 export default function EditProfileForm({ profile, onSaved }) {
   const [username,   setUsername]   = useState(profile.userName ?? '');
   const [aboutMe,    setAboutMe]    = useState(profile.aboutMe ?? '');
@@ -49,7 +51,7 @@ export default function EditProfileForm({ profile, onSaved }) {
       if (!removeAvatar && avatarFile) form.append('AvatarStream', avatarFile);
 
       const doPut = () =>
-        fetch('http://localhost:5000/api/users/user', {
+        fetch(`${API_BASE}/users/user`, {
           method: 'PUT',          
           headers: {
             Authorization: `Bearer ${Cookies.get('jwt') || ''}`,

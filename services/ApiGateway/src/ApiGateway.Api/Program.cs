@@ -2,6 +2,7 @@ using ApiGateway.Api.Extensions;
 using ApiGateway.Application.Services;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Yarp.ReverseProxy.Transforms;
 
 var builder = WebApplication.CreateBuilder (args);
@@ -33,6 +34,18 @@ app.UseRouting();
 
 // CorsMiddleware ������ ������ ����� UseRouting � UseAuth
 app.UseCors("ReactDev");
+
+
+// доверяем заголовкам от reverse-proxy (nginx)
+var fwd = new ForwardedHeadersOptions {
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+};
+// для локалки убираем ограничение «доверенных прокси»
+fwd.KnownNetworks.Clear();
+fwd.KnownProxies.Clear();
+
+app.UseForwardedHeaders(fwd);
+
 
 app.UseAuthentication();
 app.UseAuthorization();
