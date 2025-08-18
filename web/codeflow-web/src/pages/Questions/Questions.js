@@ -19,6 +19,8 @@ import {
 
 import QuestionCard from "../../components/QuestionCard/QuestionCard";
 
+import { API_BASE } from "../../config";
+
 function Questions() {
   /* ───────── URL-параметры ───────── */
   const { tagId } = useParams(); // undefined или id тега
@@ -58,7 +60,7 @@ function Questions() {
         setLoading(true);
 
         const url =
-          `http://localhost:5000/api/aggregate/get-questions?page=${page}` +
+          `${API_BASE}/aggregate/get-questions?page=${page}` +
           `&pageSize=3&orderBy=${encodeURIComponent(
             orderBy
           )}&sortDirection=${sortDir}` +

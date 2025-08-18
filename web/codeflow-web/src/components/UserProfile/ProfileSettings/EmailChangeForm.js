@@ -3,6 +3,9 @@ import { Button, Form, Alert, Spinner } from "react-bootstrap";
 import Cookies from "js-cookie";
 import { RefreshToken } from "../../../features/RefreshToken/RefreshToken";
 
+import { API_BASE } from "../../../config";
+
+
 export default function EmailChangeForm({ userId }) {
   const [oldEmail, setOldEmail] = useState("");
   const [newEmail, setNewEmail] = useState("");
@@ -10,8 +13,6 @@ export default function EmailChangeForm({ userId }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const API = "http://localhost:5000";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,7 +33,7 @@ export default function EmailChangeForm({ userId }) {
     setLoading(true);
 
     const doRequest = () =>
-      fetch(`${API}/api/auth/email-change/${userId}`, {
+      fetch(`${API_BASE}/auth/email-change/${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -39,10 +39,11 @@ public class RegisterUserHandler : ICommandHandler<Guid, RegisterUserCommand> {
     }
 
     var createResult = await _userDataRepository.CreateAsync (UserData.Create (dataCommand.Email), dataCommand.Password);
+                
 
-    if (!createResult.IsSuccess) {
-      return Result<Guid>.Error (new ErrorList (createResult.Errors));
-    }
+        if (!createResult.IsSuccess) {
+            return createResult;
+        }
     
     await _messageBroker.PublishAsync (new UserRegistered (createResult.Value, dataCommand.Username), cancellationToken);
     await _userDataRepository.SaveChangesAsync (cancellationToken);
