@@ -9,9 +9,10 @@ import "highlight.js/styles/github.css";
 import { useAuth } from "../../features/Auth/AuthProvider ";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 
+import { API_BASE } from "../../config";
+
 dayjs.extend(relativeTime);
 
-const API = "http://localhost:5000";
 
 export default function AnswerHistoryPage() {
   const { answerId } = useParams();
@@ -43,7 +44,7 @@ export default function AnswerHistoryPage() {
       try {
         setLoading(true);
 
-        const r = await authFetch(`${API}/api/answers/${answerId}/history`, {
+        const r = await authFetch(`${API_BASE}/answers/${answerId}/history`, {
           headers: { Accept: "application/json" },
           signal: ac.signal,
         });

@@ -9,8 +9,10 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../features/Auth/AuthProvider ";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 
-const API = "http://localhost:5000";
+import { API_BASE } from "../../config";
+
 const tagRegex = /^[a-z0-9.+-]+$/;
+
 
 const modules = {
   toolbar: [
@@ -53,7 +55,7 @@ export default function CreateOrEditQuestion() {
     const t = setTimeout(async () => {
       try {
         const res = await fetch(
-          `${API}/api/tags?Page=1&PageSize=8&OrderBy=Name&SortDirection=1&SearchValue=${tagInput}`
+          `${API_BASE}/tags?Page=1&PageSize=8&OrderBy=Name&SortDirection=1&SearchValue=${tagInput}`
         );
         if (!res.ok) return setSuggestions([]);
         const data = await res.json();
@@ -71,7 +73,7 @@ export default function CreateOrEditQuestion() {
     if (!isEdit) return;
     (async () => {
       try {
-        const r = await fetch(`${API}/api/aggregate/get-question`, {
+        const r = await fetch(`${API_BASE}/aggregate/get-question`, {
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json" },
           body: JSON.stringify({ questionId: id }),
@@ -153,7 +155,7 @@ export default function CreateOrEditQuestion() {
           questionTagsDTO: selectedTags.map(t => ({ tagId: t.id ?? t.tagId })),          
         };
 
-        const res = await fetchAuth(`${API}/api/questions`, {
+        const res = await fetchAuth(`${API_BASE}/questions`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", Accept: "application/json" },
           body: JSON.stringify(dto),
@@ -181,7 +183,7 @@ export default function CreateOrEditQuestion() {
           },
         };
 
-        const res = await fetchAuth(`${API}/api/aggregate/create-question`, {
+        const res = await fetchAuth(`${API_BASE}/aggregate/create-question`, {
           method: "POST",
           body: JSON.stringify(payload),
         });

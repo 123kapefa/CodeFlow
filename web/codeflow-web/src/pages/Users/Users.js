@@ -12,8 +12,9 @@ import {
 } from "react-bootstrap";
 import UserCard from "../../components/UserCard/UserCard";
 
+import { API_BASE } from "../../config";
+
 const PAGE_SIZE = 36;
-const API_URL = "http://localhost:5000/api/users";
 
 export default function UsersPage() {
   /* ---------------------------- state ---------------------------- */
@@ -55,7 +56,7 @@ export default function UsersPage() {
     (async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${API_URL}?${query}`, { signal: ctrl.signal });
+        const res = await fetch(`${API_BASE}/users?${query}`, { signal: ctrl.signal });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const dto = await res.json(); // { value: User[], pagedInfo: { totalPages, ... } }
