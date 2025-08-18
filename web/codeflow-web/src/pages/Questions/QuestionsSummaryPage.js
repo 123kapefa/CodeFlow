@@ -21,8 +21,7 @@ export default function QuestionsSummaryPage({ userId }) {
 
   const load = useCallback(async () => {
     setLoading(true);
-    try {
-      // ВНИМАНИЕ: агрегатор ждёт page/pageSize/orderBy/sortDirection (нижний регистр)
+    try {      
       const url =
         `${API_BASE}/aggregate/get-questions-summary/${userId}` +
         `?page=${page}&pageSize=${pageSize}&orderBy=${orderBy}&sortDirection=${sortDir}`;
