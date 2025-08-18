@@ -6,7 +6,8 @@ import { toast } from "react-toastify";
 import { useAuthFetch } from "../../../features/useAuthFetch/useAuthFetch";
 import { useAuth } from "../../../features/Auth/AuthProvider ";
 
-const API = "http://localhost:5000";
+import { API_BASE } from "../../../config";
+
 
 export default function EmailChangeConfirm() {
   const fetchAuth = useAuthFetch();
@@ -45,7 +46,7 @@ export default function EmailChangeConfirm() {
       }
 
       // отправляем именно JSON в тело (не в сегмент пути)
-      const resp = await fetchAuth(`${API}/api/auth/email-change-confirm/${user.userId}`, {
+      const resp = await fetchAuth(`${API_BASE}/auth/email-change-confirm/${user.userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

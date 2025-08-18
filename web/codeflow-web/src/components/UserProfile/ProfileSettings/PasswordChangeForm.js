@@ -3,6 +3,8 @@ import { Button, Form, Alert, Spinner } from "react-bootstrap";
 import Cookies from "js-cookie";
 import { RefreshToken } from "../../../features/RefreshToken/RefreshToken";
 
+import { API_BASE } from "../../../config";
+
 export default function PasswordChangeForm({ userId }) {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -10,8 +12,6 @@ export default function PasswordChangeForm({ userId }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const API = "http://localhost:5000";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,7 +31,7 @@ export default function PasswordChangeForm({ userId }) {
     setLoading(true);
 
     const doRequest = () =>
-      fetch(`${API}/api/auth/password-change/${userId}`, {
+      fetch(`${API_BASE}/auth/password-change/${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -18,7 +18,11 @@ import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 import AuthorCard from "../../components/AuthorCard/AuthorCard";
 import "./QuestionPage.css";
 
+import { API_BASE } from "../../config";
+
+
 dayjs.extend(relativeTime);
+
 
 const modules = {
   toolbar: [
@@ -177,7 +181,7 @@ export default function QuestionPage() {
     setLoading(true);
     try {
       const r = await fetchAuth(
-        "http://localhost:5000/api/aggregate/get-question",
+        `${API_BASE}/aggregate/get-question`,
         {
           method: "POST",
           headers: {
@@ -246,7 +250,7 @@ export default function QuestionPage() {
 
     try {
       setSubmitting(true);
-      const res = await fetchAuth("http://localhost:5000/api/answers", {
+      const res = await fetchAuth(`${API_BASE}/answers`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -278,7 +282,7 @@ export default function QuestionPage() {
       TargetId: targetId, // GUID вопроса или ответа
     };
 
-    const res = await fetchAuth("http://localhost:5000/api/comments", {
+    const res = await fetchAuth(`${API_BASE}/comments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -360,7 +364,7 @@ export default function QuestionPage() {
       }));
 
       const res = await fetchAuth(
-        `http://localhost:5000/api/questions/${data.question.id}/vote/${value}`,
+        `${API_BASE}/questions/${data.question.id}/vote/${value}`,
         {
           method: "PUT",
           headers: { Accept: "application/json" },
@@ -411,7 +415,7 @@ export default function QuestionPage() {
       }));
 
       const res = await fetchAuth(
-        `http://localhost:5000/api/answers/${answerId}/vote/${value}`,
+        `${API_BASE}/answers/${answerId}/vote/${value}`,
         {
           method: "PUT",
           headers: { Accept: "application/json" },
@@ -450,7 +454,7 @@ export default function QuestionPage() {
       setAcceptingA((m) => ({ ...m, [answerId]: true }));
 
       const res = await fetchAuth(
-        `http://localhost:5000/api/questions/${question.id}/answer-accept`,
+        `${API_BASE}/questions/${question.id}/answer-accept`,
         {
           method: "PUT",
           headers: {

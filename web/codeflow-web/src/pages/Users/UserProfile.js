@@ -20,6 +20,8 @@ import { RefreshToken } from "../../features/RefreshToken/RefreshToken";
 import { useAuth } from "../../features/Auth/AuthProvider ";
 import EditProfileForm from "../../components/UserProfile/ProfileSettings/EditProfileForm";
 
+import { API_BASE } from "../../config";
+
 export default function UserProfile() {
   const { userId } = useParams();
   const { user: current } = useAuth(); // текущий залогиненный пользователь
@@ -37,7 +39,7 @@ export default function UserProfile() {
   const navigate = useNavigate();
 
   const reloadProfile = async () => {
-    const res = await fetch(`http://localhost:5000/api/users/${userId}`, {
+    const res = await fetch(`${API_BASE}/users/${userId}`, {
       headers: { Authorization: `Bearer ${Cookies.get("jwt")}` },
     });
     if (res.ok) setProfile(await res.json());
@@ -52,7 +54,7 @@ export default function UserProfile() {
         const access = Cookies.get("jwt");
 
         const fetchUser = (authorized) =>
-          fetch(`http://localhost:5000/api/users/${userId}`, {
+          fetch(`${API_BASE}/users/${userId}`, {
             headers: authorized
               ? { Authorization: `Bearer ${Cookies.get("jwt")}` }
               : {},
@@ -157,7 +159,6 @@ export default function UserProfile() {
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState("");
 
-    const API = "http://localhost:5000";
 
     const canDelete = agree && confirmText.trim() === (userName ?? "");
 
@@ -166,7 +167,7 @@ export default function UserProfile() {
       setBusy(true);
 
       const call = () =>
-        fetch(`${API}/api/auth/${ownerId}`, {
+        fetch(`${API_BASE}/auth/${ownerId}`, {
           method: "DELETE",
           headers: {
             Accept: "application/json",
