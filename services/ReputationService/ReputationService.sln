@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions", "..\..\share
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReputationService.Application", "src\ReputationService.Application\ReputationService.Application.csproj", "{0675D37E-CB7A-4C39-AF3A-F866B780EE41}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging", "..\..\shared\src\Messaging\Messaging.csproj", "{33E91A60-FA11-4CA0-A6D3-296FE002DD72}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{0675D37E-CB7A-4C39-AF3A-F866B780EE41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0675D37E-CB7A-4C39-AF3A-F866B780EE41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0675D37E-CB7A-4C39-AF3A-F866B780EE41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33E91A60-FA11-4CA0-A6D3-296FE002DD72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33E91A60-FA11-4CA0-A6D3-296FE002DD72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33E91A60-FA11-4CA0-A6D3-296FE002DD72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33E91A60-FA11-4CA0-A6D3-296FE002DD72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D6604820-CE9E-4AC2-9964-3319B890CC13} = {860BF0FE-30C6-4E95-A83D-00EC4A3F4C7D}
@@ -45,5 +51,6 @@ Global
 		{B5EDC49F-87B7-4586-B675-EE4267F43511} = {860BF0FE-30C6-4E95-A83D-00EC4A3F4C7D}
 		{6030B958-3398-4E8A-91DC-2259C7F76A2C} = {860BF0FE-30C6-4E95-A83D-00EC4A3F4C7D}
 		{0675D37E-CB7A-4C39-AF3A-F866B780EE41} = {860BF0FE-30C6-4E95-A83D-00EC4A3F4C7D}
+		{33E91A60-FA11-4CA0-A6D3-296FE002DD72} = {860BF0FE-30C6-4E95-A83D-00EC4A3F4C7D}
 	EndGlobalSection
 EndGlobal
