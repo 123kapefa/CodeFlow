@@ -139,8 +139,9 @@ public class AggregationController : ControllerBase {
 
         return Ok(result);
     }
-
+        
     [HttpGet("get-user-summary/{userId:guid}")]
+    [AllowAnonymous]
     public async Task<IActionResult> AggregateUserSummary( [FromRoute] Guid userId, CancellationToken ct ) {
         if(userId == Guid.Empty)
             return BadRequest("UserId не указан.");

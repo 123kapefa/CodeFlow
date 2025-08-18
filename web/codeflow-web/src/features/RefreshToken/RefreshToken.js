@@ -1,5 +1,7 @@
 import Cookies from 'js-cookie';
 
+import { API_BASE } from "../../config";
+
 
 export async function RefreshToken() {
 
@@ -7,7 +9,7 @@ export async function RefreshToken() {
   if (!refreshToken) return false;
 
   try {
-    const resp = await fetch(`http://localhost:5000/api/auth/refresh-token`, {
+    const resp = await fetch(`${API_BASE}/auth/refresh-token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },                   
       body: JSON.stringify( refreshToken ) 
