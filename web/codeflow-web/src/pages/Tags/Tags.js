@@ -30,7 +30,7 @@ function Tags() {
   const [watchedTags, setWatchedTags] = useState({}); // tagId -> true/false
 
   const navigate = useNavigate();
-  const token = Cookies.get("jwt");
+  const token = Cookies.get("jwt"); 
 
   useEffect(() => {
     const fetchTags = async () => {

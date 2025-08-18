@@ -100,9 +100,8 @@ app.Use(async (ctx, next) =>
   await next();
 });
 
+app.MapControllers();
 // Применяем CORS к endpoint'у прокси (важно!)
 app.MapReverseProxy().RequireCors("ReactDev");
-app.MapControllers();
-
 
 app.Run();

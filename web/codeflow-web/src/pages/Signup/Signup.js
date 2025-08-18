@@ -29,9 +29,9 @@ function Signup() {
       }
 
       // Если всё ок — переходим на главную
-      toast.success("Регистрация успешна 🎉", {
-        onClose: () => navigate("/"), // дождаться анимации (опционально)
-        autoClose: 1000,                       // 2 сек
+      toast.success("Регистрация успешна.", {
+        onClose: () => navigate("/"), // дождаться анимации 
+        autoClose: 1000,                      
       });
     } catch (err) {
       setError(err.message);
@@ -69,9 +69,9 @@ function Signup() {
               {error && <div className="alert alert-danger">{error}</div>}
 
               <Form.Group controlId="formUsername" className="mb-3">
-                <Form.Label>UserName</Form.Label>
+                <Form.Label>User Name</Form.Label>
                 <Form.Control
-                  type="text"
+                  type="text"              
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
                   required
@@ -92,9 +92,11 @@ function Signup() {
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                   type="password"
+                  pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{6,}$"
+                  title="Минимум 6 символов, включая строчную и прописную латинские буквы, цифру и специальный символ."
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="8+ characters (at least 1 letter & 1 number)"
+                  placeholder="6+ characters (at least 1 letter & 1 number)"
                   required
                 />
               </Form.Group>
