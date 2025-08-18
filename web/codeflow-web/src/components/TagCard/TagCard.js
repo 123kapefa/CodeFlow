@@ -104,6 +104,7 @@ function TagCard({
     setSaving(true);
     try {
       const res = await authFetch(`${API_BASE}/tags/${tag.id}`, {
+
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -127,6 +128,7 @@ function TagCard({
 
   return (
     <Card className="h-100 shadow-sm position-relative">
+
       <Card.Body>
         {/* Заголовок по центру */}
         <div
@@ -179,6 +181,7 @@ function TagCard({
                 )}
                 {displayName}
               </Popover.Header>
+
               <Popover.Body>
                 <p className="text-muted" style={{ minHeight: "60px" }}>
                   {displayDesc || "Описание отсутствует"}
