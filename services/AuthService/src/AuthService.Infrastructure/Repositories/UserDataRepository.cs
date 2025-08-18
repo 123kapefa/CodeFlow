@@ -45,9 +45,19 @@ public class UserDataRepository : IUserDataRepository {
 
   /// <summary> Создание пользователя </summary>
   public async Task<Result<Guid>> CreateAsync (UserData user, string? password = null) {
-    IdentityResult result = password is null
+
+        UserData? isExist = await _userManager.FindByEmailAsync(user.Email);
+
+        if(isExist is not null && !EqualityComparer<object>.Default.Equals(
+            await _userManager.GetUserIdAsync(isExist), await _userManager.GetUserIdAsync(user))) {
+            return Result<Guid>.Conflict($"Email {user.Email} is already taken.");
+        }
+
+        IdentityResult result = password is null
       ? await _userManager.CreateAsync (user)
       : await _userManager.CreateAsync (user, password);
+
+        await _context.SaveChangesAsync ();
 
     if (!result.Succeeded) {
       var errors = new ErrorList (result.Errors.Select (e => e.Description));

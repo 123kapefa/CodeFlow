@@ -5,7 +5,6 @@ import { Button, Form, Container, Row, Col, Card } from "react-bootstrap";
 
 import { API_BASE } from "../../config";
 
-
 function Signup() {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,16 +21,20 @@ function Signup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userName, email, password }),
       });
-
+  
       if (!response.ok) {
         const err = await response.json();
-        throw new Error(err.message || "Ошибка регистрации");
+        console.log(err);
+        console.log(response);
+        throw new Error(err.detail || "Ошибка регистрации");
       }
+
+   
 
       // Если всё ок — переходим на главную
       toast.success("Регистрация успешна.", {
-        onClose: () => navigate("/"), // дождаться анимации 
-        autoClose: 1000,                      
+        onClose: () => navigate("/"), // дождаться анимации
+        autoClose: 1000,
       });
     } catch (err) {
       setError(err.message);
@@ -41,7 +44,7 @@ function Signup() {
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
       <Row>
-        <Col>        
+        <Col>
           <div className="text-center mb-4">
             <img src="/logo/logo-transparent.png" alt="logo" height="50" />
             <h3 className="mt-2">Join CodeFlow</h3>
@@ -60,7 +63,7 @@ function Signup() {
               <i className="bi bi-github"></i> Sign up with GitHub
             </Button>
 
-            <div className="text-center my-3">           
+            <div className="text-center my-3">
               <span className="px-2">OR</span>
               <hr />
             </div>
@@ -71,7 +74,7 @@ function Signup() {
               <Form.Group controlId="formUsername" className="mb-3">
                 <Form.Label>User Name</Form.Label>
                 <Form.Control
-                  type="text"              
+                  type="text"
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
                   required
