@@ -12,8 +12,9 @@ public class ReputationServiceDbContext : DbContext {
 
   private readonly string _connectionString;
 
-  public DbSet<ReputationEntry> ReputationEntries { get; set; }
-  public DbSet<ReputationSummary> ReputationSummaries { get; set; }
+  public DbSet<ReputationEffect> ReputationEffects => Set<ReputationEffect>();
+  public DbSet<ReputationEntry> ReputationEntries => Set<ReputationEntry>();
+  public DbSet<ReputationSummary> ReputationSummaries => Set<ReputationSummary>();
   
   public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
   public DbSet<OutboxState> OutboxStates => Set<OutboxState>();

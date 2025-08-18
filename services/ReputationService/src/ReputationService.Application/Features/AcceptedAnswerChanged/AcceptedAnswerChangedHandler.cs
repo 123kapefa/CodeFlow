@@ -2,6 +2,8 @@ using Abstractions.Commands;
 
 using Ardalis.Result;
 
+using Contracts.Publishers.ReputationService;
+
 using Messaging.Broker;
 
 using ReputationService.Domain.Entities;
@@ -26,11 +28,23 @@ public class AcceptedAnswerChangedHandler : ICommandHandler<AcceptedAnswerChange
   }
 
   public async Task<Result> Handle (AcceptedAnswerChangedCommand command, CancellationToken cancellationToken) {
-    // var result = await _repository.AppendEntryAsync (
-    //   ReputationEntry.Create (
-    //     command.Userid, command.SourceId, command.SourceType, command.Delta, command.ReasonCode,
-    //     command.OccurredAt, command.SourceEventId, command.SourceService, command.CorrelationId), cancellationToken);
+    var (oldAmount, newAmount) = _policy.FromAcceptedAnswer();
 
+    var changes = await _repository.ApplyAcceptedAnswerAsync(
+      command.SourceEventId, 
+      command.SourceService, 
+      command.CorrelationId,
+      command.QuestionId,
+      command.OldAnswerOwnerUserId, 
+      oldAmount,
+      command.NewAnswerOwnerUserId, 
+      newAmount,
+      command.OccurredAt, 
+      command.Version, 
+      cancellationToken);
+
+    foreach (var change in changes)
+      await _messageBroker.PublishAsync(change, cancellationToken);
 
     return Result.Success ();
   }

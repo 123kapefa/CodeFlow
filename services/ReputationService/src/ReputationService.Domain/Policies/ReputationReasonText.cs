@@ -10,8 +10,8 @@ public static class ReputationReasonText {
     [(ReputationSourceType.Answer, ReasonCode.Upvote)] = "Upvote Answer",
     [(ReputationSourceType.Answer, ReasonCode.Downvote)] = "Downvote Answer",
     [(ReputationSourceType.Answer, ReasonCode.AcceptedAnswer)] = "Accepted Answer",
-    [(ReputationSourceType.Answer, ReasonCode.Delete)] = "Delete Answer",
-    [(ReputationSourceType.Answer, ReasonCode.Comment)] = "Comment Answer",
+    [(ReputationSourceType.Answer, ReasonCode.AcceptedAnswer)] = "Accepted Answer",
+    [(ReputationSourceType.Answer, ReasonCode.DeleteAnswer)] = "Delete Answer",
   };
 
   public static string For (ReputationSourceType st, ReasonCode rc) =>

@@ -18,21 +18,18 @@ public class VoteChangedConsumer : IConsumer<VoteChanged> {
 
   public Task Consume (ConsumeContext<VoteChanged> context) {
     var message = context.Message;
-    
-    var cmd = new VoteChangedCommand(
-      SourceEventId: message.EventId,
-      SourceService: "VoteService",
-      CorrelationId: message.CorrelationId,
+    var command = new VoteChangedCommand(
+      SourceEventId: message.EventId, 
+      SourceService: "VoteService", 
+      CorrelationId: message.CorrelationId, 
       OccurredAt: message.OccurredAt,
-      EntityType: message.EntityType,
-      EntityId: message.EntityId,
-      EntityOwnerUserId: message.EntityOwnerUserId,
-      ActorUserId: message.ActorUserId,
-      OldKind: message.OldKind,
-      NewKind: message.NewKind
-    );
-
-    return _handler.Handle(cmd, context.CancellationToken);
+      EntityType: message.EntityType, 
+      EntityId: message.EntityId, 
+      EntityOwnerUserId: message.EntityOwnerUserId, 
+      ActorUserId: message.ActorUserId, 
+      NewKind: message.NewKind, 
+      Version: message.Version);
+    return _handler.Handle(command, context.CancellationToken);
   }
 
 }

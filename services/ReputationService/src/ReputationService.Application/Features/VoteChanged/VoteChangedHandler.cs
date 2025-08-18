@@ -25,22 +25,22 @@ public class VoteChangedHandler : ICommandHandler<VoteChangedCommand> {
   }
 
   public async Task<Result> Handle (VoteChangedCommand command, CancellationToken cancellationToken) {
-    var e = new Contracts.Publishers.VoteService.VoteChanged(command.SourceEventId, command.OccurredAt, command.EntityType, command.EntityId,
-      command.EntityOwnerUserId, command.ActorUserId, command.OldKind, command.NewKind, command.CorrelationId);
+    var (ownerAmount, st, ownerReason) = _policy.FromVote(command.EntityType, command.NewKind);
 
-    var entries = _policy.FromVoteChanged(e);
-    if (entries.Count == 0) 
-      return Result.NoContent();
-    
-    var reputationEntries = await _repository.AppendEntriesAsync(entries, cancellationToken);
-    var reputationSummaries = await _repository.SetSummaryAsync(
-      [command.ActorUserId, command.EntityOwnerUserId], 
+    var changes = await _repository.ApplyVoteAsync(
+      command.SourceEventId, 
+      command.SourceService, 
+      command.CorrelationId,
+      command.EntityId, st,
+      command.EntityOwnerUserId, 
+      ownerAmount, 
+      ownerReason,
+      occurredAt: command.OccurredAt, 
+      version: command.Version, 
       cancellationToken);
-    
-    foreach (var summary in reputationSummaries.Value) {
-      await _messageBroker.PublishAsync(new UserReputationChanged ( 
-        summary.UserId, summary.Total,summary.UpdatedAt), cancellationToken);
-    }
+
+    foreach (var change in changes)
+      await _messageBroker.PublishAsync(change, cancellationToken);
     
     return Result.Success();
   }

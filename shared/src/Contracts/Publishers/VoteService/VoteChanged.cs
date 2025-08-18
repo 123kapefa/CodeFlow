@@ -12,5 +12,6 @@ public sealed record VoteChanged(
   Guid ActorUserId,
   VoteKind OldKind,
   VoteKind NewKind,
+  int Version, 
   string? CorrelationId = null
 );
