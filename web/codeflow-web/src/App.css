@@ -17,9 +17,14 @@ body,
 .main {
   display: grid;
   grid-template-columns: 220px 1fr;
-  flex: 1; /* <<< тянем основную область */
-  min-height: 0; /* чтобы не распирало из-за внутренних overflow */
+  gap: 16px;           /* если используете отступ между колонками */
+  flex: 1;
+  min-height: 0;
 }
+
+/* Контент должен уметь сжиматься в любых строках/flex внутри */
+.main .content { min-width: 0; }
+
 .sidebar {
   border-right: 1px solid #e4e4e4;
   padding: 1rem 0.5rem;
@@ -184,6 +189,7 @@ body,
 /* ─────────── Mobile sidebar drawer ─────────── */
 @media (max-width: 992px) {
   .main {
+    display: block;
     grid-template-columns: 1fr; /* убираем колонку сайдбара */
   }
   .sidebar {
