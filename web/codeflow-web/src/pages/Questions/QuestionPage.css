@@ -83,11 +83,12 @@
 
 /* ReactQuill чуть плотнее к стилю SO */
 .ql-container {
-  min-height: 180px;
+  height: auto !important;
+  min-height: 200px;
 }
 .ql-editor {
   min-height: 160px;
-  font-size: 1rem;
+  overflow-y: visible !important;
 }
 
 

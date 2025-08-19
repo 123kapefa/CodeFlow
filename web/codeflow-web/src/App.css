@@ -113,13 +113,13 @@ body,
 
 /* reach_editor */
 .ql-container {
-  height: 200px !important;
+  height: auto !important;
   min-height: 200px !important;
 }
 
 .ql-editor {
-  height: 160px;
-  overflow-y: auto;
+  min-height: 160px;
+  overflow-y: visible !important;
 }
 
 .no-left-padding {
@@ -179,3 +179,36 @@ body,
 .question-card pre,
 .question-card code { white-space: pre-wrap; word-break: break-word; }
 .question-card img { max-width: 100%; height: auto; }
+
+
+/* ─────────── Mobile sidebar drawer ─────────── */
+@media (max-width: 992px) {
+  .main {
+    grid-template-columns: 1fr; /* убираем колонку сайдбара */
+  }
+  .sidebar {
+    display: none; /* по умолчанию скрыт на мобилках */
+  }
+  .sidebar.is-open {
+    display: block;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 280px;
+    max-width: 85%;
+    background: #fff;
+    z-index: 1040; /* выше контента */
+    overflow-y: auto;
+    box-shadow: 0 0 20px rgba(0,0,0,.25);
+    padding: 1rem 0.5rem; /* чтобы было пространство внутри */
+  }
+}
+
+/* затемнение под выезжающим меню */
+.mobile-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  z-index: 1030; /* чуть ниже, чем sidebar */
+}
