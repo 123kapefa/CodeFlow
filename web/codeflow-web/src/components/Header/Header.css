@@ -2,37 +2,27 @@
 .topbar {
   display: flex;
   align-items: center;
-  gap: 1rem; /* расстояние между элементами */  
+  gap: 1rem;
   padding: 0 1rem;
   border-bottom: 1px solid #e4e4e4;
   background: #fff;
 }
 
-.topbar .logo {
-  flex: 0 0 auto; /* логотип фиксированной ширины */
-}
+.topbar .logo img { height: 28px; }
 
+/* Поиск — на десктопе растягивается */
 .topbar .search {
-  flex: 1; /* растягиваем строку поиска на всё доступное пространство */
-  margin-left: 2rem; /* смещаем правее от логотипа */
-}
-
-.topbar .search input {
-  width: 100%;
-}
-
-.topbar .logo img {
-  height: 28px;
-}
-.search {
   flex: 1;
+  margin-left: 2rem; /* подкорректируйте при необходимости */
 }
-.search input {
+.topbar .search input,
+.mobile-search input {
   width: 100%;
   padding: 6px 12px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+
 .topbar__icons {
   list-style: none;
   display: flex;
@@ -40,7 +30,13 @@
   margin: 0;
 }
 
-.topbar .search {
-  margin-left: 5.5%; /* подгони под своё значение */
-  flex: 1;
+/* Мобильная строка поиска под шапкой */
+.mobile-search {
+  border-bottom: 1px solid #e4e4e4;
+  background: #fff;
+}
+
+/* На очень узких экранах уменьшим отступ лого и поля */
+@media (max-width: 576px) {
+  .topbar .search { margin-left: 0; }
 }
