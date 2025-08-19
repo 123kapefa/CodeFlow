@@ -26,7 +26,7 @@ function formatAsked(q) {
     } catch (_) {
       /* no-op */
     }
-  } 
+  }
   return q.answeredAgo ?? "";
 }
 
@@ -46,11 +46,11 @@ export default function QuestionCard({ q }) {
       : [];
 
   return (
-    <Card className="shadow-sm mb-3 border-1">
+    <Card className="shadow-sm mb-3 border-1 question-list-card">
       <Card.Body className="p-3">
-        <div className="d-flex">
+        <div className="d-flex qc-row">
           {/* левая колонка со счетчиками */}
-          <div className="text-center me-5" style={{ width: 90 }}>
+          <div className="text-center me-5 qc-metrics" style={{ width: 90 }}>
             <div className="small text-muted">{votes} votes</div>
 
             <div className="mt-2">
@@ -109,7 +109,7 @@ export default function QuestionCard({ q }) {
                 alt={q.author}
                 width={24}
                 height={24}
-                className="rounded" 
+                className="rounded"
                 style={{ objectFit: "cover" }}
               />
 

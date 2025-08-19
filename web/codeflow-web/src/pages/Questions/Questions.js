@@ -19,6 +19,8 @@ import {
 
 import QuestionCard from "../../components/QuestionCard/QuestionCard";
 
+import "./Questions.css";
+
 import { API_BASE } from "../../config";
 
 function Questions() {
@@ -62,7 +64,7 @@ function Questions() {
         const url =
           `${API_BASE}/aggregate/get-questions?page=${page}` +
 
-          `&pageSize=3&orderBy=${encodeURIComponent(
+          `&pageSize=30&orderBy=${encodeURIComponent(
             orderBy
           )}&sortDirection=${sortDir}` +
           (tagId ? `&tagId=${tagId}` : "");
@@ -153,7 +155,7 @@ function Questions() {
   };
 
   return (
-    <Container className="my-4">
+    <Container className="my-4 questions-page">
       <Row className="align-items-center mb-2">
         <Col xs={12} md className="mb-2 mb-md-0">
           <h2 className="mb-1">
@@ -190,7 +192,7 @@ function Questions() {
                 orderBy === "AnswersCount" ? "primary" : "outline-secondary"
               }
               checked={orderBy === "AnswersCount"}
-              onChange={() => setSort("AnswersCount", 0)}
+              onChange={() => setSort("AnswersCount", 1)}
             >
               Answered
             </ToggleButton>

@@ -33,7 +33,7 @@ function Header({ onBurgerClick }) {
 
         {/* Правая часть */}
         {loading ? null : user ? (
-          <div className="ms-auto d-flex align-items-center gap-2">
+          <div className="ms-auto d-flex align-items-center gap-2"> 
             {" "}
             {/* ← добавили ms-auto */}
             {/* Кнопка лупы — только на мобильных */}

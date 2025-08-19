@@ -9,6 +9,8 @@ import QuestionCard from "../../components/QuestionCard/QuestionCard";
 import { useAuth } from "../../features/Auth/AuthProvider ";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 
+import "./Home.css";
+
 import { API_BASE } from "../../config";
 
 
@@ -153,7 +155,7 @@ export default function Home() {
   }
 
   return (
-    <Container fluid="xxl" className="py-4">
+    <Container fluid="xxl" className="py-4 home-page">
       {/* шапка */}
       <Row className="align-items-center mb-5">
         <Col>

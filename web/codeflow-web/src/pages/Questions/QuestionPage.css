@@ -178,3 +178,132 @@
 .history-btn { color: #6c757d; }
 .history-btn:hover { color: #0a58ca; text-decoration: none; }
 .vote-col .history-btn svg { vertical-align: -2px; }
+
+
+
+/* Общий контейнер страницы создания/редактирования */
+.ask-page .card { border-radius: 8px; }
+
+/* ReactQuill: делаем тулбар прокручиваемым по горизонтали на узких */
+.ql-toolbar.ql-snow {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.ql-container {
+  height: auto !important;
+  min-height: 200px;   /* комфортная высота */
+}
+.ql-editor { min-height: 160px; }
+
+/* Список подсказок тегов привязываем к группе ввода */
+.tag-suggestions {
+  position: absolute;
+  z-index: 1000;
+  left: 0;
+  right: 0;            /* ширина = ширина Form.Group */
+  max-height: 240px;
+  overflow-y: auto;
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+}
+
+/* Контент Quill и вложенные элементы: защита от переполнения */
+.ql-editor img,
+.ql-editor video,
+.ql-editor table { max-width: 100%; height: auto; }
+.ql-editor table { display: block; overflow-x: auto; }
+.ql-editor pre { white-space: pre-wrap; overflow: auto; }
+
+/* Брейкпоинты */
+@media (max-width: 768px) {
+  .ask-page { padding-left: 12px; padding-right: 12px; }
+}
+@media (max-width: 576px) {
+  .tag-suggestions { max-height: 200px; }
+}
+
+
+
+* --- 1) Разрешаем сжатие flex‑контента справа --- */
+.post-body { min-width: 0; }     /* критично для flex-детей */
+.post { overflow: hidden; }      /* страховка от субпиксельных выпадений */
+
+/* --- 2) Контент внутри вопроса/ответа — адаптивные медиа и переносы --- */
+.post-content img,
+.post-content video,
+.post-content table {
+  max-width: 100%;
+  height: auto;
+}
+.post-content table {
+  display: block;
+  overflow-x: auto;
+}
+.post-content pre,
+.post-content code {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: auto;
+}
+.post-content p, .post-content li, .post-content a {
+  overflow-wrap: anywhere;      /* перенос длинных слов/URL */
+}
+
+/* --- 3) Шапка страницы: перенос и ужимание заголовка --- */
+.question-page header .d-flex {
+  flex-wrap: wrap;              /* разрешаем перенос кнопки/заголовка */
+  row-gap: 8px;
+}
+.qp-title {
+  min-width: 0;                 /* чтобы длинный заголовок не распирал строку */
+  overflow: hidden;
+  text-overflow: ellipsis;      /* на очень узких экранах уместит заголовок */
+}
+
+/* --- 4) Мобильные правила для поста: стек, компактное голосование, автор во всю ширину --- */
+@media (max-width: 768px) {
+  .post {
+    flex-direction: column;     /* голосование наверху, контент ниже */
+    align-items: stretch;
+    gap: 12px;
+  }
+  .vote-col {
+    flex: 0 0 auto;
+    width: auto;                /* убрать фиксированные 64px */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left;           /* визуально аккуратнее в строку */
+  }
+  .vote-btn { width: auto; }    /* кнопки голосования уже не растягивать на всю ширину */
+  .vote-score { margin: 0 4px; }
+
+  /* Низ поста — в колонку; карточка автора на 100% ширины */
+  .post-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .post-author {
+    width: 100%;
+  }
+}
+
+/* --- 5) Чуть компактнее на совсем узких, на всякий случай --- */
+@media (max-width: 576px) {
+  .post { gap: 10px; }
+  .post-tags { margin-top: 8px; }
+}
+
+/* --- 6) Теги не должны распирать ширину --- */
+.tag-badge {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- 7) Комментарии: перенос длинных строк --- */
+.comment-block, .comment-block * {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}

@@ -2,19 +2,22 @@
 .topbar {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   padding: 0 1rem;
   border-bottom: 1px solid #e4e4e4;
   background: #fff;
 }
 
+.topbar .logo { flex: 0 0 auto; }
 .topbar .logo img { height: 28px; }
 
-/* Поиск — на десктопе растягивается */
+/* Поиск — на десктопе растягивается, но умеет сжиматься */
 .topbar .search {
-  flex: 1;
-  margin-left: 2rem; /* подкорректируйте при необходимости */
+  flex: 1 1 auto;   /* может сжиматься/расти */
+  min-width: 0;     /* важно: разрешаем сжатие содержимого */
+  margin-left: 2rem; /* можно подправить */
 }
+
 .topbar .search input,
 .mobile-search input {
   width: 100%;
@@ -28,15 +31,20 @@
   display: flex;
   gap: 0.75rem;
   margin: 0;
+  flex: 0 0 auto; /* не сжимать иконки */
 }
 
 /* Мобильная строка поиска под шапкой */
 .mobile-search {
+  display: none;          /* по умолчанию скрыта */
   border-bottom: 1px solid #e4e4e4;
   background: #fff;
+  padding: 8px 1rem;
 }
 
-/* На очень узких экранах уменьшим отступ лого и поля */
-@media (max-width: 576px) {
-  .topbar .search { margin-left: 0; }
+/* Брейкпоинт: на узких экранах прячем поиск в шапке и показываем мобильный */
+@media (max-width: 640px) {
+  .topbar { gap: 0.5rem; }
+  .topbar .search { display: none; margin-left: 0; }
+  .mobile-search { display: block; }
 }
