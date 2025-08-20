@@ -20,6 +20,8 @@ import { RefreshToken } from "../../features/RefreshToken/RefreshToken";
 import { useAuth } from "../../features/Auth/AuthProvider ";
 import EditProfileForm from "../../components/UserProfile/ProfileSettings/EditProfileForm";
 
+import "./UserProfile.css";
+
 import { API_BASE } from "../../config";
 
 export default function UserProfile() {
@@ -316,7 +318,7 @@ export default function UserProfile() {
 
   /* ---------- разметка ---------- */
   return (
-    <Container className="py-4">
+    <Container className="py-4 user-profile">
       <ProfileHeader profile={profile} />
 
       {/* кнопки Activity / Settings */}

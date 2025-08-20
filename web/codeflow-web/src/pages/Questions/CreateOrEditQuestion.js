@@ -4,6 +4,7 @@ import {
 } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
 
 import { useAuth } from "../../features/Auth/AuthProvider ";
@@ -227,7 +228,7 @@ export default function CreateOrEditQuestion() {
   };
 
   return (
-    <Container className="mt-4">
+    <Container className="mt-4 ask-page">
       <Card>
         <Card.Body>
           <Card.Title className="mb-5">
@@ -283,7 +284,7 @@ export default function CreateOrEditQuestion() {
               />
             </Form.Group>
 
-            <Form.Group controlId="tags" className="mb-4">
+           <Form.Group controlId="tags" className="mb-4 position-relative">
               <Form.Label className="text-start d-block"><strong>Tags</strong></Form.Label>
               <Form.Text className="text-muted d-block mb-1 text-start">
                 Add up to 5 tags to describe what your question is about.
@@ -299,7 +300,7 @@ export default function CreateOrEditQuestion() {
               />
 
               {suggestions.length > 0 && (
-                <ul className="list-group mt-1 position-absolute z-1 w-50">
+                <ul className="list-group mt-1 tag-suggestions">
                   {suggestions.map((tag) => (
                     <li
                       key={tag.id ?? tag.name}

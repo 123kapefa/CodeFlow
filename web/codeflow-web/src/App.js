@@ -50,6 +50,15 @@ import RequireAuth from "../src/features/Auth/RequireAuth";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!Cookies.get("jwt"));
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const id = setInterval(
+      () => setIsAuthenticated(!!Cookies.get("jwt")),
+      1000
+    );
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     const id = setInterval(
@@ -64,9 +73,20 @@ function App() {
       <ToastContainer position="top-center" />
 
       <div className="container-xxl">
-        <Header isAuthenticated={isAuthenticated} />
+        <Header
+          isAuthenticated={isAuthenticated}
+          onBurgerClick={() => setSidebarOpen(true)}
+        />
         <div className="main">
-          <Sidebar />
+          <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+          {/* полупрозрачный фон для мобильного меню */}
+          {sidebarOpen && (
+            <div
+              className="mobile-backdrop"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+          
           <main className="content mt-3 mb-3">
             <Routes>
               <Route path="/" element={<Questions />} />
