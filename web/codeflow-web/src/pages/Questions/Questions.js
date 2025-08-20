@@ -63,7 +63,6 @@ function Questions() {
 
         const url =
           `${API_BASE}/aggregate/get-questions?page=${page}` +
-
           `&pageSize=30&orderBy=${encodeURIComponent(
             orderBy
           )}&sortDirection=${sortDir}` +
