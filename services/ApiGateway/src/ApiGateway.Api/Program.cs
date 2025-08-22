@@ -19,12 +19,14 @@ builder.Services.AddControllers ();
 // --- CORS ---
 builder.Services.AddCors(options => {
     options.AddPolicy("ReactDev", policy =>
-        policy.WithOrigins(
-                "http://localhost:3000",
-                "http://127.0.0.1:3000")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials()); // если шлёшь cookies/авторизацию
+        policy.WithOrigins(            
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "https://codeflow-project.ru"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()); // если шлёшь cookies/авторизацию
 });
 
 
@@ -55,8 +57,9 @@ app.Use(async ( ctx, next ) => {
 });
 
 
-app.MapControllers();
 // Применяем CORS к endpoint'у прокси (важно!)
 app.MapReverseProxy().RequireCors("ReactDev");
+app.MapControllers();
+
 
 app.Run();
