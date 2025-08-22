@@ -1,12 +1,15 @@
 using Auth.Extensions;
+using Contracts.Bootstrap;
 using Messaging.Extensions;
 using Microsoft.EntityFrameworkCore;
 using QuestionService.Api.Extensions;
 using QuestionService.Application.Abstractions;
 using QuestionService.Infrastructure.Data;
 using QuestionService.Infrastructure.Repositories;
-
 using StackExchange.Redis;
+
+
+EnvBootstrapper.Load();
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -18,9 +21,6 @@ builder.AddCustomSerilog ();
 builder.AddHandlers ();
 builder.AddQuestionMessaging ();
 builder.Services.AddMessaging();
-
-
-
 builder.Services.AddControllers();
 
 var app = builder.Build();
@@ -64,7 +64,6 @@ using(var scope = app.Services.CreateScope()) {
 }
 
 app.UseJwtAuth();
-
 app.MapControllers ();
 
 app.Run();

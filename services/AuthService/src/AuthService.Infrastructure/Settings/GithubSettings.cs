@@ -1,14 +1,13 @@
 namespace AuthService.Infrastructure.Settings;
 
 public class GithubSettings {
+    public const string SectionName = "Authentication:GitHub";
 
-  public const string SectionName = "Authentication:Github";
-
-  public string ClientId { get; set; } = null!;
-  public string ClientSecret { get; set; } = null!;
-  public string CallbackPath { get; set; } = null!;
-  public string AuthorizationEndpoint { get; set; } = null!;
-  public string TokenEndpoint { get; set; } = null!;
-  public string UserInformationEndpoint { get; set; } = null!;
+    public string ClientId { get; set; } = default!;
+    public string ClientSecret { get; set; } = default!;
+    public string CallbackPath { get; set; } = "/signin-github";
+    public string AuthorizationEndpoint { get; set; } = "https://github.com/login/oauth/authorize";
+    public string TokenEndpoint { get; set; } = "https://github.com/login/oauth/access_token";
+    public string UserInformationEndpoint { get; set; } = "https://api.github.com/user";
 
 }

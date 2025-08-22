@@ -42,6 +42,8 @@ import Technology from "./pages/Footer/Network/Technology";
 import Culture from "./pages/Footer/Network/Culture";
 import Life from "./pages/Footer/Network/Life";
 import Science from "./pages/Footer/Network/Science";
+import AuthCallback from "./pages/Signup/AuthCallback"
+
 
 import PasswordChangeConfirm from "../src/components/UserProfile/ProfileSettings/PasswordChangeConfirm";
 import EmailChangeConfirm from "../src/components/UserProfile/ProfileSettings/EmailChangeConfirm";
@@ -124,6 +126,7 @@ function App() {
                 path="/answers/:answerId/history"
                 element={<AnswerHistoryPage />}
               />
+              <Route path="/auth/callback" element={<AuthCallback />} />
 
               <Route path="/help" element={<HelpPage />} />
               <Route path="/teams" element={<Teams />} />

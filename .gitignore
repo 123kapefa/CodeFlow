@@ -5,6 +5,7 @@
 
 # dotenv files
 .env
+.env.production
 
 # User-specific files
 *.rsuser
@@ -482,3 +483,5 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+. e n v . p r o d u c t i o n  
+ 

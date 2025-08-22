@@ -139,7 +139,8 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
        .ToListAsync (token);
 
       if (ranked.Count == 0)
-        return Result.Error ();
+        return Result<IEnumerable<Question>>.Success([]);
+
 
       var ids = ranked
        .Select (x => x.QuestionId)

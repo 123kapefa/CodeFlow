@@ -3,6 +3,9 @@ import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 import { Button, Form, Container, Row, Col, Card } from "react-bootstrap";
 
+import { redirectToProvider } from "../../features/Auth/redirectToProvider";
+
+
 import { API_BASE } from "../../config";
 
 function Signup() {
@@ -21,25 +24,22 @@ function Signup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userName, email, password }),
       });
-  
+
       if (!response.ok) {
-        const err = await response.json();
-        console.log(err);
-        console.log(response);
+        const err = await response.json().catch(() => ({}));
         throw new Error(err.detail || "Ошибка регистрации");
       }
 
-   
-
-      // Если всё ок — переходим на главную
       toast.success("Регистрация успешна.", {
-        onClose: () => navigate("/"), // дождаться анимации
+        onClose: () => navigate("/"),
         autoClose: 1000,
       });
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Ошибка");
     }
   };
+
+
 
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
@@ -50,16 +50,27 @@ function Signup() {
             <h3 className="mt-2">Join CodeFlow</h3>
             <p>
               By clicking "Sign up", you agree to our{" "}
-              <a href="#">terms of service</a>
-              and <a href="#">privacy policy</a>.
+              <a href="#">terms of service</a> and{" "}
+              <a href="#">privacy policy</a>.
+
             </p>
           </div>
 
           <Card className="shadow-sm p-4">
-            <Button variant="light" className="mb-2 w-100 border">
+            <Button
+              variant="light"
+              className="mb-2 w-100 border"
+              onClick={() => redirectToProvider("Google")}
+            >
               <i className="bi bi-google"></i> Sign up with Google
             </Button>
-            <Button variant="dark" className="mb-2 w-100">
+
+            <Button
+              variant="dark"
+              className="mb-2 w-100"
+              onClick={() => redirectToProvider("GitHub")}
+            >
+
               <i className="bi bi-github"></i> Sign up with GitHub
             </Button>
 
@@ -95,7 +106,8 @@ function Signup() {
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                   type="password"
-                  pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{6,}$"
+                  pattern="^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{6,}$"
+
                   title="Минимум 6 символов, включая строчную и прописную латинские буквы, цифру и специальный символ."
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

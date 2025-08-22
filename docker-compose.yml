@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     environment:
       RABBITMQ_DEFAULT_USER: guest
+
       RABBITMQ_DEFAULT_PASS: guest
     # В ПРОДЕ порты НЕ публикуем! (UI можно открыть временно по нужде)
     networks: [ clonenet ]
@@ -68,7 +69,8 @@ services:
         PROJECT_NAME: ApiGateway
         DOTNET_VERSION: 9.0-preview
     env_file:
-      - .env
+      - .env.production
+
     environment:
       ASPNETCORE_URLS: http://+:5000
       Services__Auth:     http://authservice:5000
@@ -109,7 +111,8 @@ services:
         PROJECT_NAME: AuthService
         DOTNET_VERSION: 9.0-preview
     env_file:
-      - .env
+      - .env.production
+
     environment:
       ASPNETCORE_URLS: http://+:5000
       Rabbit__Host: rabbitmq
@@ -139,7 +142,8 @@ services:
         PROJECT_NAME: UserService
         DOTNET_VERSION: 9.0-preview
     env_file:
-      - .env
+      - .env.production
+
     environment:
       ASPNETCORE_URLS: http://+:5000
       ConnectionStrings__UserServiceDbContext: 'Host=user-db;Port=5432;Database=userdb;Username=user;Password=secret'
@@ -170,7 +174,8 @@ services:
         PROJECT_NAME: QuestionService
         DOTNET_VERSION: 9.0-preview
     env_file:
-      - .env
+      - .env.production
+
     environment:
       ASPNETCORE_URLS: http://+:5000
       ConnectionStrings__QuestionServiceDbContext: 'Host=question-db;Port=5432;Database=questiondb;Username=question;Password=secret'
@@ -201,6 +206,9 @@ services:
       args:
         PROJECT_NAME: AnswerService
         DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env.production
+
     environment:
       ASPNETCORE_URLS: http://+:5000
       ConnectionStrings__AnswerServiceDbContext: 'Host=answer-db;Port=5432;Database=answerdb;Username=answer;Password=secret'
@@ -230,6 +238,9 @@ services:
       args:
         PROJECT_NAME: CommentService
         DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env.production
+
     environment:
       ASPNETCORE_URLS: http://+:5000
       ConnectionStrings__CommentServiceDbContext: 'Host=comment-db;Port=5432;Database=commentdb;Username=comment;Password=secret'
@@ -259,6 +270,9 @@ services:
       args:
         PROJECT_NAME: TagService
         DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env.production
+
     environment:
       ASPNETCORE_URLS: http://+:5000
       ConnectionStrings__TagServiceDbContext: 'Host=tag-db;Port=5432;Database=tagdb;Username=tag;Password=secret'
