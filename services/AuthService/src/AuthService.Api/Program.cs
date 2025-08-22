@@ -4,9 +4,13 @@ using AuthService.Domain.Repositories;
 using AuthService.Infrastructure;
 using AuthService.Infrastructure.Repositories;
 using AuthService.Infrastructure.Settings;
+using Contracts.Bootstrap;
 using Messaging.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+
+
+EnvBootstrapper.Load();
 
 var builder = WebApplication.CreateBuilder (args);
 
@@ -47,7 +51,7 @@ var app = builder.Build ();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions {
     ForwardedHeaders = ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto,
-    // если запускаешь в docker/k8s и не хочешь белые списки:
+    // если в docker
     KnownNetworks = { },  // иначе X-Forwarded-* могут игнориться
     KnownProxies = { }
 });

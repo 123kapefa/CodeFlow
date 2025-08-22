@@ -1,9 +1,13 @@
 using ApiGateway.Api.Extensions;
 using ApiGateway.Application.Services;
-
+using Contracts.Bootstrap;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Yarp.ReverseProxy.Transforms;
+
+
+EnvBootstrapper.Load();
+
 
 var builder = WebApplication.CreateBuilder (args);
 

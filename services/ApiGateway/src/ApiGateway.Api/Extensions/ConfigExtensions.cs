@@ -3,9 +3,7 @@ namespace ApiGateway.Api.Extensions;
 public static class ConfigExtensions {
 
   public static WebApplicationBuilder AddConfig (this WebApplicationBuilder builder) {
-    
-    var envPath = Path.Combine("..", "..", "..", "..", ".env");
-    DotNetEnv.Env.Load(envPath);
+
     
     var configurationBuilder = new ConfigurationBuilder ()
      .SetBasePath (Directory.GetCurrentDirectory ())

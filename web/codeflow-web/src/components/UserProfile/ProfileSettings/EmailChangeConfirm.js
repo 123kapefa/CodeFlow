@@ -123,7 +123,7 @@ export default function EmailChangeConfirm() {
               {busy ? (
                 <Spinner animation="border" size="sm" />
               ) : (
-                "Подтвердить смену пароля"
+                "Подтвердить смену email"
               )}
             </Button>
             <div className="mt-3">

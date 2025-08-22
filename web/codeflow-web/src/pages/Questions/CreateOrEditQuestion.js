@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
-  Container, Form, Button, Card, Row, Col, Spinner,
+  Container,
+  Form,
+  Button,
+  Card,
+  Row,
+  Col,
+  Spinner,
 } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
@@ -14,7 +20,6 @@ import { API_BASE } from "../../config";
 
 const tagRegex = /^[a-z0-9.+-]+$/;
 
-
 const modules = {
   toolbar: [
     [{ header: [1, 2, false] }],
@@ -25,13 +30,19 @@ const modules = {
   ],
 };
 const formats = [
-  "header","bold","italic","underline","code-block","list","bullet","link",
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "code-block",
+  "list",
+  "bullet",
+  "link",
 ];
-
 
 export default function CreateOrEditQuestion() {
   const navigate = useNavigate();
-  const { id } = useParams();               // если есть — режим редактирования
+  const { id } = useParams(); // если есть — режим редактирования
   const isEdit = !!id;
 
   const { user, loading } = useAuth();
@@ -52,7 +63,10 @@ export default function CreateOrEditQuestion() {
 
   // 2) Подсказки тегов (как у тебя)
   useEffect(() => {
-    if (tagInput.length < 2) { setSuggestions([]); return; }
+    if (tagInput.length < 2) {
+      setSuggestions([]);
+      return;
+    }
     const t = setTimeout(async () => {
       try {
         const res = await fetch(
@@ -62,9 +76,15 @@ export default function CreateOrEditQuestion() {
         const data = await res.json();
         const items = data.value ?? [];
         setSuggestions(
-          items.map(t => ({ id: t.id, name: t.name, description: t.description }))
+          items.map((t) => ({
+            id: t.id,
+            name: t.name,
+            description: t.description,
+          }))
         );
-      } catch { setSuggestions([]); }
+      } catch {
+        setSuggestions([]);
+      }
     }, 300);
     return () => clearTimeout(t);
   }, [tagInput]);
@@ -76,28 +96,41 @@ export default function CreateOrEditQuestion() {
       try {
         const r = await fetch(`${API_BASE}/aggregate/get-question`, {
           method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
           body: JSON.stringify({ questionId: id }),
         });
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const data = await r.json();
 
-        // безопасность: только автор 
-        if (user && (user.userId !== data.question.userId)) {
-          toast.error("Вы не можете редактировать этот вопрос.", { toastId: "not-author" });
+        // безопасность: только автор
+        if (user && user.userId !== data.question.userId) {
+          toast.error("Вы не можете редактировать этот вопрос.", {
+            toastId: "not-author",
+          });
           navigate(`/questions/${id}`);
           return;
         }
 
-        setTitle(data.question.title);       // Title readonly
+        setTitle(data.question.title); // Title readonly
         setContent(data.question.content);
 
-        const tagsFromServer =
-          (data.question.questionTags || []).map(qt => ({
+        // map по id из массива data.tags
+        const tagsMap = Object.fromEntries(
+          (data.tags ?? []).map((t) => [t.id, t])
+        );
+
+        // selectedTags c именами
+        const tagsFromServer = (data.question.questionTags || []).map((qt) => {
+          const t = tagsMap[qt.tagId] ?? {};
+          return {
             id: qt.tagId,
-            name: data.tags[`tag-${qt.tagId}`]?.name || "",
-            description: data.tags[`tag-${qt.tagId}`]?.description || "",
-          }));
+            name: t.name ?? "",
+            description: t.description ?? "",
+          };
+        });
         setSelectedTags(tagsFromServer);
       } catch (e) {
         console.error(e);
@@ -132,7 +165,9 @@ export default function CreateOrEditQuestion() {
 
     for (const tag of selectedTags) {
       if (!tagRegex.test(tag.name)) {
-        errors.push(`Tag "${tag.name}" is invalid. Only lowercase letters, numbers, "+", "-", "." allowed`);
+        errors.push(
+          `Tag "${tag.name}" is invalid. Only lowercase letters, numbers, "+", "-", "." allowed`
+        );
       }
       if (tag.name.length > 64) {
         errors.push(`Tag "${tag.name}" is too long (max 64 characters)`);
@@ -150,18 +185,24 @@ export default function CreateOrEditQuestion() {
       if (isEdit) {
         // ---- ОБНОВЛЕНИЕ ВОПРОСА ----
         const dto = {
-          id,                                  // Guid вопроса
-          userEditorId: user.userId,           // кто редактирует
-          content,                             // HTML из ReactQuill
-          questionTagsDTO: selectedTags.map(t => ({ tagId: t.id ?? t.tagId })),          
+          id, // Guid вопроса
+          userEditorId: user.userId, // кто редактирует
+          content, // HTML из ReactQuill
+          questionTagsDTO: selectedTags.map((t) => ({
+            tagId: t.id ?? t.tagId,
+          })),
         };
 
         const res = await fetchAuth(`${API_BASE}/questions`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
           body: JSON.stringify(dto),
         });
-        if (!res.ok) throw new Error(await res.text() || "Не удалось обновить вопрос");
+        if (!res.ok)
+          throw new Error((await res.text()) || "Не удалось обновить вопрос");
 
         toast.success("Изменения сохранены.", {
           onClose: () => navigate(`/questions/${id}`),
@@ -169,7 +210,7 @@ export default function CreateOrEditQuestion() {
         });
       } else {
         // ---- СОЗДАНИЕ ВОПРОСА ----
-        const tagList = selectedTags.map(tag => ({
+        const tagList = selectedTags.map((tag) => ({
           id: tag.id ?? null,
           name: tag.name,
           description: tag.description ?? null,
@@ -188,7 +229,8 @@ export default function CreateOrEditQuestion() {
           method: "POST",
           body: JSON.stringify(payload),
         });
-        if (!res.ok) throw new Error(await res.text() || "Не удалось отправить вопрос");
+        if (!res.ok)
+          throw new Error((await res.text()) || "Не удалось отправить вопрос");
 
         toast.success("Вопрос создан.", {
           onClose: () => navigate("/"),
@@ -209,17 +251,21 @@ export default function CreateOrEditQuestion() {
       if (!trimmed) return;
 
       if (!tagRegex.test(trimmed)) {
-        toast.error(`Invalid tag "${trimmed}". Only lowercase letters, numbers, "+", "-", "." allowed`);
+        toast.error(
+          `Invalid tag "${trimmed}". Only lowercase letters, numbers, "+", "-", "." allowed`
+        );
         return;
       }
       if (trimmed.length > 64) {
         toast.error(`Tag "${trimmed}" is too long (max 64 characters)`);
         return;
       }
-      const already = selectedTags.some(t => t.name.toLowerCase() === trimmed);
+      const already = selectedTags.some(
+        (t) => t.name.toLowerCase() === trimmed
+      );
       if (already || selectedTags.length >= 5) return;
 
-      const match = suggestions.find(t => t.name.toLowerCase() === trimmed);
+      const match = suggestions.find((t) => t.name.toLowerCase() === trimmed);
       const newTag = match || { name: trimmed };
       setSelectedTags([...selectedTags, newTag]);
       setTagInput("");
@@ -241,12 +287,14 @@ export default function CreateOrEditQuestion() {
           </Card.Title>
 
           <Form onSubmit={handleSubmit}>
-            
             {!isEdit && (
               <Form.Group controlId="title" className="mb-5">
-                <Form.Label className="text-start d-block"><strong>Title</strong></Form.Label>
+                <Form.Label className="text-start d-block">
+                  <strong>Title</strong>
+                </Form.Label>
                 <Form.Text className="text-muted d-block mb-1 text-start">
-                  Be specific and imagine you’re asking a question to another person.
+                  Be specific and imagine you’re asking a question to another
+                  person.
                 </Form.Text>
                 <Form.Control
                   type="text"
@@ -259,7 +307,9 @@ export default function CreateOrEditQuestion() {
             )}
             {isEdit && (
               <Form.Group className="mb-3">
-                <Form.Label className="text-start d-block"><strong>Title</strong></Form.Label>
+                <Form.Label className="text-start d-block">
+                  <strong>Title</strong>
+                </Form.Label>
                 <Form.Control value={title} readOnly />
                 <Form.Text className="text-muted d-block text-start">
                   Заголовок сейчас нельзя менять (нет в UpdateQuestionDTO).
@@ -272,7 +322,8 @@ export default function CreateOrEditQuestion() {
                 <strong>What are the details of your problem?</strong>
               </Form.Label>
               <Form.Text className="text-muted d-block mb-1 text-start">
-                Introduce the problem and expand on what you put in the title. Minimum 20 characters.
+                Introduce the problem and expand on what you put in the title.
+                Minimum 20 characters.
               </Form.Text>
               <ReactQuill
                 theme="snow"
@@ -284,8 +335,10 @@ export default function CreateOrEditQuestion() {
               />
             </Form.Group>
 
-           <Form.Group controlId="tags" className="mb-4 position-relative">
-              <Form.Label className="text-start d-block"><strong>Tags</strong></Form.Label>
+            <Form.Group controlId="tags" className="mb-4 position-relative">
+              <Form.Label className="text-start d-block">
+                <strong>Tags</strong>
+              </Form.Label>
               <Form.Text className="text-muted d-block mb-1 text-start">
                 Add up to 5 tags to describe what your question is about.
               </Form.Text>
@@ -306,7 +359,8 @@ export default function CreateOrEditQuestion() {
                       key={tag.id ?? tag.name}
                       className="list-group-item list-group-item-action"
                       onClick={() => {
-                        if (selectedTags.find((t) => t.name === tag.name)) return;
+                        if (selectedTags.find((t) => t.name === tag.name))
+                          return;
                         if (selectedTags.length >= 5) return;
                         setSelectedTags([...selectedTags, tag]);
                         setTagInput("");
@@ -327,7 +381,9 @@ export default function CreateOrEditQuestion() {
                     <span
                       style={{ cursor: "pointer", marginLeft: 6 }}
                       onClick={() =>
-                        setSelectedTags(selectedTags.filter((_, i) => i !== index))
+                        setSelectedTags(
+                          selectedTags.filter((_, i) => i !== index)
+                        )
                       }
                     >
                       &times;
@@ -345,10 +401,18 @@ export default function CreateOrEditQuestion() {
 
             <Row>
               <Col>
-                <Button className="me-auto d-block mb-3" type="submit" disabled={posting}>
+                <Button
+                  className="me-auto d-block mb-3"
+                  type="submit"
+                  disabled={posting}
+                >
                   {posting
-                    ? (isEdit ? "Saving..." : "Posting...")
-                    : (isEdit ? "Save edits" : "Review your question")}
+                    ? isEdit
+                      ? "Saving..."
+                      : "Posting..."
+                    : isEdit
+                    ? "Save edits"
+                    : "Review your question"}
                 </Button>
               </Col>
             </Row>

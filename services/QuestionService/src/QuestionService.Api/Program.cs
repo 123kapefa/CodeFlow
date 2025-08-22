@@ -1,4 +1,5 @@
 using Auth.Extensions;
+using Contracts.Bootstrap;
 using Messaging.Extensions;
 using Microsoft.EntityFrameworkCore;
 using QuestionService.Api.Extensions;
@@ -7,6 +8,9 @@ using QuestionService.Infrastructure.Data;
 using QuestionService.Infrastructure.Repositories;
 
 using StackExchange.Redis;
+
+
+EnvBootstrapper.Load();
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

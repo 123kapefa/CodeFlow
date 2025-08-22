@@ -1,8 +1,12 @@
+using Contracts.Bootstrap;
 using Microsoft.EntityFrameworkCore;
 using UserService.Api.Extensions;
 using UserService.Application.Services;
 using UserService.Infrastructure.Data;
 using UserService.Infrastructure.Services;
+
+
+EnvBootstrapper.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
