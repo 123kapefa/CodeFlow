@@ -7,6 +7,7 @@ import {
   Row,
   Col,
   Spinner,
+
 } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
@@ -43,6 +44,7 @@ const formats = [
 export default function CreateOrEditQuestion() {
   const navigate = useNavigate();
   const { id } = useParams(); // если есть — режим редактирования
+
   const isEdit = !!id;
 
   const { user, loading } = useAuth();
@@ -63,10 +65,12 @@ export default function CreateOrEditQuestion() {
 
   // 2) Подсказки тегов (как у тебя)
   useEffect(() => {
+
     if (tagInput.length < 2) {
       setSuggestions([]);
       return;
     }
+
     const t = setTimeout(async () => {
       try {
         const res = await fetch(
@@ -85,6 +89,7 @@ export default function CreateOrEditQuestion() {
       } catch {
         setSuggestions([]);
       }
+
     }, 300);
     return () => clearTimeout(t);
   }, [tagInput]);
@@ -100,6 +105,7 @@ export default function CreateOrEditQuestion() {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
+
           body: JSON.stringify({ questionId: id }),
         });
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -110,6 +116,7 @@ export default function CreateOrEditQuestion() {
           toast.error("Вы не можете редактировать этот вопрос.", {
             toastId: "not-author",
           });
+
           navigate(`/questions/${id}`);
           return;
         }
@@ -131,6 +138,7 @@ export default function CreateOrEditQuestion() {
             description: t.description ?? "",
           };
         });
+
         setSelectedTags(tagsFromServer);
       } catch (e) {
         console.error(e);
@@ -168,6 +176,7 @@ export default function CreateOrEditQuestion() {
         errors.push(
           `Tag "${tag.name}" is invalid. Only lowercase letters, numbers, "+", "-", "." allowed`
         );
+
       }
       if (tag.name.length > 64) {
         errors.push(`Tag "${tag.name}" is too long (max 64 characters)`);
@@ -191,6 +200,7 @@ export default function CreateOrEditQuestion() {
           questionTagsDTO: selectedTags.map((t) => ({
             tagId: t.id ?? t.tagId,
           })),
+
         };
 
         const res = await fetchAuth(`${API_BASE}/questions`, {
@@ -204,6 +214,7 @@ export default function CreateOrEditQuestion() {
         if (!res.ok)
           throw new Error((await res.text()) || "Не удалось обновить вопрос");
 
+
         toast.success("Изменения сохранены.", {
           onClose: () => navigate(`/questions/${id}`),
           autoClose: 1000,
@@ -211,6 +222,7 @@ export default function CreateOrEditQuestion() {
       } else {
         // ---- СОЗДАНИЕ ВОПРОСА ----
         const tagList = selectedTags.map((tag) => ({
+
           id: tag.id ?? null,
           name: tag.name,
           description: tag.description ?? null,
@@ -229,8 +241,10 @@ export default function CreateOrEditQuestion() {
           method: "POST",
           body: JSON.stringify(payload),
         });
+
         if (!res.ok)
           throw new Error((await res.text()) || "Не удалось отправить вопрос");
+
 
         toast.success("Вопрос создан.", {
           onClose: () => navigate("/"),
@@ -254,18 +268,21 @@ export default function CreateOrEditQuestion() {
         toast.error(
           `Invalid tag "${trimmed}". Only lowercase letters, numbers, "+", "-", "." allowed`
         );
+
         return;
       }
       if (trimmed.length > 64) {
         toast.error(`Tag "${trimmed}" is too long (max 64 characters)`);
         return;
       }
+
       const already = selectedTags.some(
         (t) => t.name.toLowerCase() === trimmed
       );
       if (already || selectedTags.length >= 5) return;
 
       const match = suggestions.find((t) => t.name.toLowerCase() === trimmed);
+
       const newTag = match || { name: trimmed };
       setSelectedTags([...selectedTags, newTag]);
       setTagInput("");
@@ -295,6 +312,7 @@ export default function CreateOrEditQuestion() {
                 <Form.Text className="text-muted d-block mb-1 text-start">
                   Be specific and imagine you’re asking a question to another
                   person.
+
                 </Form.Text>
                 <Form.Control
                   type="text"
@@ -310,6 +328,7 @@ export default function CreateOrEditQuestion() {
                 <Form.Label className="text-start d-block">
                   <strong>Title</strong>
                 </Form.Label>
+
                 <Form.Control value={title} readOnly />
                 <Form.Text className="text-muted d-block text-start">
                   Заголовок сейчас нельзя менять (нет в UpdateQuestionDTO).
@@ -339,6 +358,7 @@ export default function CreateOrEditQuestion() {
               <Form.Label className="text-start d-block">
                 <strong>Tags</strong>
               </Form.Label>
+
               <Form.Text className="text-muted d-block mb-1 text-start">
                 Add up to 5 tags to describe what your question is about.
               </Form.Text>
@@ -361,6 +381,7 @@ export default function CreateOrEditQuestion() {
                       onClick={() => {
                         if (selectedTags.find((t) => t.name === tag.name))
                           return;
+
                         if (selectedTags.length >= 5) return;
                         setSelectedTags([...selectedTags, tag]);
                         setTagInput("");
@@ -384,6 +405,7 @@ export default function CreateOrEditQuestion() {
                         setSelectedTags(
                           selectedTags.filter((_, i) => i !== index)
                         )
+
                       }
                     >
                       &times;
@@ -413,6 +435,7 @@ export default function CreateOrEditQuestion() {
                     : isEdit
                     ? "Save edits"
                     : "Review your question"}
+
                 </Button>
               </Col>
             </Row>

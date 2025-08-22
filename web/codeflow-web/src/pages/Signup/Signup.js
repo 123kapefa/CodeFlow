@@ -5,6 +5,7 @@ import { Button, Form, Container, Row, Col, Card } from "react-bootstrap";
 
 import { redirectToProvider } from "../../features/Auth/redirectToProvider";
 
+
 import { API_BASE } from "../../config";
 
 function Signup() {
@@ -16,6 +17,7 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const response = await fetch(`${API_BASE}/auth/register`, {
         method: "POST",
@@ -38,6 +40,7 @@ function Signup() {
   };
 
 
+
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
       <Row>
@@ -49,6 +52,7 @@ function Signup() {
               By clicking "Sign up", you agree to our{" "}
               <a href="#">terms of service</a> and{" "}
               <a href="#">privacy policy</a>.
+
             </p>
           </div>
 
@@ -66,6 +70,7 @@ function Signup() {
               className="mb-2 w-100"
               onClick={() => redirectToProvider("GitHub")}
             >
+
               <i className="bi bi-github"></i> Sign up with GitHub
             </Button>
 
@@ -102,6 +107,7 @@ function Signup() {
                 <Form.Control
                   type="password"
                   pattern="^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{6,}$"
+
                   title="Минимум 6 символов, включая строчную и прописную латинские буквы, цифру и специальный символ."
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

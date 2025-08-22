@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 EnvBootstrapper.Load();
 
+
 var builder = WebApplication.CreateBuilder (args);
 
 builder.AddBase ();
@@ -23,7 +24,6 @@ builder.AddCustomSwagger ();
 builder.AddCustomSerilog ();
 builder.AddAuthMessaging ();
 builder.Services.AddMessaging ();
-
 
 // JWT settings
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(JwtSettings.SectionName));
@@ -55,7 +55,6 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions {
     KnownNetworks = { },  // иначе X-Forwarded-* могут игнориться
     KnownProxies = { }
 });
-
 
 app.UseCustomSwagger ();
 app.UseBase ();

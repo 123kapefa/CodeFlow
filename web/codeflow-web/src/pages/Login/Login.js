@@ -14,6 +14,7 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       await login(email, password);
       navigate("/");
@@ -29,6 +30,7 @@ export default function Login() {
 
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
+
       <Row>
         <Col>
           <div className="text-center mb-4">
@@ -61,6 +63,7 @@ export default function Login() {
               <hr />
             </div>
 
+
             <Form onSubmit={handleSubmit}>
               {error && <div className="alert alert-danger">{error}</div>}
 
@@ -71,6 +74,7 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+
                 />
               </Form.Group>
 
@@ -84,6 +88,7 @@ export default function Login() {
                 />
                 <small className="text-muted">
                   <Link to="/forgot-password">Forgot password?</Link>
+
                 </small>
               </Form.Group>
 
@@ -97,9 +102,11 @@ export default function Login() {
             <p>
               Don’t have an account? <Link to="/signup">Sign up</Link>
             </p>
+
           </div>
         </Col>
       </Row>
     </Container>
   );
 }
+

@@ -8,6 +8,7 @@ using UserService.Infrastructure.Services;
 
 EnvBootstrapper.Load();
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddBase ();

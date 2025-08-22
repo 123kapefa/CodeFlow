@@ -1,16 +1,17 @@
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
-
 using AuthService.Domain.Entities;
 using AuthService.Domain.Repositories;
 using AuthService.Infrastructure.Settings;
 using Microsoft.AspNetCore.Authentication;
+
 using Microsoft.AspNetCore.Authentication.OAuth;
 
 namespace AuthService.Api.Extensions;
 
 public static class GithubAuthExtensions {
+
     public static IServiceCollection AddGithubAuth( this IServiceCollection services, IConfiguration config ) {
 
         var section = config.GetSection(GithubSettings.SectionName);
@@ -54,7 +55,7 @@ public static class GithubAuthExtensions {
                     var email = ctx.Principal?.FindFirstValue(ClaimTypes.Email);
                     var full = ctx.Principal?.FindFirstValue(ClaimTypes.Name);
 
-                    // Если email не пришёл — /user/emails (берём primary+verified)
+                    // пїЅпїЅпїЅпїЅ email пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ /user/emails (пїЅпїЅпїЅпїЅ primary+verified)
                     if(string.IsNullOrWhiteSpace(email)) {
                         using var req = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/user/emails");
                         req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", ctx.AccessToken);
@@ -98,4 +99,5 @@ public static class GithubAuthExtensions {
 
         return services;
     }
+
 }

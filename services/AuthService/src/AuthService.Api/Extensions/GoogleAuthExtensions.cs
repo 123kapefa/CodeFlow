@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 namespace AuthService.Api.Extensions;
 
 public static class GoogleAuthExtensions {
+
     public static IServiceCollection AddGoogleAuth( this IServiceCollection services, IConfiguration config ) {
         services.Configure<GoogleAuthSettings>(config.GetSection("Authentication:Google"));
 
@@ -48,4 +49,5 @@ public static class GoogleAuthExtensions {
 
         return services;
     }
+
 }

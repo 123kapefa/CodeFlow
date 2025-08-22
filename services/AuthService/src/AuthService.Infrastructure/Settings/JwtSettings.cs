@@ -8,4 +8,5 @@ public class JwtSettings {
 
     public const string SectionName = "JwtSettings";
     public bool RequireHttps { get; set; } = true;
+
 }

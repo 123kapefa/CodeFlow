@@ -1,6 +1,7 @@
 using ApiGateway.Api.Extensions;
 using ApiGateway.Application.Services;
 using Contracts.Bootstrap;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Yarp.ReverseProxy.Transforms;
@@ -31,6 +32,7 @@ builder.Services.AddCors(options => {
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials()); // если шлёшь cookies/авторизацию
+
 });
 
 
@@ -60,10 +62,10 @@ app.Use(async ( ctx, next ) => {
     await next();
 });
 
-
 // Применяем CORS к endpoint'у прокси (важно!)
 app.MapReverseProxy().RequireCors("ReactDev");
 app.MapControllers();
+
 
 
 app.Run();

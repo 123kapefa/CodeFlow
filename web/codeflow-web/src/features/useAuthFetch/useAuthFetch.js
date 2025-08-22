@@ -2,9 +2,11 @@ import Cookies from "js-cookie";
 import { RefreshToken } from "../RefreshToken/RefreshToken";
 import { useCallback } from "react";
 
+
 export const useAuthFetch = () => {
   // useCallback гарантирует одну и ту же ссылку на функцию между рендерами
   const authFetch = useCallback(async (url, options = {}) => {
+
     let at = Cookies.get("jwt");
 
     const baseOpts = {
@@ -18,6 +20,7 @@ export const useAuthFetch = () => {
         ...(at ? { Authorization: `Bearer ${at}` } : {}),
       },
       credentials: "include", // тянем refresh-cookie
+
     };
 
     let res = await fetch(url, baseOpts);

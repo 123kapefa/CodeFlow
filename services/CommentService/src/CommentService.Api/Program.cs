@@ -2,7 +2,6 @@ using CommentService.Api.Extensions;
 using CommentService.Infrastructure.Data;
 using Contracts.Bootstrap;
 using Messaging.Extensions;
-
 using Microsoft.EntityFrameworkCore;
 
 

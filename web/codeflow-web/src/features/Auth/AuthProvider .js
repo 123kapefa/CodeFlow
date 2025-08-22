@@ -6,10 +6,12 @@ import {
   useState,
   useCallback,
 } from "react";
+
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { RefreshToken } from "../RefreshToken/RefreshToken";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
+
 
 import { API_BASE } from "../../config";
 
@@ -193,6 +195,7 @@ import { API_BASE } from "../../config";
 // export const useAuth = () => useContext(AuthContext);
 
 const AuthContext = createContext(null);
+
 const USER_LS_KEY = "cf.user";
 
 function readJsonLS(key) {
@@ -203,6 +206,7 @@ function readJsonLS(key) {
     return null;
   }
 }
+
 function writeJsonLS(key, v) {
   try {
     v == null
@@ -216,9 +220,11 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const authFetch = useAuthFetch();
 
+
   useEffect(() => {
     writeJsonLS(USER_LS_KEY, user);
   }, [user]);
+
 
   const getUserIdFromAccess = (token) => {
     try {
@@ -238,9 +244,11 @@ export const AuthProvider = ({ children }) => {
     }
 
     const res = await authFetch(`${API_BASE}/users/${id}`);
+
     if (res.ok) setUser(await res.json());
     else setUser(null);
   }, [authFetch]);
+
 
   // ── Тихий bootstrap ──
   useEffect(() => {
@@ -270,10 +278,12 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     })();
+
     return () => {
       cancelled = true;
     };
   }, [authFetch]);
+
 
   // ── login (парольный) ──
   const login = async (email, password) => {
@@ -290,6 +300,7 @@ export const AuthProvider = ({ children }) => {
 
     const data = await res.json().catch(() => ({}));
 
+
     if (data?.accessToken) {
       Cookies.set("jwt", data.accessToken, {
         path: "/",
@@ -298,12 +309,14 @@ export const AuthProvider = ({ children }) => {
       });
     }
 
+
     if (data?.refreshToken) {
       Cookies.set("refresh_token", data.refreshToken, {
         path: "/",
         sameSite: "Lax",
         expires: 30,
       });
+
     } else if (!data?.accessToken) {
       // если access не пришёл — попробуем через refresh-cookie
       await RefreshToken();
@@ -324,11 +337,13 @@ export const AuthProvider = ({ children }) => {
         credentials: "include",
         body: "null", // либо убери, если сервер не требует тело
       });
+
     } catch (e) {
       console.warn("Logout error:", e);
     } finally {
       Cookies.remove("jwt", { path: "/" });
       // refresh удалит сервер Set-Cookie с Max-Age=0
+
       setUser(null);
     }
   };
