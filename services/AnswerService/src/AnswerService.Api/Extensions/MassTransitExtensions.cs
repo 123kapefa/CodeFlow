@@ -42,7 +42,7 @@ public static class MassTransitExtensions {
                     e.ConfigureConsumer<AnswerAcceptedConsumer>(ctx);
                     e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
                 });
-                
+
                 cfg.ReceiveEndpoint("answer-service.user-deleted", e => {
                 
                     e.ConfigureConsumer<UserDeletedConsumer>(ctx);

@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { useAuthFetch } from "../../../features/useAuthFetch/useAuthFetch";
 import { useAuth } from "../../../features/Auth/AuthProvider ";
 
-const API = "http://localhost:5000";
+import { API_BASE } from "../../../config";
 
 export default function PasswordChangeConfirm() {
   const fetchAuth = useAuthFetch();
@@ -45,7 +45,7 @@ export default function PasswordChangeConfirm() {
       }
 
       // отправляем именно JSON в тело (не в сегмент пути)
-      const resp = await fetchAuth(`${API}/api/auth/password-change-confirm`, {
+      const resp = await fetchAuth(`${API_BASE}/auth/password-change-confirm`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

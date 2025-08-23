@@ -230,6 +230,3 @@ public class QuestionController : ControllerBase {
       new CancellationToken(false));
 
 }
-
-// user 1 01985fd7-f48d-79c5-ba32-5b2c14cb7d02  testrabbitmq@gmail.com
-// user 2 01985fdb-9b87-7e8d-91da-bcebf52c9687  user2@gmail.com

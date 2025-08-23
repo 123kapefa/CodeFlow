@@ -5,7 +5,9 @@ using AnswerService.Domain.Repositories;
 using Ardalis.Result;
 
 using Contracts.Publishers.AnswerService;
+
 using Contracts.Publishers.VoteService;
+
 
 using Messaging.Broker;
 
@@ -50,7 +52,6 @@ public class UpdateAnswerVoteHandler : ICommandHandler<UpdateAnswerVoteCommand> 
     
     if (!updateResult.IsSuccess)
       return Result.Error (new ErrorList(updateResult.Errors));
-    
     await _answerRepository.SaveAsync(cancellationToken);
     
     return Result.Success ();

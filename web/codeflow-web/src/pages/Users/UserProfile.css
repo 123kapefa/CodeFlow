@@ -1,0 +1,29 @@
+/* Общие страховки от переполнения */
+.user-profile * { min-width: 0; }
+.user-profile img, .user-profile video, .user-profile table { max-width: 100%; height: auto; }
+.user-profile table { display: block; overflow-x: auto; }
+
+/* Левое меню: на десктопе — sticky, на мобилке — обычный поток */
+.user-profile .nav-compact { position: sticky; top: 6rem; }
+@media (max-width: 992px) {
+  .user-profile .nav-compact { position: static; top: auto; }
+}
+
+/* Сетка: уже используете col-lg-2/10 и col-md-3/9 — добавим отступы и переносы */
+@media (max-width: 992px) {
+  .user-profile .row > [class*="col-"] { margin-bottom: 12px; }
+}
+
+/* Карточки внутри Summary: не даём им разъезжаться и выходить по ширине */
+.user-profile .card { box-sizing: border-box; }
+
+/* Кнопки Activity/Settings — компактнее на узких */
+@media (max-width: 576px) {
+  .user-profile .mb-3.d-flex { flex-wrap: wrap; row-gap: 8px; }
+}
+
+/* Формы настроек: большие поля по ширине экрана */
+.user-profile form .form-control { width: 100%; }
+
+/* Графики/диаграммы: не ломать ширину */
+.user-profile canvas, .user-profile svg { max-width: 100%; height: auto; }

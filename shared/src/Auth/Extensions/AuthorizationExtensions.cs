@@ -55,7 +55,8 @@ public static class AuthorizationExtensions {
           });
 
         services.AddAuthorization();
-        services.Configure<JwtOptions>(config.GetSection("JwtSettings"));
+        services.Configure<JwtOptions>(config.GetSection("JwtOptions"));
+
         return services;
     }
 
@@ -72,3 +73,4 @@ public static class AuthorizationExtensions {
 //     public string Audience { get; set; } = "";
 //     public int? ExpiresInMinutes { get; set; }
 // }
+

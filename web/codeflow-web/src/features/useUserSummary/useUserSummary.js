@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const API = "http://localhost:5000";
+import { API_BASE } from "../../config";
 
 export function useUserSummary(userId) {
   const [data, setData]   = useState(null);
@@ -14,7 +14,7 @@ export function useUserSummary(userId) {
       try {
         setLoading(true);
         setErr("");
-        const res = await fetch(`${API}/api/aggregate/get-user-summary/${userId}`);
+        const res = await fetch(`${API_BASE}/aggregate/get-user-summary/${userId}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
         if (!cancelled) setData(json);

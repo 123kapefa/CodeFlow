@@ -4,7 +4,7 @@ import { Container, Spinner, ButtonGroup, ToggleButton } from "react-bootstrap";
 import QuestionSummaryCard from "../../components/QuestionCard/QuestionSummaryCard";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 
-const API = "http://localhost:5000";
+import { API_BASE } from "../../config";
 
 export default function AnswersSummaryPage({ userId }) {
      const authFetch = useAuthFetch(); 
@@ -14,8 +14,8 @@ export default function AnswersSummaryPage({ userId }) {
   const [tagsMap, setTagsMap] = useState({});
 
   // сортировка и пагинация
-  const [orderBy, setOrderBy] = useState("CreatedAt");      // CreatedAt | AnswersCount
-  const [sortDir, setSortDir] = useState("Descending");     // "Descending" | "Ascending"
+  const [orderBy, setOrderBy] = useState("CreatedAt");      
+  const [sortDir, setSortDir] = useState("Descending");     
   const [page, setPage] = useState(1);
   const pageSize = 30;
 
@@ -23,7 +23,7 @@ export default function AnswersSummaryPage({ userId }) {
     setLoading(true);
     try {
       const url =
-        `${API}/api/aggregate/get-answers-summary/${userId}` +
+        `${API_BASE}/aggregate/get-answers-summary/${userId}` +
         `?page=${page}&pageSize=${pageSize}&orderBy=${orderBy}&sortDirection=${sortDir}`;
 
       const res = await authFetch(url, {

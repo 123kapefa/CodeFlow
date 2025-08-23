@@ -23,6 +23,7 @@ public static class MassTransitExtensions {
       x.AddConsumer<UserLoggedConsumer> ();
       x.AddConsumer<UserReputationChangedConsumer> ();
 
+
       x.UsingRabbitMq ((ctx, cfg) =>
       {
         cfg.Host ("rabbitmq", "/", h =>
@@ -54,7 +55,6 @@ public static class MassTransitExtensions {
           e.ConfigureConsumer<UserReputationChangedConsumer> (ctx);
           e.UseMessageRetry (r => r.Interval (3, TimeSpan.FromSeconds (5)));
         });
-
       });
     });
 

@@ -9,7 +9,9 @@ import QuestionCard from "../../components/QuestionCard/QuestionCard";
 import { useAuth } from "../../features/Auth/AuthProvider ";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 
-const API = "http://localhost:5000";
+import "./Home.css";
+
+import { API_BASE } from "../../config";
 
 function timeAgo(iso) {
   if (!iso) return "";
@@ -50,7 +52,7 @@ export default function Home() {
 
     (async () => {
       try {
-        const res = await fetchAuth(`${API}/api/tags/watched/${user.userId}`);
+        const res = await fetchAuth(`${API_BASE}/tags/watched/${user.userId}`);
         if (!cancelled) {
           if (res.ok) setWatched(await res.json());
           else setWErr(res.status);
@@ -68,7 +70,7 @@ export default function Home() {
     if (!user) return;
     let cancelled = false;
 
-    const url = `${API}/api/aggregate/recommended/${user.userId}` +
+    const url = `${API_BASE}/aggregate/recommended/${user.userId}` +
                 `?page=1&pageSize=40&orderBy=CreatedAt&sortDirection=Ascending`;
 
     (async () => {
@@ -152,7 +154,7 @@ export default function Home() {
   }
 
   return (
-    <Container fluid="xxl" className="py-4">
+    <Container fluid="xxl" className="py-4 home-page">
       {/* шапка */}
       <Row className="align-items-center mb-5">
         <Col>

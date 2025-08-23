@@ -8,7 +8,7 @@ namespace QuestionService.Domain.Entities;
 
 public class Question {
 
-  public Guid Id { get; set; } = Guid.NewGuid ();
+  public Guid Id { get; set; } = Guid.NewGuid();
 
   public Guid UserId { get; set; }
   public Guid? UserEditorId { get; set; }
@@ -32,19 +32,19 @@ public class Question {
   public List<QuestionChangingHistory> QuestionChangingHistories { get; set; } = [];
   public List<QuestionTag> QuestionTags { get; set; } = [];
 
-  public void AcceptAnswer (Guid? newAnswerId) {
+  public void AcceptAnswer(Guid? newAnswerId) {
     AcceptedAnswerVersion ??= 1;
 
     if (AcceptedAnswerId == newAnswerId) return;
-    
+
     if (AcceptedAnswerId is null) {
       IsClosed = false;
       AcceptedAnswerId = null;
     }
-    
+
     IsClosed = true;
     AcceptedAnswerId = newAnswerId;
     AcceptedAnswerVersion++;
   }
-
+  
 }

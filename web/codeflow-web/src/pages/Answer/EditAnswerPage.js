@@ -9,7 +9,7 @@ import { InfoCircle } from "react-bootstrap-icons";
 import { useAuth } from "../../features/Auth/AuthProvider ";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 
-const API = "http://localhost:5000";
+import { API_BASE } from "../../config";
 
 const modules = {
   toolbar: [
@@ -67,7 +67,7 @@ export default function EditAnswerPage() {
 
     // Быстрая проверка по state
     if (stateAuthorId && stateAuthorId !== user.userId) {
-      toast.error("Вы не можете редактировать этот ответ");
+      toast.error("Вы не можете редактировать этот ответ.", { toastId: "not-author" });
       navigate(`/questions/${questionId}`);
       return;
     }
@@ -77,7 +77,7 @@ export default function EditAnswerPage() {
       (async () => {
         try {
           const r = await fetch(
-            `http://localhost:5000/api/answers/${answerId}`,
+            `${API_BASE}/answers/${answerId}`,
             {
               headers: { Accept: "application/json" },
             }
@@ -85,7 +85,7 @@ export default function EditAnswerPage() {
           if (!r.ok) throw new Error();
           const ans = await r.json(); // ожидаем { userId, content, ... }
           if (ans.userId !== user.userId) {
-            toast.error("Вы не можете редактировать этот ответ");
+            toast.error("Вы не можете редактировать этот ответ.", { toastId: "not-author" });
             navigate(-1);
           }
         } catch {
@@ -127,7 +127,7 @@ export default function EditAnswerPage() {
         content, // HTML из редактора
       };
 
-      const res = await authFetch(`${API}/api/answers/edit/${answerId}`, {
+      const res = await authFetch(`${API_BASE}/answers/edit/${answerId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -139,7 +139,7 @@ export default function EditAnswerPage() {
       if (!res.ok)
         throw new Error((await res.text()) || "Failed to save edits");
 
-      toast.success("Edits saved 🎉", {
+      toast.success("Edits saved.", {
         onClose: () => navigate(questionId ? `/questions/${questionId}` : -1),
         autoClose: 900,
       });

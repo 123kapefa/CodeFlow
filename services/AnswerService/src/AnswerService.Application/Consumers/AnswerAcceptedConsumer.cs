@@ -19,7 +19,7 @@ public class AnswerAcceptedConsumer : IConsumer<AnswerAccepted> {
   public Task Consume (ConsumeContext<AnswerAccepted> context) {
     var message = context.Message;
     return _handler.Handle (
-      new UpdateAnswerAcceptCommand((Guid)message.NewAnswerId!, message.QuestionId), 
+      new UpdateAnswerAcceptCommand((Guid)message.NewAnswerId!, message.ParentId), 
       context.CancellationToken);
   }
 

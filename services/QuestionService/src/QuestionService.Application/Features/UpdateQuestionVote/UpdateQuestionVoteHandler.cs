@@ -20,9 +20,6 @@ public class UpdateQuestionVoteHandler : ICommandHandler<UpdateQuestionVoteComma
 
     public async Task<Result> Handle( UpdateQuestionVoteCommand command, CancellationToken token ) {
         
-        Console.WriteLine("UpdateQuestionVoteHandler Start working");
-        Console.WriteLine($"Command: {JsonSerializer.Serialize(command)}");
-        
         if(command.QuestionId == Guid.Empty)
             return Result.Error("ID вопроса не может быть пустым");
 
@@ -34,7 +31,7 @@ public class UpdateQuestionVoteHandler : ICommandHandler<UpdateQuestionVoteComma
 
         if(!questionResult.IsSuccess)
             return Result.Error(new ErrorList(questionResult.Errors));
-        
+
         switch (command.VoteValue) {
             case VoteKind.Up: {
                 questionResult.Value.Upvotes += 1;
@@ -54,7 +51,6 @@ public class UpdateQuestionVoteHandler : ICommandHandler<UpdateQuestionVoteComma
 
         if(!updateResult.IsSuccess)
             return Result.Error(new ErrorList(updateResult.Errors));
-
         await _questionServiceRepository.SaveChangesAsync(token);
 
         return Result.Success();

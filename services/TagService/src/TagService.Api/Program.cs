@@ -1,11 +1,11 @@
+using Contracts.Bootstrap;
 using MassTransit;
-
 using Messaging.Extensions;
-
 using Microsoft.EntityFrameworkCore;
-
 using TagService.Api.Extensions;
 using TagService.Infrastructure.Data;
+
+EnvBootstrapper.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 

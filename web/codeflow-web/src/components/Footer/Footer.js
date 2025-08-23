@@ -5,7 +5,7 @@ import '../../App.css'
 function Footer() {
   return (
     <div className="container-fluid footer-body">
-      <footer className="footer container-xxl">
+      <footer className="footer">
         <section>
           <h4>CodeFlow</h4>
           <ul>

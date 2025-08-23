@@ -4,10 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{3790E44D-25CB-4141-85B3-9A359ACCC32F}"
-	ProjectSection(SolutionItems) = preProject
-		docker\.dockerignore = docker\.dockerignore
-		docker\Dockerfile = docker\Dockerfile
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{93CFDE53-6771-47C6-90E1-E3142A5D4CDA}"
 EndProject

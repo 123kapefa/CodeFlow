@@ -11,8 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 
-const API = "http://localhost:5000";
-
+import { API_BASE } from "../../config";
 
 export default function TagsSummaryPage({ userId }) {
   const authFetch = useAuthFetch();
@@ -48,7 +47,7 @@ export default function TagsSummaryPage({ userId }) {
         setErr("");
 
         const res = await authFetch(
-          `${API}/api/tags/user/${userId}/participation?${qs}`,
+          `${API_BASE}/tags/user/${userId}/participation?${qs}`,
           { headers: { Accept: "application/json" } }
         );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);

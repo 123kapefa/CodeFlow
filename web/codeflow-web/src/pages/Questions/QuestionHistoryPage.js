@@ -6,9 +6,10 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css";
 
+import { API_BASE } from "../../config";
+
 dayjs.extend(relativeTime);
 
-const API = "http://localhost:5000";
 
 export default function QuestionHistoryPage() {
   const { id } = useParams(); // questionId
@@ -19,7 +20,7 @@ export default function QuestionHistoryPage() {
   useEffect(() => {
     (async () => {
       try {
-        const r = await fetch(`${API}/api/questions/${id}/history`, {
+        const r = await fetch(`${API_BASE}/questions/${id}/history`, {
           headers: { Accept: "application/json" },
         });
         if (!r.ok) throw new Error(`HTTP ${r.status}`);

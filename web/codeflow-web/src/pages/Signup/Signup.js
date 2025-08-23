@@ -3,6 +3,10 @@ import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 import { Button, Form, Container, Row, Col, Card } from "react-bootstrap";
 
+import { redirectToProvider } from "../../features/Auth/redirectToProvider";
+
+
+import { API_BASE } from "../../config";
 
 function Signup() {
   const [userName, setUserName] = useState("");
@@ -15,50 +19,63 @@ function Signup() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
+
+      const response = await fetch(`${API_BASE}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userName, email, password }),
       });
 
       if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.message || "Ошибка регистрации");
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.detail || "Ошибка регистрации");
       }
 
-      // Если всё ок — переходим на главную
-      toast.success("Регистрация успешна 🎉", {
-        onClose: () => navigate("/"), // дождаться анимации (опционально)
-        autoClose: 1000,                       // 2 сек
+      toast.success("Регистрация успешна.", {
+        onClose: () => navigate("/"),
+        autoClose: 1000,
       });
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Ошибка");
     }
   };
+
+
 
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
       <Row>
-        <Col>        
+        <Col>
           <div className="text-center mb-4">
             <img src="/logo/logo-transparent.png" alt="logo" height="50" />
             <h3 className="mt-2">Join CodeFlow</h3>
             <p>
               By clicking "Sign up", you agree to our{" "}
-              <a href="#">terms of service</a>
-              and <a href="#">privacy policy</a>.
+              <a href="#">terms of service</a> and{" "}
+              <a href="#">privacy policy</a>.
+
             </p>
           </div>
 
           <Card className="shadow-sm p-4">
-            <Button variant="light" className="mb-2 w-100 border">
+            <Button
+              variant="light"
+              className="mb-2 w-100 border"
+              onClick={() => redirectToProvider("Google")}
+            >
               <i className="bi bi-google"></i> Sign up with Google
             </Button>
-            <Button variant="dark" className="mb-2 w-100">
+
+            <Button
+              variant="dark"
+              className="mb-2 w-100"
+              onClick={() => redirectToProvider("GitHub")}
+            >
+
               <i className="bi bi-github"></i> Sign up with GitHub
             </Button>
 
-            <div className="text-center my-3">           
+            <div className="text-center my-3">
               <span className="px-2">OR</span>
               <hr />
             </div>
@@ -67,7 +84,7 @@ function Signup() {
               {error && <div className="alert alert-danger">{error}</div>}
 
               <Form.Group controlId="formUsername" className="mb-3">
-                <Form.Label>UserName</Form.Label>
+                <Form.Label>User Name</Form.Label>
                 <Form.Control
                   type="text"
                   value={userName}
@@ -90,9 +107,12 @@ function Signup() {
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                   type="password"
+                  pattern="^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{6,}$"
+
+                  title="Минимум 6 символов, включая строчную и прописную латинские буквы, цифру и специальный символ."
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="8+ characters (at least 1 letter & 1 number)"
+                  placeholder="6+ characters (at least 1 letter & 1 number)"
                   required
                 />
               </Form.Group>

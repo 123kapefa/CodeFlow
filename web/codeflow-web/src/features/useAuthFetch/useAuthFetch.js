@@ -1,21 +1,25 @@
-import Cookies from 'js-cookie';
-import { RefreshToken } from '../RefreshToken/RefreshToken';
-import { useCallback } from 'react';
+import Cookies from "js-cookie";
+import { RefreshToken } from "../RefreshToken/RefreshToken";
+import { useCallback } from "react";
 
 export const useAuthFetch = () => {
   // useCallback гарантирует одну и ту же ссылку на функцию между рендерами
   const authFetch = useCallback(async (url, options = {}) => {
-    let at = Cookies.get('jwt');
+
+    let at = Cookies.get("jwt");
 
     const baseOpts = {
       ...options,
       headers: {
         ...(options.headers ?? {}),
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
+        "Content-Type": options.body
+          ? "application/json"
+          : options.headers?.["Content-Type"] ?? undefined,
+        Accept: "application/json",
         ...(at ? { Authorization: `Bearer ${at}` } : {}),
       },
-      credentials: 'include',
+      credentials: "include", // тянем refresh-cookie
+
     };
 
     let res = await fetch(url, baseOpts);
@@ -23,7 +27,7 @@ export const useAuthFetch = () => {
     if (res.status === 401) {
       const ok = await RefreshToken();
       if (ok) {
-        at = Cookies.get('jwt');
+        at = Cookies.get("jwt");
         res = await fetch(url, {
           ...baseOpts,
           headers: { ...baseOpts.headers, Authorization: `Bearer ${at}` },
@@ -31,7 +35,7 @@ export const useAuthFetch = () => {
       }
     }
     return res;
-  }, []);                         
+  }, []);
 
   return authFetch;
 };

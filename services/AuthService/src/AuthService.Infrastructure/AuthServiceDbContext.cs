@@ -1,8 +1,6 @@
 using AuthService.Domain.Entities;
-
 using MassTransit;
 using MassTransit.EntityFrameworkCoreIntegration;
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
