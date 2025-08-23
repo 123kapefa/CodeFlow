@@ -199,6 +199,9 @@ namespace QuestionService.Infrastructure.Migrations
                     b.Property<Guid?>("AcceptedAnswerId")
                         .HasColumnType("uuid");
 
+                    b.Property<int?>("AcceptedAnswerVersion")
+                        .HasColumnType("integer");
+
                     b.Property<int>("AnswersCount")
                         .HasColumnType("integer");
 

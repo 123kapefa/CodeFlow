@@ -141,7 +141,6 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
       if (ranked.Count == 0)
         return Result<IEnumerable<Question>>.Success([]);
 
-
       var ids = ranked
        .Select (x => x.QuestionId)
        .ToList ();

@@ -19,4 +19,9 @@ public class UserStatistic {
 
     public static UserStatistic Create(Guid userId) => new UserStatistic(userId);  
     
+    public UserStatistic UpdateReputation(int reputation) {
+        Reputation = reputation;
+        return this;
+    }
+
 }

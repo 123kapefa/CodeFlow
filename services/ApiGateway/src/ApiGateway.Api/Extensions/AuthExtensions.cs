@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -42,7 +43,6 @@ public static class AuthExtensions {
             options.AddPolicy("AuthenticatedPolicy", p => p.RequireAuthenticatedUser());
             options.AddPolicy("AllowAnonymousPolicy", p => p.RequireAssertion(_ => true));
         });
-
     
     return builder;
   }

@@ -33,6 +33,7 @@ function Tags() {
   const navigate = useNavigate();
   const token = Cookies.get("jwt");
 
+
   useEffect(() => {
     const fetchTags = async () => {
       try {

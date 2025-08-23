@@ -30,7 +30,7 @@ public static class CloudStorageExtensions {
                cfg["YANDEXCLOUD_SERVICE_URL"] ?? throw new ArgumentNullException("YANDEXCLOUD_SERVICE_URL")
            )
        );
-    
+
     return builder;
   }
 

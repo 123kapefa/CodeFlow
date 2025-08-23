@@ -2,7 +2,6 @@ import Cookies from 'js-cookie';
 
 import { API_BASE } from "../../config";
 
-
 export async function RefreshToken() {
 
   const refreshToken = Cookies.get('refresh_token');

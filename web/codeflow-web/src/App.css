@@ -12,7 +12,6 @@ body,
 }
 
 
-
 /* ─────────── Sidebar + Content ─────────── */
 .main {
   display: grid;
@@ -233,4 +232,5 @@ body,
 .main {
   flex: 1 1 auto;      /* занимает всё между Header и Footer */
   min-height: 0;       /* корректная прокрутка внутри */
+
 }

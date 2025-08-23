@@ -1,3 +1,4 @@
+
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
@@ -11,7 +12,6 @@ using Microsoft.AspNetCore.Authentication.OAuth;
 namespace AuthService.Api.Extensions;
 
 public static class GithubAuthExtensions {
-
     public static IServiceCollection AddGithubAuth( this IServiceCollection services, IConfiguration config ) {
 
         var section = config.GetSection(GithubSettings.SectionName);
@@ -99,5 +99,4 @@ public static class GithubAuthExtensions {
 
         return services;
     }
-
 }

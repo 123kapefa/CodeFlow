@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\..\shared\src\Contracts\Contracts.csproj" />
+        <ProjectReference Include="..\..\..\..\shared\src\Abstractions\Abstractions.csproj" />
+        <ProjectReference Include="..\..\..\..\shared\src\Messaging\Messaging.csproj" />
+        <ProjectReference Include="..\ReputationService.Domain\ReputationService.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

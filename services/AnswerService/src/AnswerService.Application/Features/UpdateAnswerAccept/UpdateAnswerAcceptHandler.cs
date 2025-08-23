@@ -3,6 +3,7 @@ using Abstractions.Commands;
 using AnswerService.Domain.Repositories;
 
 using Ardalis.Result;
+
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -20,6 +21,7 @@ public class UpdateAnswerAcceptHandler : ICommandHandler<UpdateAnswerAcceptComma
     }
 
     public async Task<Result> Handle (UpdateAnswerAcceptCommand command, CancellationToken cancellationToken) {
+
     var answers = await _answerRepository.GetByQuestionIdAsync (command.QuestionId, cancellationToken);
 
     if (!answers.Value.Any (answer => answer.Id == command.Id)) {

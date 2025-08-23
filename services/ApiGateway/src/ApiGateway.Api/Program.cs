@@ -1,14 +1,13 @@
 using ApiGateway.Api.Extensions;
 using ApiGateway.Application.Services;
+
 using Contracts.Bootstrap;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Yarp.ReverseProxy.Transforms;
 
-
 EnvBootstrapper.Load();
-
 
 var builder = WebApplication.CreateBuilder (args);
 
@@ -32,7 +31,6 @@ builder.Services.AddCors(options => {
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials()); // если шлёшь cookies/авторизацию
-
 });
 
 
@@ -42,7 +40,6 @@ app.UseRouting();
 
 // CorsMiddleware ������ ������ ����� UseRouting � UseAuth
 app.UseCors("ReactDev");
-
 
 // доверяем заголовкам от reverse-proxy (nginx)
 var fwd = new ForwardedHeadersOptions {
@@ -54,7 +51,6 @@ fwd.KnownProxies.Clear();
 
 app.UseForwardedHeaders(fwd);
 
-
 app.UseAuthentication();
 app.UseAuthorization();
 app.Use(async ( ctx, next ) => {
@@ -65,7 +61,5 @@ app.Use(async ( ctx, next ) => {
 // Применяем CORS к endpoint'у прокси (важно!)
 app.MapReverseProxy().RequireCors("ReactDev");
 app.MapControllers();
-
-
 
 app.Run();

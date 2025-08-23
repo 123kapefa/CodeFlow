@@ -6,7 +6,6 @@ services:
     restart: unless-stopped
     environment:
       RABBITMQ_DEFAULT_USER: guest
-
       RABBITMQ_DEFAULT_PASS: guest
     # В ПРОДЕ порты НЕ публикуем! (UI можно открыть временно по нужде)
     networks: [ clonenet ]
@@ -70,15 +69,16 @@ services:
         DOTNET_VERSION: 9.0-preview
     env_file:
       - .env.production
-
     environment:
       ASPNETCORE_URLS: http://+:5000
-      Services__Auth:     http://authservice:5000
-      Services__User:     http://userservice:5000
+      Services__Auth: http://authservice:5000
+      Services__User: http://userservice:5000
       Services__Question: http://questionservice:5000
-      Services__Answer:   http://answerservice:5000
-      Services__Comment:  http://commentservice:5000
-      Services__Tag:      http://tagservice:5000
+      Services__Answer: http://answerservice:5000
+      Services__Comment: http://commentservice:5000
+      Services__Tag: http://tagservice:5000
+      Services__Reputation: http://reputationservice:5000
+      Services__Vote: http://voteservice:5000
     depends_on:
       - authservice
       - userservice
@@ -86,6 +86,8 @@ services:
       - answerservice
       - commentservice
       - tagservice
+      - reputationservice
+      - voteservice
     expose:
       - "5000"                 # доступен ТОЛЬКО внутри сети
     restart: unless-stopped
@@ -112,7 +114,6 @@ services:
         DOTNET_VERSION: 9.0-preview
     env_file:
       - .env.production
-
     environment:
       ASPNETCORE_URLS: http://+:5000
       Rabbit__Host: rabbitmq
@@ -143,7 +144,6 @@ services:
         DOTNET_VERSION: 9.0-preview
     env_file:
       - .env.production
-
     environment:
       ASPNETCORE_URLS: http://+:5000
       ConnectionStrings__UserServiceDbContext: 'Host=user-db;Port=5432;Database=userdb;Username=user;Password=secret'
@@ -175,7 +175,6 @@ services:
         DOTNET_VERSION: 9.0-preview
     env_file:
       - .env.production
-
     environment:
       ASPNETCORE_URLS: http://+:5000
       ConnectionStrings__QuestionServiceDbContext: 'Host=question-db;Port=5432;Database=questiondb;Username=question;Password=secret'
@@ -240,7 +239,6 @@ services:
         DOTNET_VERSION: 9.0-preview
     env_file:
       - .env.production
-
     environment:
       ASPNETCORE_URLS: http://+:5000
       ConnectionStrings__CommentServiceDbContext: 'Host=comment-db;Port=5432;Database=commentdb;Username=comment;Password=secret'
@@ -272,7 +270,6 @@ services:
         DOTNET_VERSION: 9.0-preview
     env_file:
       - .env.production
-
     environment:
       ASPNETCORE_URLS: http://+:5000
       ConnectionStrings__TagServiceDbContext: 'Host=tag-db;Port=5432;Database=tagdb;Username=tag;Password=secret'
@@ -282,8 +279,74 @@ services:
     depends_on: [ rabbitmq, tag-db ]
     restart: unless-stopped
     networks: [ clonenet ]
+    
+  # ────────── ReputationService + БД ──────────
+  reputation-db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: reputationdb
+      POSTGRES_USER: reputation
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - reputation-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
 
-# ────────── тома ──────────
+  reputationservice:
+    build:
+      context: .
+      dockerfile: services/ReputationService/docker/Dockerfile
+      args:
+        PROJECT_NAME: ReputationService
+        DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env.production
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__ReputationServiceDbContext: 'Host=reputation-db;Port=5432;Database=reputationdb;Username=reputation;Password=secret'
+      Rabbit__Host: rabbitmq
+      Rabbit__User: guest
+      Rabbit__Pass: guest
+    depends_on:
+      - rabbitmq
+      - reputation-db
+    networks: [ clonenet ]
+    
+  # ────────── VoteService + БД ──────────
+  vote-db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: votedb
+      POSTGRES_USER: vote
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - vote-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  voteservice:
+    build:
+      context: .
+      dockerfile: services/VoteService/docker/Dockerfile
+      args:
+        PROJECT_NAME: VoteService
+        DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env.production
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__VoteServiceDbContext: 'Host=vote-db;Port=5432;Database=votedb;Username=vote;Password=secret'
+      Rabbit__Host: rabbitmq
+      Rabbit__User: guest
+      Rabbit__Pass: guest
+    depends_on:
+      - rabbitmq
+      - vote-db
+    #    ports:
+    #      - "5008:5000"
+    networks: [ clonenet ]
+
+# ────────── тома для персистентных БД ──────────
 volumes:
   auth-db-data:
   user-db-data:
@@ -291,6 +354,10 @@ volumes:
   answer-db-data:
   comment-db-data:
   tag-db-data:
+  reputation-db-data:
+  vote-db-data:
+
+# ────────── общая bridge-сеть ──────────
   redis-data:
   letsencrypt:
   certbot-www:

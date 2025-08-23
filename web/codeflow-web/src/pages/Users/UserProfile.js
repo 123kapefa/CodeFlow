@@ -161,7 +161,6 @@ export default function UserProfile() {
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState("");
 
-
     const canDelete = agree && confirmText.trim() === (userName ?? "");
 
     const doDelete = async () => {

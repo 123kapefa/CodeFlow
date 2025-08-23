@@ -5,7 +5,6 @@ import { RefreshToken } from "../../../features/RefreshToken/RefreshToken";
 
 import { API_BASE } from "../../../config";
 
-
 export default function EmailChangeForm({ userId }) {
   const [oldEmail, setOldEmail] = useState("");
   const [newEmail, setNewEmail] = useState("");

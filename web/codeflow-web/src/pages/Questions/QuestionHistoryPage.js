@@ -11,8 +11,6 @@ import { API_BASE } from "../../config";
 dayjs.extend(relativeTime);
 
 
-
-
 export default function QuestionHistoryPage() {
   const { id } = useParams(); // questionId
   const navigate = useNavigate();

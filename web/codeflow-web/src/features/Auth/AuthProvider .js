@@ -343,7 +343,6 @@ export const AuthProvider = ({ children }) => {
     } finally {
       Cookies.remove("jwt", { path: "/" });
       // refresh удалит сервер Set-Cookie с Max-Age=0
-
       setUser(null);
     }
   };

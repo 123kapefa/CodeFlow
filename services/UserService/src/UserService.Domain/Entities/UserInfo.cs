@@ -30,5 +30,5 @@ public class UserInfo {
     public static UserInfo Create( Guid userId, string username ) {
         return new UserInfo(userId, username);    
     }
-   
+
 }

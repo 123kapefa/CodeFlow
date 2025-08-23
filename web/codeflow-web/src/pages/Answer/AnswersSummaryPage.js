@@ -6,7 +6,6 @@ import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 
 import { API_BASE } from "../../config";
 
-
 export default function AnswersSummaryPage({ userId }) {
      const authFetch = useAuthFetch(); 
   const [loading, setLoading] = useState(true);

@@ -37,7 +37,6 @@ function TagCard({
     setEditName(tag.name);
     setEditDesc(tag.description ?? "");
   }, [isWatchedFromProps, tag.id, tag.name, tag.description]);
-
   const fetchIsWatched = async () => {
     if (!user) {
       setIsWatched(false);

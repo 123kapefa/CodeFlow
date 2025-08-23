@@ -30,7 +30,6 @@ export default function Login() {
 
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
-
       <Row>
         <Col>
           <div className="text-center mb-4">
@@ -62,7 +61,6 @@ export default function Login() {
               <span className="px-2">OR</span>
               <hr />
             </div>
-
 
             <Form onSubmit={handleSubmit}>
               {error && <div className="alert alert-danger">{error}</div>}
@@ -109,4 +107,3 @@ export default function Login() {
     </Container>
   );
 }
-
