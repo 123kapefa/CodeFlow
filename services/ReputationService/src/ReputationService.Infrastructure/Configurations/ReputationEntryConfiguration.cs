@@ -11,19 +11,25 @@ public class ReputationEntryConfiguration : IEntityTypeConfiguration<ReputationE
     b.ToTable ("reputation_entries");
     b.HasKey (x => x.Id);
 
-    b.Property (x => x.SourceType).HasConversion<string> ().HasMaxLength (16).IsRequired ();
-
-    b.Property (x => x.ReasonCode).HasConversion<string> ().HasMaxLength (32).IsRequired ();
-
-    b.Property (x => x.ReasonDetails).HasMaxLength (256);
-
-    b.Property (x => x.Delta).IsRequired ();
+    b.Property(x => x.UserId).HasColumnName("user_id").IsRequired();
     
-    b.Property (x => x.OccurredAt).IsRequired ();
+    b.Property (x => x.ParentId).HasColumnName("parent_id").IsRequired ();
+    
+    b.Property(x => x.SourceId).HasColumnName("source_id").IsRequired();
+    
+    b.Property (x => x.SourceType).HasColumnName ("source_type").HasConversion<string> ().HasMaxLength (16).IsRequired ();
 
-    b.Property (x => x.SourceEventId).IsRequired ();
+    b.Property (x => x.ReasonCode).HasColumnName ("reason_code").HasConversion<string> ().HasMaxLength (32).IsRequired ();
 
-    b.Property (x => x.SourceService).HasMaxLength (64).IsRequired ();
+    b.Property (x => x.ReasonDetails).HasColumnName ("reason_details").HasMaxLength (256);
+
+    b.Property (x => x.Delta).HasColumnName ("delta").IsRequired ();
+    
+    b.Property (x => x.OccurredAt).HasColumnName ("occurred_at").IsRequired ();
+
+    b.Property (x => x.SourceEventId).HasColumnName ("source_event_id").IsRequired ();
+
+    b.Property (x => x.SourceService).HasColumnName ("source_service").HasMaxLength (64).IsRequired ();
     
     b.HasIndex (x => x.UserId);
     b.HasIndex (x => new { x.UserId, x.OccurredAt });

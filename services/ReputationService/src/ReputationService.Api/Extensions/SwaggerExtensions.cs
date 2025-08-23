@@ -11,9 +11,9 @@ public static class SwaggerExtensions {
     builder.Services.AddOpenApi ();
     builder.Services.AddSwaggerGen (options => {
       options.SwaggerDoc ("v1", new OpenApiInfo {
-        Title = "AnswerService API",
+        Title = "ReputationService API",
         Version = "v1",
-        Description = "Swagger AnswerService"
+        Description = "Swagger ReputationService"
       });
 
       options.EnableAnnotations();
@@ -26,7 +26,7 @@ public static class SwaggerExtensions {
     
     app.UseSwagger ();
     app.UseSwaggerUI (options => {
-      options.SwaggerEndpoint ("/swagger/v1/swagger.json", "AnswerService API v1");
+      options.SwaggerEndpoint ("/swagger/v1/swagger.json", "ReputationService API v1");
     });
 
     return app;

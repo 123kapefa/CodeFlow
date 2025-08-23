@@ -22,24 +22,32 @@ public interface IReputationRepository {
 
   Task<Result> DeleteEntryAsync (Guid id, CancellationToken ct);
   Task<Result> DeleteEntriesAsync (Guid userId, CancellationToken ct);
-
-  // Task<Result<ReputationSummary>> SetSummaryAsync (Guid userId, CancellationToken ct);
-  // Task<Result<IReadOnlyList<ReputationSummary>>> SetSummaryAsync (IReadOnlyCollection<Guid> userIds, CancellationToken ct);
   
   Task SaveAsync (CancellationToken ct);
 
   Task<IReadOnlyList<UserReputationChanged>> ApplyVoteAsync(
-    Guid eventId, string sourceService, string? correlationId,
-    Guid entityId, ReputationSourceType st,
-    Guid ownerUserId, int ownerNewAmount, ReasonCode ownerReason,
+    Guid sourceEventId,
+    Guid parentId,
+    Guid sourceId, 
+    Guid ownerUserId, 
+    string sourceService,
+    ReputationSourceType sourceType,
+    int delta, 
+    ReasonCode ownerReason,
     DateTime occurredAt, int version, CancellationToken ct);
   
-  Task<IReadOnlyList<UserReputationChanged>> ApplyAcceptedAnswerAsync(
-    Guid eventId, string sourceService, string? correlationId,
-    Guid questionId,
-    Guid? oldOwnerUserId, int oldOwnerNewAmount,
-    Guid? newOwnerUserId, int newOwnerNewAmount,
-    DateTime occurredAt, int version, CancellationToken ct);
+  Task<IReadOnlyList<UserReputationChanged>> ApplyAcceptedAnswerAsync (
+    Guid eventId,
+    Guid parentId,
+    string sourceService,
+    Guid? oldOwnerUserId,
+    int oldDelta,
+    Guid newAnswerId,
+    Guid newOwnerUserId,
+    int newDelta,
+    ReasonCode reason,
+    DateTime occurredAt,
+    CancellationToken ct);
 
   Task<ReputationSummary?> GetSummaryAsync(Guid userId, CancellationToken ct);
   Task<IReadOnlyList<ReputationEffect>> GetEffectsAsync(Guid userId, CancellationToken ct);

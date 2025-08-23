@@ -1,6 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Text.Json;
+
+using Auth.Jwt;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -16,8 +19,15 @@ public static class AuthorizationExtensions {
         IConfiguration config ) {
 
         var settings = config
-           .GetSection("JwtSettings")
-           .Get<JwtSettings>() ?? new JwtSettings();
+           .GetSection("JwtOptions")
+           .Get<JwtOptions>() ?? new JwtOptions();
+        
+        settings.Secret = Environment.GetEnvironmentVariable("JWTSETTINGS__SECRET") ?? settings.Secret;
+        settings.Issuer = Environment.GetEnvironmentVariable("JWTSETTINGS__ISSUER") ?? settings.Issuer;
+        settings.Audience = Environment.GetEnvironmentVariable("JWTSETTINGS__AUDIENCE") ?? settings.Audience;
+        settings.ExpiryMinutes = int.Parse(Environment.GetEnvironmentVariable("JWTSETTINGS__EXPIRESINMINUTES")!);
+        
+        Console.WriteLine(JsonSerializer.Serialize(settings));
         
         JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
@@ -45,7 +55,7 @@ public static class AuthorizationExtensions {
           });
 
         services.AddAuthorization();
-        services.Configure<JwtSettings>(config.GetSection("JwtSettings"));
+        services.Configure<JwtOptions>(config.GetSection("JwtSettings"));
         return services;
     }
 
@@ -56,9 +66,9 @@ public static class AuthorizationExtensions {
     }
 }
 
-public sealed class JwtSettings {
-    public string Secret { get; set; } = default!;
-    public string Issuer { get; set; } = "";
-    public string Audience { get; set; } = "";
-    public int ExpiresInMinutes { get; set; } = 60;
-}
+// public sealed class JwtSettings {
+//     public string Secret { get; set; } = default!;
+//     public string Issuer { get; set; } = "";
+//     public string Audience { get; set; } = "";
+//     public int? ExpiresInMinutes { get; set; }
+// }

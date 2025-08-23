@@ -11,17 +11,18 @@ public class ReputationEffectConfiguration : IEntityTypeConfiguration<Reputation
     b.ToTable ("reputation_effects");
     b.HasKey (x => x.Id);
 
-    b.Property (x => x.SourceType).HasConversion<string> ().HasMaxLength (16).IsRequired ();
-    b.Property (x => x.EffectKind).HasMaxLength (32).IsRequired ();
-
+    b.Property (x => x.SourceType).HasColumnName ("source_type").HasConversion<string> ().HasMaxLength (16).IsRequired ();
+    b.Property (x => x.EffectKind).HasColumnName ("effect_kind").HasMaxLength (32).IsRequired ();
+    b.Property(x => x.UserId).HasColumnName("user_id").IsRequired();
+    b.Property(x => x.SourceId).HasColumnName("source_id").IsRequired();
+    b.Property (x => x.Amount).HasColumnName("amount").IsRequired ();
+    b.Property (x => x.ParentId).HasColumnName("parent_id").IsRequired ();
+    b.Property (x => x.LastVersion).HasColumnName("last_version").IsRequired ();
+    b.Property (x => x.LastEventId).HasColumnName("last_event_id").IsRequired ();
+    b.Property (x => x.UpdatedAt).HasColumnName("updated_at").IsRequired ();
+    b.Property (x => x.SourceService).HasColumnName("source_service").HasMaxLength (64).IsRequired ();
+    
     b.HasIndex (x => new { x.UserId, x.SourceId, x.SourceType, x.EffectKind }).IsUnique ();
-
-    b.Property (x => x.Amount).IsRequired ();
-    b.Property (x => x.LastVersion).IsRequired ();
-    b.Property (x => x.LastEventId).IsRequired ();
-    b.Property (x => x.UpdatedAt).IsRequired ();
-    b.Property (x => x.SourceService).HasMaxLength (64).IsRequired ();
-    b.Property (x => x.CorrelationId).HasMaxLength (64);
   }
 
 }

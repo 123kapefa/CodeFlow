@@ -1,3 +1,3 @@
 namespace Contracts.Requests.QuestionService;
 
-public record UpdateQuestionAcceptRequest (Guid AcceptAnswerId, Guid UserAnswerId);
+public record UpdateQuestionAcceptRequest (Guid? OldAcceptedAnswerId, Guid AcceptAnswerId, Guid UserAnswerId);

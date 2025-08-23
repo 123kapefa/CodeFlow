@@ -28,24 +28,25 @@ public class AcceptedAnswerChangedHandler : ICommandHandler<AcceptedAnswerChange
   }
 
   public async Task<Result> Handle (AcceptedAnswerChangedCommand command, CancellationToken cancellationToken) {
-    var (oldAmount, newAmount) = _policy.FromAcceptedAnswer();
+    var (oldDelta, newDelta, reason) = _policy.FromAcceptedAnswerChange();
 
     var changes = await _repository.ApplyAcceptedAnswerAsync(
-      command.SourceEventId, 
-      command.SourceService, 
-      command.CorrelationId,
-      command.QuestionId,
-      command.OldAnswerOwnerUserId, 
-      oldAmount,
-      command.NewAnswerOwnerUserId, 
-      newAmount,
-      command.OccurredAt, 
-      command.Version, 
+      command.SourceEventId,
+      command.ParentId,
+      command.SourceService,
+      command.OldAnswerOwnerUserId,
+      oldDelta,
+      command.NewAnswerId,
+      command.NewAnswerOwnerUserId,
+      newDelta,
+      reason,
+      command.OccurredAt,
       cancellationToken);
 
     foreach (var change in changes)
       await _messageBroker.PublishAsync(change, cancellationToken);
-
+    await _repository.SaveAsync(cancellationToken);
+    
     return Result.Success ();
   }
 

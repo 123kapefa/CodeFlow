@@ -16,15 +16,16 @@ public sealed class AcceptedAnswerChangedConsumer : IConsumer<AnswerAccepted>
   public Task Consume(ConsumeContext<AnswerAccepted> context)
   {
     var message = context.Message;
-    var command = new AcceptedAnswerChangedCommand(
+    var command = new AcceptedAnswerChangedCommand (
       SourceEventId: message.EventId, 
-      SourceService: "AnswerService", 
-      CorrelationId: message.CorrelationId, 
-      OccurredAt: message.OccurredAt,
-      QuestionId: message.QuestionId, 
+      ParentId: message.ParentId,
+      OldAnswerId: message.OldAnswerId,
       OldAnswerOwnerUserId: message.OldAnswerOwnerUserId, 
-      NewAnswerOwnerUserId: message.NewAnswerOwnerUserId, 
-      Version: message.Version);
+      NewAnswerId: message.NewAnswerId,
+      NewAnswerOwnerUserId: message.NewAnswerOwnerUserId,
+      SourceService: "AnswerService", 
+      Version: message.Version,
+      OccurredAt: message.OccurredAt);
     return _handler.Handle(command, context.CancellationToken);
   }
 }

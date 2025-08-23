@@ -152,7 +152,7 @@ public class QuestionController : ControllerBase {
     [FromRoute] Guid questionId,
     [FromBody] UpdateQuestionAcceptRequest request,
     [FromServices] ICommandHandler<UpdateQuestionAcceptCommand> handler) =>
-    await handler.Handle (new UpdateQuestionAcceptCommand (questionId, request.AcceptAnswerId, request.UserAnswerId),
+    await handler.Handle (new UpdateQuestionAcceptCommand (questionId, request.OldAcceptedAnswerId, request.AcceptAnswerId, request.UserAnswerId),
       new CancellationToken (false));
 
   [HttpPut ("{questionId}/views")]
@@ -163,14 +163,15 @@ public class QuestionController : ControllerBase {
     [FromServices] ICommandHandler<UpdateQuestionViewCommand> handler) =>
     await handler.Handle (new UpdateQuestionViewCommand (questionId), new CancellationToken (false));
 
-  [HttpPut ("{questionId}/vote/{value}")]
-  [SwaggerOperation (Summary = "Обновить поле Upvotes или Downvotes.",
-    Description = "Обновляет данные в таблице Questions.", OperationId = "Question_Put")]
-  public async Task<Result> UpdateQuestionVoteAsync (
-    Guid questionId,
-    int value,
-    [FromServices] ICommandHandler<UpdateQuestionVoteCommand> handler) =>
-    await handler.Handle (new UpdateQuestionVoteCommand (questionId, value), new CancellationToken (false));
+  // Вроде как не нужен, поскольку запрос приходит из VoteService
+  // [HttpPut ("{questionId}/vote/{value}")]
+  // [SwaggerOperation (Summary = "Обновить поле Upvotes или Downvotes.",
+  //   Description = "Обновляет данные в таблице Questions.", OperationId = "Question_Put")]
+  // public async Task<Result> UpdateQuestionVoteAsync (
+  //   Guid questionId,
+  //   int value,
+  //   [FromServices] ICommandHandler<UpdateQuestionVoteCommand> handler) =>
+  //   await handler.Handle (new UpdateQuestionVoteCommand (questionId, value), new CancellationToken (false));
 
   [HttpPut ("{questionId}/answers")]
   [SwaggerOperation (Summary = "Обновить поле AnswersCount.", Description = "Обновляет данные в таблице Questions.",

@@ -17,8 +17,10 @@ public static class MassTransitExtensions {
                 o.UseBusOutbox();
             });
             
+            x.AddConsumer<QuestionVotedConsumer> ();
             x.AddConsumer<AnswerCreatedConsumer> ();
             x.AddConsumer<AnswerDeletedConsumer> ();
+            
 
             x.UsingRabbitMq(( ctx, cfg ) => {
                 cfg.Host("rabbitmq", "/", h => {
@@ -26,6 +28,14 @@ public static class MassTransitExtensions {
                     h.Password("guest");
                 });
 
+                cfg.ReceiveEndpoint("question-service.question-voted", e => {
+                    e.Bind<Contracts.Publishers.VoteService.QuestionVoted>();
+                
+                    e.ConfigureConsumer<QuestionVotedConsumer>(ctx);
+                    e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+                    e.PrefetchCount = 16;
+                });
+                
                 cfg.ReceiveEndpoint("question-service.answer-created", e => {
 
                     e.ConfigureConsumer<AnswerCreatedConsumer>(ctx);
@@ -37,6 +47,8 @@ public static class MassTransitExtensions {
                     e.ConfigureConsumer<AnswerDeletedConsumer>(ctx);
                     e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
                 });
+                
+                cfg.ConfigureEndpoints(ctx);
             });
         });
 

@@ -55,6 +55,8 @@ services:
       Services__Answer: http://answerservice:5000
       Services__Comment: http://commentservice:5000
       Services__Tag: http://tagservice:5000
+      Services__Reputation: http://reputationservice:5000
+      Services__Vote: http://voteservice:5000
     depends_on:
       - authservice
       - userservice
@@ -62,6 +64,8 @@ services:
       - answerservice
       - commentservice
       - tagservice
+      - reputationservice
+      - voteservice
     ports:
       - "5000:5000"
     networks: [ clonenet ]
@@ -298,6 +302,8 @@ services:
       args:
         PROJECT_NAME: ReputationService
         DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env
     environment:
       ASPNETCORE_URLS: http://+:5000
       ConnectionStrings__ReputationServiceDbContext: 'Host=reputation-db;Port=5432;Database=reputationdb;Username=reputation;Password=secret'
@@ -310,6 +316,42 @@ services:
     #    ports:
     #      - "5007:5000"
     networks: [ clonenet ]
+    
+  # ────────── VoteService + БД ──────────
+  vote-db:
+    image: postgres:16
+    ports:
+      - "5108:5432"
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: votedb
+      POSTGRES_USER: vote
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - vote-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  voteservice:
+    build:
+      context: .
+      dockerfile: services/VoteService/docker/Dockerfile
+      args:
+        PROJECT_NAME: VoteService
+        DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__VoteServiceDbContext: 'Host=vote-db;Port=5432;Database=votedb;Username=vote;Password=secret'
+      Rabbit__Host: rabbitmq
+      Rabbit__User: guest
+      Rabbit__Pass: guest
+    depends_on:
+      - rabbitmq
+      - vote-db
+    #    ports:
+    #      - "5008:5000"
+    networks: [ clonenet ]
 
 # ────────── тома для персистентных БД ──────────
 volumes:
@@ -320,6 +362,7 @@ volumes:
   comment-db-data:
   tag-db-data:
   reputation-db-data:
+  vote-db-data:
   redis-data:
 
 # ────────── общая bridge-сеть ──────────

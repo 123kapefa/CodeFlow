@@ -25,23 +25,24 @@ public class VoteChangedHandler : ICommandHandler<VoteChangedCommand> {
   }
 
   public async Task<Result> Handle (VoteChangedCommand command, CancellationToken cancellationToken) {
-    var (ownerAmount, st, ownerReason) = _policy.FromVote(command.EntityType, command.NewKind);
+    var (delta, sourceType, ownerReason) = _policy.FromVote(command.SourceType, command.OldKind, command.NewKind);
 
     var changes = await _repository.ApplyVoteAsync(
-      command.SourceEventId, 
+      command.SourceEventId,
+      command.ParentId,
+      command.SourceId, 
+      command.OwnerUserId, 
       command.SourceService, 
-      command.CorrelationId,
-      command.EntityId, st,
-      command.EntityOwnerUserId, 
-      ownerAmount, 
+      sourceType,
+      delta, 
       ownerReason,
-      occurredAt: command.OccurredAt, 
-      version: command.Version, 
+      command.OccurredAt,
+      command.Version,
       cancellationToken);
 
     foreach (var change in changes)
       await _messageBroker.PublishAsync(change, cancellationToken);
-    
+    await _repository.SaveAsync(cancellationToken);
     return Result.Success();
   }
 

@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 using Ardalis.Result;
 
 using Contracts.Common.Filters;
@@ -197,13 +199,13 @@ public sealed class ReputationRepository : IReputationRepository {
   public async Task SaveAsync (CancellationToken ct) => await _context.SaveChangesAsync (ct);
 
   public async Task<IReadOnlyList<UserReputationChanged>> ApplyVoteAsync (
-    Guid eventId,
-    string sourceService,
-    string? correlationId,
-    Guid entityId,
-    ReputationSourceType st,
+    Guid sourceEventId,
+    Guid parentId,
+    Guid sourceId,
     Guid ownerUserId,
-    int ownerNewAmount,
+    string sourceService,
+    ReputationSourceType sourceType,
+    int delta,
     ReasonCode ownerReason,
     DateTime occurredAt,
     int version,
@@ -212,17 +214,17 @@ public sealed class ReputationRepository : IReputationRepository {
     await using var tx = await _context.Database.BeginTransactionAsync (ct);
 
     // единственный эффект: владелец поста
-    var delta = await UpsertEffectDelta (ownerUserId, entityId, st, "VoteOwner", ownerNewAmount, version, eventId,
-      sourceService, correlationId, ct);
+    var deltaResult = await UpsertEffectDelta (ownerUserId, parentId, sourceId, sourceType, "VoteOwner", delta, version,
+      sourceEventId, sourceService, ct);
 
-    if (delta != 0) {
+    if (deltaResult != 0) {
       // (опц.) ledger
-      _context.ReputationEntries.Add (ReputationEntry.Create (ownerUserId, entityId, st, "VoteOwner", ownerReason, delta,
-        occurredAt, eventId, sourceService, correlationId));
+      _context.ReputationEntries.Add (ReputationEntry.Create (ownerUserId, parentId, sourceId, sourceType, "VoteOwner",
+        ownerReason, deltaResult, occurredAt, sourceEventId, sourceService));
       await _context.SaveChangesAsync (ct);
 
       // summary
-      changes.Add (await ApplyDeltaToSummary (ownerUserId, delta, ct));
+      changes.Add (await ApplyDeltaToSummary (ownerUserId, deltaResult, ct));
       await _context.SaveChangesAsync (ct);
     }
 
@@ -232,150 +234,132 @@ public sealed class ReputationRepository : IReputationRepository {
 
   public async Task<IReadOnlyList<UserReputationChanged>> ApplyAcceptedAnswerAsync (
     Guid eventId,
+    Guid parentId,
     string sourceService,
-    string? correlationId,
-    Guid questionId,
     Guid? oldOwnerUserId,
-    int oldOwnerNewAmount,
-    Guid? newOwnerUserId,
-    int newOwnerNewAmount,
+    int oldDelta,
+    Guid newAnswerId,
+    Guid newOwnerUserId,
+    int newDelta,
+    ReasonCode reason,
     DateTime occurredAt,
-    int version,
     CancellationToken ct) {
     var changes = new List<UserReputationChanged> (2);
     await using var tx = await _context.Database.BeginTransactionAsync (ct);
 
-    if (oldOwnerUserId is Guid oldId) {
-      var delta = await UpsertEffectDelta (
-        oldId, 
-        questionId, 
-        ReputationSourceType.Answer, 
-        "AcceptedAnswer",
-        oldOwnerNewAmount, 
-        version, 
-        eventId, 
-        sourceService, 
-        correlationId,
-        ct);
-      if (delta != 0) {
-        _context.ReputationEntries.Add (ReputationEntry.Create (oldId, questionId, ReputationSourceType.Answer,
-          "AcceptedAnswer", ReasonCode.AcceptedAnswer, delta, occurredAt, eventId, sourceService, correlationId));
-        await _context.SaveChangesAsync (ct);
-        changes.Add (await ApplyDeltaToSummary (oldId, delta, ct));
+    if (oldOwnerUserId is not null) {
+      var eff = await GetOrCreateEffect ((Guid)oldOwnerUserId, parentId, newAnswerId, ReputationSourceType.Answer, "AcceptedAnswer",
+        sourceService, ct);
+      if (oldDelta != 0) {
+        var applied = eff.Apply (oldDelta, eventId);
+        if (applied) {
+          _context.ReputationEntries.Add (ReputationEntry.Create ((Guid)oldOwnerUserId, parentId, newAnswerId, ReputationSourceType.Answer,
+            "AcceptedAnswer", reason, oldDelta, occurredAt, eventId, sourceService));
+          changes.Add (await ApplyDeltaToSummary ((Guid)oldOwnerUserId, oldDelta, ct));
+        }
       }
     }
 
     if (newOwnerUserId is Guid newId) {
-      var delta = await UpsertEffectDelta (
-        newId, 
-        questionId, 
-        ReputationSourceType.Answer, 
-        "AcceptedAnswer",
-        newOwnerNewAmount, 
-        version, 
-        eventId, 
-        sourceService, 
-        correlationId, 
-        ct);
-      if (delta != 0) {
-        _context.ReputationEntries.Add (ReputationEntry.Create (
-          newId, 
-          questionId, 
-          ReputationSourceType.Answer,
-          "AcceptedAnswer", 
-          ReasonCode.AcceptedAnswer, 
-          delta, 
-          occurredAt, 
-          eventId, 
-          sourceService, 
-          correlationId));
-        await _context.SaveChangesAsync (ct);
-        changes.Add (await ApplyDeltaToSummary (newId, delta, ct));
+      var eff = await GetOrCreateEffect (newId, parentId, newAnswerId, ReputationSourceType.Answer, "AcceptedAnswer",
+        sourceService, ct);
+      if (newDelta != 0) {
+        var applied = eff.Apply (newDelta, eventId);
+        if (applied) {
+          _context.ReputationEntries.Add (ReputationEntry.Create (newId, parentId, newAnswerId, ReputationSourceType.Answer,
+            "AcceptedAnswer", reason, newDelta, occurredAt, eventId, sourceService));
+          changes.Add (await ApplyDeltaToSummary (newId, newDelta, ct));
+        }
       }
     }
 
     await _context.SaveChangesAsync (ct);
     await tx.CommitAsync (ct);
-
     return changes.Where (c => c.NewReputation != 0).ToList ();
   }
 
   public Task<ReputationSummary?> GetSummaryAsync (Guid userId, CancellationToken ct) =>
-    _context.ReputationSummaries
-     .AsNoTracking ()
-     .FirstOrDefaultAsync (x => x.UserId == userId, ct);
+    _context.ReputationSummaries.AsNoTracking ().FirstOrDefaultAsync (x => x.UserId == userId, ct);
 
   public async Task<IReadOnlyList<ReputationEffect>> GetEffectsAsync (Guid userId, CancellationToken ct) {
-    var reputationEffects = await _context.ReputationEffects
-     .AsNoTracking ()
-     .Where (x => x.UserId == userId && x.Amount != 0)
-     .OrderByDescending (x => x.UpdatedAt)
-     .ToListAsync (ct);
+    var reputationEffects = await _context.ReputationEffects.AsNoTracking ()
+     .Where (x => x.UserId == userId && x.Amount != 0).OrderByDescending (x => x.UpdatedAt).ToListAsync (ct);
     return reputationEffects;
   }
 
-  // ---- helpers ----
-
   private async Task<int> UpsertEffectDelta (
     Guid userId,
+    Guid parentId,
     Guid sourceId,
     ReputationSourceType st,
     string kind,
-    int newAmount,
+    int delta,
     int version,
     Guid eventId,
     string sourceService,
-    string? correlationId,
     CancellationToken ct) {
-    var eff = await _context.ReputationEffects
-     .FirstOrDefaultAsync (
-      x => 
-        x.UserId == userId && 
-        x.SourceId == sourceId && 
-        x.SourceType == st && 
-        x.EffectKind == kind, 
-      ct);
+    var eff = await _context.ReputationEffects.FirstOrDefaultAsync (
+      x => x.UserId == userId && x.SourceId == sourceId && x.SourceType == st && x.EffectKind == kind, ct);
+
+    Console.WriteLine ($"===== UpsertEffectDelta: {JsonSerializer.Serialize (eff)}");
+    Console.WriteLine ($"===== delta: {delta}");
+
+    //Console.WriteLine ($"===== Delta: {eff.Amount}");
 
     if (eff is null) {
-      if (newAmount == 0) return 0; // ничего не создаём
-      _context.ReputationEffects.Add (
-        ReputationEffect.Create (userId, sourceId, st, kind, newAmount, version, eventId,
-        sourceService, correlationId));
-      return newAmount; // old=0
+      if (delta == 0) return 0;
+      _context.ReputationEffects.Add (ReputationEffect.Create (userId, parentId, sourceId, st, kind, delta, version, eventId,
+        sourceService));
+      return delta;
     }
     else {
-      var (delta, applied) = eff.Apply (newAmount, version, eventId, correlationId);
+      var applied = eff.Apply (delta, eventId);
       if (applied) _context.ReputationEffects.Update (eff);
       return delta;
     }
   }
 
   private async Task<UserReputationChanged> ApplyDeltaToSummary (Guid userId, int delta, CancellationToken ct) {
-    var reputationSummary = await _context.ReputationSummaries
-     .FirstOrDefaultAsync (x => x.UserId == userId, ct);
+    var reputationSummary = await _context.ReputationSummaries.FirstOrDefaultAsync (x => x.UserId == userId, ct);
     if (reputationSummary is null) {
       reputationSummary = new ReputationSummary {
-        UserId = userId, 
-        Total = delta, 
-        Version = 0, 
-        UpdatedAt = DateTime.UtcNow
+        UserId = userId, Total = delta, Version = 0, UpdatedAt = DateTime.UtcNow
       };
       _context.ReputationSummaries.Add (reputationSummary);
-      return new (
-        userId,
-        reputationSummary.Total, 
-        reputationSummary.UpdatedAt, 
-        null);
+      return new (userId, reputationSummary.Total, reputationSummary.UpdatedAt);
     }
 
     var old = reputationSummary.Total;
     reputationSummary.Total += delta;
     reputationSummary.Version++;
     reputationSummary.UpdatedAt = DateTime.UtcNow;
-    return new (
-      UserId: userId, 
-      NewReputation: reputationSummary.Total,
-      OccurredAt: reputationSummary.UpdatedAt, null);
+    return new (UserId: userId, NewReputation: reputationSummary.Total, OccurredAt: reputationSummary.UpdatedAt);
+  }
+  
+  private async Task<ReputationEffect> GetOrCreateEffect(
+    Guid userId,
+    Guid parentId,
+    Guid sourceId,
+    ReputationSourceType sourceType,
+    string effectKind,
+    string sourceService,
+    CancellationToken ct)
+  {
+    var eff = await _context.ReputationEffects
+     .FirstOrDefaultAsync(x =>
+        x.UserId == userId &&
+        x.SourceId == sourceId &&
+        x.SourceType == sourceType &&
+        x.EffectKind == effectKind, ct);
+
+    if (eff is null)
+    {
+      eff = ReputationEffect.Create(userId, parentId, sourceId, sourceType, effectKind, 0, version: 0, Guid.Empty, sourceService);
+      _context.ReputationEffects.Add(eff);
+      await _context.SaveChangesAsync(ct);
+    }
+
+    return eff;
   }
 
 }
