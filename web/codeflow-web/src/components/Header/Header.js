@@ -21,7 +21,13 @@ function Header({ onBurgerClick }) {
         </button>
         <div className="logo">
           <Link to="/home">
-            <img src="/logo/logo-transparent.png" alt="logo" />
+            <picture>
+              <source
+                media="(max-width: 460px)"
+                srcSet="/logo/logo_short.png"
+              />
+              <img src="/logo/logo-transparent.png" alt="logo" />
+            </picture>
           </Link>
         </div>
 
@@ -32,7 +38,7 @@ function Header({ onBurgerClick }) {
 
         {/* Правая часть */}
         {loading ? null : user ? (
-          <div className="ms-auto d-flex align-items-center gap-2"> 
+          <div className="ms-auto d-flex align-items-center gap-2">
             {" "}
             {/* ← добавили ms-auto */}
             {/* Кнопка лупы — только на мобильных */}
@@ -80,7 +86,7 @@ function Header({ onBurgerClick }) {
             >
               <i className="bi bi-search" aria-hidden="true"></i>
             </button>
-            <Link to="/login" className="btn btn-outline-primary me-2">
+            <Link to="/login" className="btn btn-outline-primary me-0">
               Log in
             </Link>
             <Link to="/signup" className="btn btn-primary">

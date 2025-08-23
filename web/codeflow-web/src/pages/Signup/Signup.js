@@ -3,9 +3,6 @@ import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 import { Button, Form, Container, Row, Col, Card } from "react-bootstrap";
 
-import { redirectToProvider } from "../../features/Auth/redirectToProvider";
-
-
 import { API_BASE } from "../../config";
 
 function Signup() {
@@ -15,8 +12,32 @@ function Signup() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const validatePassword = (pwd) => {
+  const checks = [
+    { ok: /[A-Z]/.test(pwd), msg: "Нужна минимум одна заглавная латинская буква" },
+    { ok: /[a-z]/.test(pwd), msg: "Нужна минимум одна строчная латинская буква" },
+    { ok: /\d/.test(pwd),  msg: "Нужна минимум одна цифра" },
+    { ok: /[^A-Za-z0-9]/.test(pwd), msg: "Нужен минимум один спецсимвол (например, _ ! @ # $ ...)" },
+    { ok: pwd.length >= 6, msg: "Минимум 6 символов" }
+  ];
+  const firstFail = checks.find(c => !c.ok);
+  return firstFail ? firstFail.msg : null;
+};
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Clear previous error
+    setError("");
+
+    // Optional: trim whitespace from password
+    const pwd = password.trim();
+
+    const validationError = validatePassword(pwd);
+    if (validationError) {
+      setError(validationError);
+      return; // stop submit if invalid
+    }
 
     try {
 
@@ -27,20 +48,21 @@ function Signup() {
       });
 
       if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
+        const err = await response.json();
+        console.log(err);
+        console.log(response);
         throw new Error(err.detail || "Ошибка регистрации");
       }
 
+      // Если всё ок — переходим на главную
       toast.success("Регистрация успешна.", {
-        onClose: () => navigate("/"),
+        onClose: () => navigate("/login"), // дождаться анимации
         autoClose: 1000,
       });
     } catch (err) {
-      setError(err.message || "Ошибка");
+      setError(err.message);
     }
   };
-
-
 
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
@@ -51,27 +73,16 @@ function Signup() {
             <h3 className="mt-2">Join CodeFlow</h3>
             <p>
               By clicking "Sign up", you agree to our{" "}
-              <a href="#">terms of service</a> and{" "}
-              <a href="#">privacy policy</a>.
-
+              <a href="#">terms of service</a>
+              and <a href="#">privacy policy</a>.
             </p>
           </div>
 
           <Card className="shadow-sm p-4">
-            <Button
-              variant="light"
-              className="mb-2 w-100 border"
-              onClick={() => redirectToProvider("Google")}
-            >
+            <Button variant="light" className="mb-2 w-100 border">
               <i className="bi bi-google"></i> Sign up with Google
             </Button>
-
-            <Button
-              variant="dark"
-              className="mb-2 w-100"
-              onClick={() => redirectToProvider("GitHub")}
-            >
-
+            <Button variant="dark" className="mb-2 w-100">
               <i className="bi bi-github"></i> Sign up with GitHub
             </Button>
 
@@ -107,11 +118,11 @@ function Signup() {
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                   type="password"
-                  pattern="^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{6,}$"
-
-                  title="Минимум 6 символов, включая строчную и прописную латинские буквы, цифру и специальный символ."
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (error) setError(""); // clear message while typing
+                  }}
                   placeholder="6+ characters (at least 1 letter & 1 number)"
                   required
                 />
