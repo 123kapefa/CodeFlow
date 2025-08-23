@@ -26,7 +26,7 @@ function formatAsked(q) {
     } catch (_) {
       /* no-op */
     }
-  }
+  } 
   return q.answeredAgo ?? "";
 }
 

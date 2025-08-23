@@ -6,7 +6,6 @@ using QuestionService.Domain.Entities;
 using QuestionService.Domain.Repositories;
 using System.Text.Json;
 
-
 namespace QuestionService.Application.Features.GetQuestionsByTags;
 
 public class GetQuestionsByTagsHandler : ICommandHandler<IEnumerable<QuestionShortDTO>, GetQuestionsByTagsCommand> {

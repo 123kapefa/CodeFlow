@@ -19,7 +19,6 @@ function Header({ onBurgerClick }) {
         >
           <i className="bi bi-list" aria-hidden="true"></i>
         </button>
-
         <div className="logo">
           <Link to="/home">
             <img src="/logo/logo-transparent.png" alt="logo" />

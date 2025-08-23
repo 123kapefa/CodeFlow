@@ -12,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 
 EnvBootstrapper.Load();
 
-
 var builder = WebApplication.CreateBuilder (args);
 
 builder.AddBase ();

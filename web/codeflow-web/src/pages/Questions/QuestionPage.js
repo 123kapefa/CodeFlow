@@ -18,7 +18,6 @@ import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 import AuthorCard from "../../components/AuthorCard/AuthorCard";
 import "./QuestionPage.css";
 
-
 import { API_BASE } from "../../config";
 
 
@@ -107,7 +106,6 @@ export default function QuestionPage() {
 
   // кто залогинен
   const currentUserId = (user && (user.userId ?? user.id)) || null;
-
 
   // ── helpers ────────────────────────────────────────────────────────────────
   const normalizeResponse = (res) => {

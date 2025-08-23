@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 import { API_BASE } from "../../config";
 
-
 export function useUserSummary(userId) {
   const [data, setData]   = useState(null);
   const [loading, setLoading] = useState(true);

@@ -22,7 +22,7 @@ public class UpdateUserReputationHandler : ICommandHandler<UpdateUserReputationC
         if(!user.IsSuccess)
             return Result.Error(new ErrorList(user.Errors));
 
-        user.Value.Reputation += command.Reputation;
+        user.Value.UpdateReputation(command.NewReputation);
 
         Result updateResult = await _userInfoRepository
                                 .UpdateUserStatisticAsync(user.Value, cancellationToken);

@@ -44,7 +44,6 @@ const formats = [
 export default function CreateOrEditQuestion() {
   const navigate = useNavigate();
   const { id } = useParams(); // если есть — режим редактирования
-
   const isEdit = !!id;
 
   const { user, loading } = useAuth();
@@ -105,7 +104,6 @@ export default function CreateOrEditQuestion() {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-
           body: JSON.stringify({ questionId: id }),
         });
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -116,7 +114,6 @@ export default function CreateOrEditQuestion() {
           toast.error("Вы не можете редактировать этот вопрос.", {
             toastId: "not-author",
           });
-
           navigate(`/questions/${id}`);
           return;
         }
@@ -138,7 +135,6 @@ export default function CreateOrEditQuestion() {
             description: t.description ?? "",
           };
         });
-
         setSelectedTags(tagsFromServer);
       } catch (e) {
         console.error(e);
@@ -176,7 +172,6 @@ export default function CreateOrEditQuestion() {
         errors.push(
           `Tag "${tag.name}" is invalid. Only lowercase letters, numbers, "+", "-", "." allowed`
         );
-
       }
       if (tag.name.length > 64) {
         errors.push(`Tag "${tag.name}" is too long (max 64 characters)`);
@@ -312,7 +307,6 @@ export default function CreateOrEditQuestion() {
                 <Form.Text className="text-muted d-block mb-1 text-start">
                   Be specific and imagine you’re asking a question to another
                   person.
-
                 </Form.Text>
                 <Form.Control
                   type="text"
@@ -381,7 +375,6 @@ export default function CreateOrEditQuestion() {
                       onClick={() => {
                         if (selectedTags.find((t) => t.name === tag.name))
                           return;
-
                         if (selectedTags.length >= 5) return;
                         setSelectedTags([...selectedTags, tag]);
                         setTagInput("");

@@ -125,19 +125,17 @@ public class AnswersController : ControllerBase {
     , [FromServices] ICommandHandler<UpdateAnswerAcceptCommand> handler) =>
   await handler.Handle (new UpdateAnswerAcceptCommand(answerId, questionId), new CancellationToken (false));
 
- 
-
-    [HttpPut("{answerId}/vote/{value}")]
-    [SwaggerOperation(
-    Summary = "Обновить поле Upvotes или Downvotes.",
-    Description = "Обновляет данные в таблице Questions.",
-    OperationId = "Question_Put")]
-    public async Task<Result> UpdateAnswerVote( 
-        Guid answerId,
-        int value,
-        [FromServices] ICommandHandler<UpdateAnswerVoteCommand> handler ) =>
-        await handler.Handle(new UpdateAnswerVoteCommand(answerId, value), new CancellationToken(false));
-
+    // Вроде как не нужен, поскольку запрос приходит из VoteService
+    // [HttpPut("{answerId}/vote/{value}")]
+    // [SwaggerOperation(
+    // Summary = "Обновить поле Upvotes или Downvotes.",
+    // Description = "Обновляет данные в таблице Questions.",
+    // OperationId = "Question_Put")]
+    // public async Task<Result> UpdateAnswerVote( 
+    //     Guid answerId,
+    //     int value,
+    //     [FromServices] ICommandHandler<UpdateAnswerVoteCommand> handler ) =>
+    //     await handler.Handle(new UpdateAnswerVoteCommand(answerId, value), new CancellationToken(false));
 
     [HttpGet("{answerId}/history")]
     [SwaggerOperation(

@@ -4,9 +4,7 @@ using Contracts.Bootstrap;
 using Messaging.Extensions;
 using Microsoft.EntityFrameworkCore;
 
-
 EnvBootstrapper.Load();
-
 
 var builder = WebApplication.CreateBuilder(args);
 

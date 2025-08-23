@@ -4,11 +4,14 @@ using ApiGateway.Application.Clients;
 using ApiGateway.Application.Extensions;
 using ApiGateway.Application.Services;
 
+using Ardalis.Result;
+
 using Contracts.Common.Filters;
 using Contracts.DTOs.AnswerService;
 using Contracts.DTOs.CommentService;
 using Contracts.DTOs.QuestionService;
 using Contracts.DTOs.TagService;
+using Contracts.DTOs.UserService;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -274,6 +277,17 @@ public class AggregationController : ControllerBase {
           userId,
           $"{pageParams.ToQueryString()}&{sortParams.ToQueryString()}",
           ct);
+      
+
+        if (!questionIds.Any ()) {
+          return Ok (new {
+            questionsList =
+              new PagedResult<IEnumerable<QuestionShortDTO>> (
+                new PagedInfo ((int)pageParams.Page!, (int)pageParams.PageSize!, 0, 0), new List<QuestionShortDTO> ()),
+            tagsList = new List<TagDTO> (),
+            usersList = new List<UserForQuestionDto> ()
+          });
+        }
 
         var questionsList = await _questions.GetQuestionsByIdsAsync(
           questionIds, ct);

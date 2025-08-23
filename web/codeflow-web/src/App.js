@@ -75,6 +75,7 @@ function App() {
       <ToastContainer position="top-center" />
 
       <div className="container-xxl">
+
         <Header
           isAuthenticated={isAuthenticated}
           onBurgerClick={() => setSidebarOpen(true)}

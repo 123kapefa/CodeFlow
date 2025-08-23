@@ -8,7 +8,6 @@ import { useAuth } from "../../../features/Auth/AuthProvider ";
 
 import { API_BASE } from "../../../config";
 
-
 export default function EmailChangeConfirm() {
   const fetchAuth = useAuthFetch();
   const { logout } = useAuth();

@@ -1,3 +1,11 @@
 namespace Contracts.Publishers.AnswerService;
 
-public record AnswerAccepted (Guid QuestionId, Guid AnswerId, Guid UserAnswerId, int ReputationValue);
+public record AnswerAccepted (
+  Guid EventId,
+  Guid ParentId,
+  Guid? OldAnswerId,
+  Guid? OldAnswerOwnerUserId,
+  Guid NewAnswerId,
+  Guid NewAnswerOwnerUserId,
+  int Version,
+  DateTime OccurredAt);

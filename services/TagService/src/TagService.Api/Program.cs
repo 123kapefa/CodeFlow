@@ -5,9 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TagService.Api.Extensions;
 using TagService.Infrastructure.Data;
 
-
 EnvBootstrapper.Load();
-
 
 var builder = WebApplication.CreateBuilder(args);
 
