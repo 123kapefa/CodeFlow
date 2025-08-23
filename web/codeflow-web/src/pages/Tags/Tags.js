@@ -14,6 +14,7 @@ import TagCard from "../../components/TagCard/TagCard";
 import { jwtDecode } from "jwt-decode";
 import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 import { useAuth } from "../../features/Auth/AuthProvider ";
+import "./Tags.css"
 
 import { API_BASE } from "../../config";
 
@@ -30,7 +31,7 @@ function Tags() {
   const [watchedTags, setWatchedTags] = useState({}); // tagId -> true/false
 
   const navigate = useNavigate();
-  const token = Cookies.get("jwt"); 
+  const token = Cookies.get("jwt");
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -50,9 +51,9 @@ function Tags() {
         if (!response.ok) throw new Error("Ошибка загрузки тегов");
 
         const data = await response.json();
-      
+
         setTags(data.value);
-        setTotalPages(data.pagedInfo.totalPages);        
+        setTotalPages(data.pagedInfo.totalPages);
       } catch (error) {
         console.error(error);
       }
@@ -61,18 +62,13 @@ function Tags() {
     fetchTags();
   }, [page, search, orderBy]);
 
-  
-
   const handlePopoverShow = (tagId) => {
     setShowPopoverId(tagId);
- 
   };
 
   const handlePopoverHide = () => {
     setShowPopoverId(null);
   };
-
-  
 
   return (
     <Container className="my-4">
@@ -82,8 +78,8 @@ function Tags() {
         similar questions.
       </p>
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <Form className="me-3" style={{ maxWidth: "300px" }}>
+      <div className="tags-toolbar d-flex align-items-center gap-2 mb-4">
+        <Form className="me-2" style={{ maxWidth: "300px" }}>
           <Form.Control
             type="text"
             placeholder="Filter by tag name"
@@ -95,7 +91,7 @@ function Tags() {
           />
         </Form>
 
-        <ButtonGroup>
+        <ButtonGroup className="flex-shrink-0" style={{ whiteSpace: "nowrap" }}>
           <ToggleButton
             id="name"
             type="radio"

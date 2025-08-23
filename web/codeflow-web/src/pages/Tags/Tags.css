@@ -1,0 +1,25 @@
+/* По умолчанию (шире 460px): горизонтально */
+.tags-toolbar {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.tags-toolbar form { max-width: 300px; }
+.tags-toolbar .btn-group { white-space: nowrap; }
+
+/* Уже 460px: переносим кнопки под поиск и центрируем их */
+@media (max-width: 460px) {
+  .tags-toolbar {
+    flex-direction: column;   /* кнопки под поиск */
+    align-items: stretch;     /* поиск на всю ширину */
+  }
+  .tags-toolbar form {
+    max-width: none;
+    width: 100%;
+    margin-right: 0;
+  }
+  .tags-toolbar .btn-group {
+    align-self: center;       /* центрируем ряд кнопок */
+    white-space: nowrap;      /* кнопки в одну линию */
+  }
+}
