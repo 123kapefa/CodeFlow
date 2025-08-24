@@ -19,6 +19,9 @@ public static class GoogleAuthExtensions {
             options.CallbackPath = "/signin-google";
             options.SaveTokens = true;
 
+            options.CorrelationCookie.SameSite = SameSiteMode.None;
+            options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+
             // гарантируем нужные scope
             options.Scope.Clear();
             options.Scope.Add("openid");

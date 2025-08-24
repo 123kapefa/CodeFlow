@@ -29,6 +29,9 @@ public static class GithubAuthExtensions {
             options.UserInformationEndpoint = s.UserInformationEndpoint;
             options.SignInScheme = AuthSchemes.ExternalCookie;
 
+            options.CorrelationCookie.SameSite = SameSiteMode.None;
+            options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+
             options.Scope.Add("read:user");
             options.Scope.Add("user:email");
 

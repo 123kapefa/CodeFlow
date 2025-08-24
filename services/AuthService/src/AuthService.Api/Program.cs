@@ -29,10 +29,13 @@ builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(JwtSett
 
 // Внешняя cookie (временная, на период внешнего логина)
 builder.Services
-  .AddAuthentication(o => {
+  .AddAuthentication(o => {      
       o.DefaultScheme = AuthSchemes.ExternalCookie;
   })
   .AddCookie(AuthSchemes.ExternalCookie, o => {
+      o.Cookie.Name = "cf_ext";
+      o.Cookie.SameSite = SameSiteMode.None;
+      o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
       o.ExpireTimeSpan = TimeSpan.FromMinutes(10);
       o.SlidingExpiration = false;
   });

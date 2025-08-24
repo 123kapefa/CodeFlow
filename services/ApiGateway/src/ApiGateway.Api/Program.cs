@@ -43,9 +43,8 @@ app.UseCors("ReactDev");
 
 // доверяем заголовкам от reverse-proxy (nginx)
 var fwd = new ForwardedHeadersOptions {
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
 };
-// для локалки убираем ограничение «доверенных прокси»
 fwd.KnownNetworks.Clear();
 fwd.KnownProxies.Clear();
 
