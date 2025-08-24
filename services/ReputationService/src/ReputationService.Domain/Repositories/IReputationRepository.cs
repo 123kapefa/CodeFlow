@@ -40,6 +40,7 @@ public interface IReputationRepository {
     Guid eventId,
     Guid parentId,
     string sourceService,
+    Guid? oldAnswerId,
     Guid? oldOwnerUserId,
     int oldDelta,
     Guid newAnswerId,

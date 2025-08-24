@@ -3,7 +3,7 @@ using System.Text.Json;
 using Abstractions.Commands;
 
 using Ardalis.Result;
-
+using Ardalis.Result.AspNetCore;
 using Contracts.Publishers.VoteService;
 using Contracts.Requests.VoteService;
 using Contracts.Responses.VoteService;
@@ -18,18 +18,19 @@ namespace VoteService.Api.Controllers;
 
 [ApiController]
 [Route ("[controller]")]
+[TranslateResultToActionResult]
 public class VotesController : ControllerBase {
   
   /// <summary>
   /// Установить голос (лайк/дизлайк).
   /// </summary>
   [HttpPost("set")]
-  public async Task<IActionResult> SetVote(
+  public async Task<Result<VoteResponse>> SetVote(
     [FromBody] SetVoteRequest request,
     [FromServices] ICommandHandler<VoteResponse, SetVoteCommand> _handler) {
     
     if(User.Identity?.IsAuthenticated is null && User.Identity?.IsAuthenticated == false) {
-      return Unauthorized();
+      return Result<VoteResponse>.Unauthorized();
     }
     
     Guid authorUserId = Guid.Parse (User.FindFirst("sub")?.Value!);
@@ -44,6 +45,6 @@ public class VotesController : ControllerBase {
       );
     
     var result = await _handler.Handle(command, new CancellationToken(false));
-    return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Errors);
+    return result;
   }
 }

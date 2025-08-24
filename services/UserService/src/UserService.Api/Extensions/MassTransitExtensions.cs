@@ -1,3 +1,4 @@
+using Contracts.Publishers.ReputationService;
 using MassTransit;
 
 using UserService.Application.Consumers;
@@ -51,10 +52,12 @@ public static class MassTransitExtensions {
         });
 
         cfg.ReceiveEndpoint ("user-service.user-reputation-changed", e =>
-        {
-          e.ConfigureConsumer<UserReputationChangedConsumer> (ctx);
+        {           
+            e.ConfigureConsumer<UserReputationChangedConsumer> (ctx);
           e.UseMessageRetry (r => r.Interval (3, TimeSpan.FromSeconds (5)));
         });
+
+          cfg.UseRawJsonSerializer();
       });
     });
 

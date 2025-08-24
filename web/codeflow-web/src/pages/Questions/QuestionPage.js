@@ -20,9 +20,7 @@ import "./QuestionPage.css";
 
 import { API_BASE } from "../../config";
 
-
 dayjs.extend(relativeTime);
-
 
 const modules = {
   toolbar: [
@@ -125,15 +123,19 @@ export default function QuestionPage() {
     };
 
     // Ответы + авторы
-    const answers = (res.answers ?? []).map((a) => {
-      const au = usersMap[a.userId] ?? {};
-      return {
-        ...a,
-        authorName: au.username ?? "unknown",
-        authorReputation: au.reputation ?? 0,
-        authorAvatarUrl: au.avatarUrl ?? null,
-      };
-    });
+    const answers = (res.answers ?? [])
+      .map((a) => {
+        const au = usersMap[a.userId] ?? {};
+        return {
+          ...a,
+          authorName: au.username ?? "unknown",
+          authorReputation: au.reputation ?? 0,
+          authorAvatarUrl: au.avatarUrl ?? null,
+          isAccepted: a.isAccepted ?? res.question?.acceptedAnswerId === a.id,
+        };
+      })
+      // сортировка: новые сверху
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     // Комментарии к вопросу: в ответе сервера authorId
     const questionComments = (res.questionComments ?? []).map((c) => {
@@ -175,21 +177,28 @@ export default function QuestionPage() {
     };
   };
 
+  const sendVote = (payload) =>
+    fetchAuth(`${API_BASE}/votes/set`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
   // ЗАГРУЗКА ВОПРОСА
   const loadQuestion = useCallback(async () => {
     setLoading(true);
     try {
-      const r = await fetchAuth(
-        `${API_BASE}/aggregate/get-question`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({ questionId: id }),
-        }
-      );
+      const r = await fetchAuth(`${API_BASE}/aggregate/get-question`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ questionId: id }),
+      });
       if (!r.ok) throw new Error(`HTTP error ${r.status}`);
       const text = await r.text();
       if (!text) throw new Error("Empty response");
@@ -337,6 +346,72 @@ export default function QuestionPage() {
     }
   };
 
+  // Обработка ошибок голосования
+  const extractProblemMessage = (text) => {
+    try {
+      const json = JSON.parse(text);
+      if (json?.detail) {
+        // убираем "Next error(s) occurred:" если есть
+        let detail = json.detail
+          .replace(/^Next error\(s\) occurred:/i, "")
+          .trim();
+
+        // detail может быть: "* Сообщение1\n* Сообщение2"
+        return detail
+          .split("\n")
+          .map((l) => l.trim())
+          .filter(Boolean)
+          .map((l) => l.replace(/^\*+/, "").trim())
+          .join("\n");
+      }
+      if (json?.message) return json.message;
+      if (json?.title) return json.title;
+    } catch {
+      /* not JSON */
+    }
+    return text;
+  };
+
+  // единый обработчик ответа голосования
+  const handleVoteResponse = async (res, { rollback } = {}) => {
+    if (res.ok) return true;
+
+    // читаем тело ОДИН раз
+    const bodyText = await res.text();
+
+    // откатываем оптимистичное изменение (перезагрузка вопроса — простой и надёжный способ)
+    if (rollback) await rollback();
+
+    if (res.status === 401) {
+      toast.info("Войдите, чтобы голосовать");
+      navigate("/login");
+      return false;
+    }
+
+    if (res.status === 409 || res.status === 429) {
+      const msg = extractProblemMessage(bodyText); // ← тут вытащится "Слишком много попыток. Попробуйте позже."
+      const retryAfter = res.headers.get("Retry-After");
+      if (retryAfter) {
+        const sec = parseInt(retryAfter, 10);
+        const mins = Math.ceil(sec / 60);
+        toast.warn(
+          `${msg}${
+            Number.isFinite(mins) ? ` Повторите через ~${mins} мин.` : ""
+          }`
+        );
+      } else {
+        toast.warn(msg || "Конфликт голосования. Попробуйте позже.");
+      }
+      return false;
+    }
+
+    // прочее
+    toast.error(
+      extractProblemMessage(bodyText) || "Не удалось выполнить голосование"
+    );
+    return false;
+  };
+
   // ГОЛОСОВАНИЯ
   const voteQuestion = async (value) => {
     if (!user) {
@@ -345,6 +420,7 @@ export default function QuestionPage() {
     }
     if (votingQ) return;
 
+    // запрет голосовать за себя
     if (currentUserId && currentUserId === data.question.userId) {
       toast.warn("Запрещено голосовать за себя!");
       return;
@@ -362,19 +438,17 @@ export default function QuestionPage() {
         },
       }));
 
-      const res = await fetchAuth(
-        `${API_BASE}/questions/${data.question.id}/vote/${value}`,
-        {
-          method: "PUT",
-          headers: { Accept: "application/json" },
-        }
-      );
+      const payload = {
+        ParentId: data.question.id, // id вопроса
+        SourceId: data.question.id, // голосуем за сам вопрос
+        OwnerUserId: data.question.userId, // владелец источника
+        SourceType: "Question",
+        ValueKind: value === 1 ? "Up" : "Down",
+      };
 
-      if (!res.ok) {
-        await loadQuestion();
-        const errText = await res.text();
-        throw new Error(errText || `HTTP ${res.status}`);
-      }
+      const res = await sendVote(payload);
+      const ok = await handleVoteResponse(res, { rollback: loadQuestion });
+      if (!ok) return;
     } catch (e) {
       console.error("Question vote failed:", e);
       alert("Не удалось проголосовать за вопрос");
@@ -413,19 +487,17 @@ export default function QuestionPage() {
         ),
       }));
 
-      const res = await fetchAuth(
-        `${API_BASE}/answers/${answerId}/vote/${value}`,
-        {
-          method: "PUT",
-          headers: { Accept: "application/json" },
-        }
-      );
+      const payload = {
+        ParentId: data.question.id, // вопрос-владелец
+        SourceId: answerId, // источник голосования — ответ
+        OwnerUserId: a.userId, // владелец ответа
+        SourceType: "Answer",
+        ValueKind: value === 1 ? "Up" : "Down",
+      };
 
-      if (!res.ok) {
-        await loadQuestion();
-        const errText = await res.text();
-        throw new Error(errText || `HTTP ${res.status}`);
-      }
+      const res = await sendVote(payload);
+      const ok = await handleVoteResponse(res, { rollback: loadQuestion });
+      if (!ok) return;
     } catch (e) {
       console.error("Answer vote failed:", e);
       alert("Не удалось проголосовать за ответ");
@@ -450,7 +522,13 @@ export default function QuestionPage() {
     if (acceptingA[answerId]) return;
 
     try {
-      setAcceptingA((m) => ({ ...m, [answerId]: true }));
+      setAcceptingA((m) => ({ ...m, [answerId]: true }));    
+
+      const oldAnsweredUserId = data.answers.find(a => a.isAccepted === true)?.userId ?? null;
+      const userAnswerId = data.answers.find(a => a.id === answerId)?.userId ?? null;
+
+      console.log("oldAnsweredUserId  ->",oldAnsweredUserId)
+      console.log("answerId  ->",answerId)
 
       const res = await fetchAuth(
         `${API_BASE}/questions/${question.id}/answer-accept`,
@@ -461,8 +539,9 @@ export default function QuestionPage() {
             Accept: "application/json",
           },
           body: JSON.stringify({
+            OldAcceptedAnswerId: oldAnsweredUserId,
             AcceptAnswerId: answerId,
-            UserAnswerId: user.userId,
+            UserAnswerId: userAnswerId,
           }),
         }
       );

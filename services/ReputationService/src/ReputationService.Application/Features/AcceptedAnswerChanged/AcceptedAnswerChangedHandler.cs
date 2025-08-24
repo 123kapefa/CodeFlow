@@ -34,6 +34,7 @@ public class AcceptedAnswerChangedHandler : ICommandHandler<AcceptedAnswerChange
       command.SourceEventId,
       command.ParentId,
       command.SourceService,
+      command.OldAnswerId,
       command.OldAnswerOwnerUserId,
       oldDelta,
       command.NewAnswerId,
@@ -43,11 +44,12 @@ public class AcceptedAnswerChangedHandler : ICommandHandler<AcceptedAnswerChange
       command.OccurredAt,
       cancellationToken);
 
-    foreach (var change in changes)
-      await _messageBroker.PublishAsync(change, cancellationToken);
-    await _repository.SaveAsync(cancellationToken);
-    
-    return Result.Success ();
+        foreach(var change in changes)            
+            await _messageBroker.PublishAsync(change, cancellationToken);      
+
+        await _repository.SaveAsync(cancellationToken);
+
+        return Result.Success ();
   }
 
 }
