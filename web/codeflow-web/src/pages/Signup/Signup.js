@@ -3,6 +3,8 @@ import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 import { Button, Form, Container, Row, Col, Card } from "react-bootstrap";
 
+import { redirectToProvider } from "../../features/Auth/redirectToProvider";
+
 import { API_BASE } from "../../config";
 
 function Signup() {
@@ -65,7 +67,7 @@ function Signup() {
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center vh-100">
+    <Container className="d-flex justify-content-center align-items-center">
       <Row>
         <Col>
           <div className="text-center mb-4">
@@ -79,10 +81,20 @@ function Signup() {
           </div>
 
           <Card className="shadow-sm p-4">
-            <Button variant="light" className="mb-2 w-100 border">
+             <Button
+              variant="light"
+              className="mb-2 w-100 border p-0 py-2"
+              onClick={() => redirectToProvider("Google")}
+            >
               <i className="bi bi-google"></i> Sign up with Google
             </Button>
-            <Button variant="dark" className="mb-2 w-100">
+
+            <Button
+              variant="dark"
+              className="mb-2 w-100 p-0 py-2"
+              onClick={() => redirectToProvider("GitHub")}
+            >
+
               <i className="bi bi-github"></i> Sign up with GitHub
             </Button>
 

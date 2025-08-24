@@ -39,7 +39,7 @@ export default function Login() {
           <Card className="shadow-sm p-4">
             <Button
               variant="light"
-              className="mb-2 w-100 border"
+              className="mb-2 w-100 border p-0 py-2"
               disabled={!!redirecting}
               onClick={() => socialLogin("Google")}
             >
@@ -49,7 +49,7 @@ export default function Login() {
 
             <Button
               variant="dark"
-              className="mb-2 w-100"
+              className="mb-2 w-100 p-0 py-2"
               disabled={!!redirecting}
               onClick={() => socialLogin("GitHub")}
             >
