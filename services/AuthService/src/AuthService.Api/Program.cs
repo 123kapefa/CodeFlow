@@ -52,9 +52,11 @@ var app = builder.Build ();
 
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions {
-    ForwardedHeaders = ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto,
-    // если в docker
-    KnownNetworks = { },  // иначе X-Forwarded-* могут игнориться
+    ForwardedHeaders = ForwardedHeaders.XForwardedProto
+                     | ForwardedHeaders.XForwardedHost
+                     | ForwardedHeaders.XForwardedFor,
+    ForwardLimit = 2,        // nginx + yarp
+    KnownNetworks = { },     // доверять всем (в докере это удобно)
     KnownProxies = { }
 });
 
