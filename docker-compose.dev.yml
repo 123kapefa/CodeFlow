@@ -64,6 +64,8 @@ services:
       - answerservice
       - commentservice
       - tagservice
+      - reputationservice  
+      - voteservice    
     ports:
       - "5000:5000"
     networks: [ clonenet ]

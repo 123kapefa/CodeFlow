@@ -32,10 +32,10 @@ public class SetVoteHandler : ICommandHandler<VoteResponse, SetVoteCommand> {
       return Result.Conflict ("Вы не можете голосовать за свой собственный пост.");
 
     var policyCheck = await _policy.ValidateAsync(command.AuthorUserId, command.OwnerUserId, command.SourceId, command.SourceType, command.VoteKind, cancellationToken);
-    if (!policyCheck.IsSuccess)
-        return policyCheck;
-    
-    var voteResult = await _voteRepository.GetAsync (command.AuthorUserId, command.SourceType, command.SourceId,
+    if (policyCheck.IsConflict())
+            return Result<VoteResponse>.Conflict(policyCheck.Errors.ToArray());
+
+        var voteResult = await _voteRepository.GetAsync (command.AuthorUserId, command.SourceType, command.SourceId,
       cancellationToken);
     
     if (voteResult.IsNotFound ()) {

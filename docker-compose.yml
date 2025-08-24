@@ -342,8 +342,6 @@ services:
     depends_on:
       - rabbitmq
       - vote-db
-    #    ports:
-    #      - "5008:5000"
     networks: [ clonenet ]
 
 # ────────── тома для персистентных БД ──────────

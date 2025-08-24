@@ -236,6 +236,7 @@ public sealed class ReputationRepository : IReputationRepository {
     Guid eventId,
     Guid parentId,
     string sourceService,
+    Guid? oldAnswerId,  
     Guid? oldOwnerUserId,
     int oldDelta,
     Guid newAnswerId,
@@ -247,13 +248,13 @@ public sealed class ReputationRepository : IReputationRepository {
     var changes = new List<UserReputationChanged> (2);
     await using var tx = await _context.Database.BeginTransactionAsync (ct);
 
-    if (oldOwnerUserId is not null) {
-      var eff = await GetOrCreateEffect ((Guid)oldOwnerUserId, parentId, newAnswerId, ReputationSourceType.Answer, "AcceptedAnswer",
+    if (oldOwnerUserId is not null && oldAnswerId is not null) {
+      var eff = await GetOrCreateEffect ((Guid)oldOwnerUserId!, parentId, (Guid)oldAnswerId!, ReputationSourceType.Answer, "AcceptedAnswer",
         sourceService, ct);
       if (oldDelta != 0) {
         var applied = eff.Apply (oldDelta, eventId);
         if (applied) {
-          _context.ReputationEntries.Add (ReputationEntry.Create ((Guid)oldOwnerUserId, parentId, newAnswerId, ReputationSourceType.Answer,
+          _context.ReputationEntries.Add (ReputationEntry.Create ((Guid)oldOwnerUserId, parentId, (Guid)oldAnswerId, ReputationSourceType.Answer,
             "AcceptedAnswer", reason, oldDelta, occurredAt, eventId, sourceService));
           changes.Add (await ApplyDeltaToSummary ((Guid)oldOwnerUserId, oldDelta, ct));
         }
@@ -274,8 +275,9 @@ public sealed class ReputationRepository : IReputationRepository {
     }
 
     await _context.SaveChangesAsync (ct);
-    await tx.CommitAsync (ct);
-    return changes.Where (c => c.NewReputation != 0).ToList ();
+    await tx.CommitAsync (ct);      
+
+        return changes.ToList ();
   }
 
   public Task<ReputationSummary?> GetSummaryAsync (Guid userId, CancellationToken ct) =>
