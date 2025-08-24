@@ -34,7 +34,7 @@ builder.Services
   })
   .AddCookie(AuthSchemes.ExternalCookie, o => {
       o.Cookie.Name = "cf_ext";
-      o.Cookie.SameSite = SameSiteMode.None;
+      o.Cookie.SameSite = SameSiteMode.None;            // критично за HTTPS на другом домене
       o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
       o.ExpireTimeSpan = TimeSpan.FromMinutes(10);
       o.SlidingExpiration = false;

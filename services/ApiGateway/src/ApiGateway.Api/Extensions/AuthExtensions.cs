@@ -40,7 +40,7 @@ public static class AuthExtensions {
 
 
         builder.Services.AddAuthorization(options => {
-            options.AddPolicy("AllowAnonymous", p => p.RequireAssertion(_ => true));
+            options.FallbackPolicy = null;
             options.AddPolicy("AuthenticatedPolicy", p => p.RequireAuthenticatedUser());
             options.AddPolicy("AllowAnonymousPolicy", p => p.RequireAssertion(_ => true));
         });
