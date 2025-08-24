@@ -20,9 +20,7 @@ import "./QuestionPage.css";
 
 import { API_BASE } from "../../config";
 
-
 dayjs.extend(relativeTime);
-
 
 const modules = {
   toolbar: [
@@ -132,6 +130,7 @@ export default function QuestionPage() {
         authorName: au.username ?? "unknown",
         authorReputation: au.reputation ?? 0,
         authorAvatarUrl: au.avatarUrl ?? null,
+        isAccepted: a.isAccepted ?? res.question?.acceptedAnswerId === a.id,
       };
     });
 
@@ -175,21 +174,28 @@ export default function QuestionPage() {
     };
   };
 
+  const sendVote = (payload) =>
+    fetchAuth(`${API_BASE}/votes/set`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
   // ЗАГРУЗКА ВОПРОСА
   const loadQuestion = useCallback(async () => {
     setLoading(true);
     try {
-      const r = await fetchAuth(
-        `${API_BASE}/aggregate/get-question`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({ questionId: id }),
-        }
-      );
+      const r = await fetchAuth(`${API_BASE}/aggregate/get-question`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ questionId: id }),
+      });
       if (!r.ok) throw new Error(`HTTP error ${r.status}`);
       const text = await r.text();
       if (!text) throw new Error("Empty response");
@@ -345,6 +351,7 @@ export default function QuestionPage() {
     }
     if (votingQ) return;
 
+    // запрет голосовать за себя
     if (currentUserId && currentUserId === data.question.userId) {
       toast.warn("Запрещено голосовать за себя!");
       return;
@@ -362,13 +369,15 @@ export default function QuestionPage() {
         },
       }));
 
-      const res = await fetchAuth(
-        `${API_BASE}/questions/${data.question.id}/vote/${value}`,
-        {
-          method: "PUT",
-          headers: { Accept: "application/json" },
-        }
-      );
+      const payload = {
+        ParentId: data.question.id, // id вопроса
+        SourceId: data.question.id, // голосуем за сам вопрос
+        OwnerUserId: data.question.userId, // владелец источника
+        SourceType: "Question",
+        ValueKind: value === 1 ? "Up" : "Down",
+      };
+
+      const res = await sendVote(payload);
 
       if (!res.ok) {
         await loadQuestion();
@@ -413,13 +422,15 @@ export default function QuestionPage() {
         ),
       }));
 
-      const res = await fetchAuth(
-        `${API_BASE}/answers/${answerId}/vote/${value}`,
-        {
-          method: "PUT",
-          headers: { Accept: "application/json" },
-        }
-      );
+      const payload = {
+        ParentId: data.question.id, // вопрос-владелец
+        SourceId: answerId, // источник голосования — ответ
+        OwnerUserId: a.userId, // владелец ответа
+        SourceType: "Answer",
+        ValueKind: value === 1 ? "Up" : "Down",
+      };
+
+      const res = await sendVote(payload);
 
       if (!res.ok) {
         await loadQuestion();
@@ -452,6 +463,8 @@ export default function QuestionPage() {
     try {
       setAcceptingA((m) => ({ ...m, [answerId]: true }));
 
+      const oldAcceptedId = data?.question?.acceptedAnswerId ?? null;
+
       const res = await fetchAuth(
         `${API_BASE}/questions/${question.id}/answer-accept`,
         {
@@ -461,8 +474,9 @@ export default function QuestionPage() {
             Accept: "application/json",
           },
           body: JSON.stringify({
+            OldAcceptedAnswerId: oldAcceptedId,
             AcceptAnswerId: answerId,
-            UserAnswerId: user.userId,
+            UserAnswerId: user.userId ?? user.id,
           }),
         }
       );
