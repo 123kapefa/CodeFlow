@@ -48,7 +48,14 @@ var fwd = new ForwardedHeadersOptions {
 fwd.KnownNetworks.Clear();
 fwd.KnownProxies.Clear();
 
-app.UseForwardedHeaders(fwd);
+app.UseForwardedHeaders(new ForwardedHeadersOptions {
+    ForwardedHeaders = ForwardedHeaders.XForwardedProto
+                     | ForwardedHeaders.XForwardedHost
+                     | ForwardedHeaders.XForwardedFor,
+    ForwardLimit = 2,            // <-- критично: nginx + yarp
+    KnownNetworks = { },
+    KnownProxies = { }
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
