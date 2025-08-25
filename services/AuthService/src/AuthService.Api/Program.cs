@@ -51,54 +51,19 @@ builder.Services.AddScoped<IExternalTokenService, ExternalTokenService>();
 
 var app = builder.Build ();
 
-var fwd = new ForwardedHeadersOptions {
+app.UseForwardedHeaders(new ForwardedHeadersOptions {
     ForwardedHeaders = ForwardedHeaders.XForwardedProto
                      | ForwardedHeaders.XForwardedHost
                      | ForwardedHeaders.XForwardedFor,
-    ForwardLimit = 2, // для /signin-* цепочка: nginx -> authservice
-    RequireHeaderSymmetry = false
-};
-
-fwd.KnownNetworks.Clear();
-fwd.KnownProxies.Clear();
-
-
-app.UseForwardedHeaders(fwd);
+    ForwardLimit = 2,   
+});
 
 app.UseWhen(ctx => ctx.Request.Path.StartsWithSegments("/signin-"), branch => {
     branch.Use(( ctx, next ) => {
-        // Жёстко фиксируем то, что ждёт Google/GitHub
         ctx.Request.Scheme = "https";
-        if(!string.Equals(ctx.Request.Host.Host, "codeflow-project.ru", StringComparison.OrdinalIgnoreCase))
-            ctx.Request.Host = new HostString("codeflow-project.ru"); // без порта
-
+        ctx.Request.Host = new HostString("codeflow-project.ru"); // без порта
         return next();
     });
-});
-
-// 2) Явно нормализуем схему/хост/порт из X-Forwarded-* (если пришли)
-app.Use(( ctx, next ) => {
-    // Scheme
-    if(ctx.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto) &&
-        proto.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-             .Any(p => string.Equals(p, "https", StringComparison.OrdinalIgnoreCase))) {
-        ctx.Request.Scheme = "https";
-    }
-
-    // Host
-    if(ctx.Request.Headers.TryGetValue("X-Forwarded-Host", out var fwdHost)) {
-        var host = fwdHost.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)[0];
-        if(ctx.Request.Headers.TryGetValue("X-Forwarded-Port", out var fwdPort) &&
-            int.TryParse(fwdPort.ToString().Split(',')[0].Trim(), out var port) &&
-            port != 0 && port != 80 && port != 443) {
-            ctx.Request.Host = new HostString(host, port);
-        }
-        else {
-            ctx.Request.Host = new HostString(host); // порт по умолчанию для https не добавляем
-        }
-    }
-
-    return next();
 });
 
 app.Use(( ctx, next ) => {
