@@ -62,20 +62,20 @@ var fwd = new ForwardedHeadersOptions {
 //fwd.KnownNetworks.Clear();
 //fwd.KnownProxies.Clear();
 
+//fwd.KnownNetworks.Add(new Microsoft.AspNetCore.HttpOverrides.IPNetwork(IPAddress.Parse("172.18.0.0"), 16));
 fwd.KnownNetworks.Add(new Microsoft.AspNetCore.HttpOverrides.IPNetwork(IPAddress.Parse("172.18.0.0"), 16));
+fwd.KnownNetworks.Add(new Microsoft.AspNetCore.HttpOverrides.IPNetwork(IPAddress.Parse("::ffff:0:0"), 96));
 
 fwd.KnownProxies.Add(IPAddress.Parse("172.18.0.22"));
-
+fwd.KnownProxies.Add(IPAddress.Parse("::ffff:172.18.0.22"));
 
 app.UseForwardedHeaders(fwd);
 
-app.UseWhen(ctx => ctx.Request.Path.StartsWithSegments("/signin-"), branch => {
-    branch.Use(( ctx, next ) => {
-        // Жёстко фиксируем то, что ждёт Google/GitHub
-        ctx.Request.Scheme = "https";
-        if(!string.Equals(ctx.Request.Host.Host, "codeflow-project.ru", StringComparison.OrdinalIgnoreCase))
-            ctx.Request.Host = new HostString("codeflow-project.ru"); // без порта
 
+app.UseWhen(ctx => ctx.Request.Path.StartsWithSegments("/signin-"), branch => {
+    branch.Use((ctx, next) => {
+        ctx.Request.Scheme = "https";
+        ctx.Request.Host   = new HostString("codeflow-project.ru");
         return next();
     });
 });
