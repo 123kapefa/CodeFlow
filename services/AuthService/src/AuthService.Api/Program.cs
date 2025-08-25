@@ -8,6 +8,7 @@ using Contracts.Bootstrap;
 using Messaging.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 
 EnvBootstrapper.Load();
@@ -50,15 +51,25 @@ builder.Services.AddScoped<IExternalTokenService, ExternalTokenService>();
 
 var app = builder.Build ();
 
-
-app.UseForwardedHeaders(new ForwardedHeadersOptions {
+var fwd = new ForwardedHeadersOptions {
     ForwardedHeaders = ForwardedHeaders.XForwardedProto
                      | ForwardedHeaders.XForwardedHost
                      | ForwardedHeaders.XForwardedFor,
     ForwardLimit = 2,        // nginx + yarp
     KnownNetworks = { },     // доверять всем (в докере это удобно)
     KnownProxies = { }
-});
+};
+
+fwd.KnownNetworks.Add(
+    new Microsoft.AspNetCore.HttpOverrides.IPNetwork(IPAddress.Parse("172.18.0.0"), 16)
+);
+
+
+fwd.KnownProxies.Add(IPAddress.Parse("172.18.0.22"));
+fwd.KnownProxies.Add(IPAddress.Parse("::ffff:172.18.0.22"));
+
+app.UseForwardedHeaders(fwd);
+
 
 app.Use(( ctx, next ) => {
     if(ctx.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto)) {
