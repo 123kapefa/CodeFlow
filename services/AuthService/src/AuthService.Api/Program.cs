@@ -51,6 +51,16 @@ builder.Services.AddScoped<IExternalTokenService, ExternalTokenService>();
 
 var app = builder.Build ();
 
+
+app.Use(( ctx, next ) => {
+    if(ctx.Request.Path.StartsWithSegments("/signin-")) {
+        ctx.Request.Scheme = "https";
+        ctx.Request.Host = new HostString("codeflow-project.ru"); // без порта
+    }
+    return next();
+});
+
+
 var fwd = new ForwardedHeadersOptions {
     ForwardedHeaders = ForwardedHeaders.XForwardedProto
                      | ForwardedHeaders.XForwardedHost
@@ -72,21 +82,20 @@ fwd.KnownProxies.Add(IPAddress.Parse("::ffff:172.18.0.22"));
 app.UseForwardedHeaders(fwd);
 
 
-app.UseWhen(ctx => ctx.Request.Path.StartsWithSegments("/signin-"), branch => {
-    branch.Use((ctx, next) => {
-        ctx.Request.Scheme = "https";
-        ctx.Request.Host   = new HostString("codeflow-project.ru");
-        return next();
-    });
-});
+//app.UseWhen(ctx => ctx.Request.Path.StartsWithSegments("/signin-"), branch => {
+//    branch.Use((ctx, next) => {
+//        ctx.Request.Scheme = "https";
+//        ctx.Request.Host   = new HostString("codeflow-project.ru");
+//        return next();
+//    });
+//});
 
 
 app.Use(( ctx, next ) => {
     if(ctx.Request.Path.Equals("/signin-google", StringComparison.OrdinalIgnoreCase)) {
-        Console.WriteLine($"[CBK] scheme={ctx.Request.Scheme}, host={ctx.Request.Host}, xfp={ctx.Request.Headers["X-Forwarded-Proto"]}, xfh={ctx.Request.Headers["X-Forwarded-Host"]}, xfpn={ctx.Request.Headers["X-Forwarded-Port"]}");
+        Console.WriteLine($"[SIGNIN-GOOGLE] scheme={ctx.Request.Scheme}, host={ctx.Request.Host}");
     }
     return next();
-
 });
 
 
