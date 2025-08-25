@@ -62,15 +62,12 @@ var fwd = new ForwardedHeadersOptions {
 fwd.KnownNetworks.Clear();
 fwd.KnownProxies.Clear();
 
-//fwd.KnownNetworks.Add(
-//    new Microsoft.AspNetCore.HttpOverrides.IPNetwork(IPAddress.Parse("172.18.0.0"), 16)
-//);
 
-
-//fwd.KnownProxies.Add(IPAddress.Parse("172.18.0.22"));
-//fwd.KnownProxies.Add(IPAddress.Parse("::ffff:172.18.0.22"));
-
-app.UseForwardedHeaders(fwd);
+app.UseForwardedHeaders(new ForwardedHeadersOptions {
+    ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost,
+    KnownProxies = { IPAddress.Loopback, new IPAddress(new byte[] { 10, 0, 0, 1 }) },
+    ForwardedForHeaderName = "X-Forwarded-For" 
+});
 
 // 2) Явно нормализуем схему/хост/порт из X-Forwarded-* (если пришли)
 app.Use(( ctx, next ) => {
@@ -97,14 +94,14 @@ app.Use(( ctx, next ) => {
     return next();
 });
 
-//app.Use(( ctx, next ) => {
-//    if(ctx.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto) &&
-//        proto.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-//             .Any(p => string.Equals(p, "https", StringComparison.OrdinalIgnoreCase))) {
-//        ctx.Request.Scheme = "https";
-//    }
-//    return next();
-//});
+app.Use(( ctx, next ) => {
+    if(ctx.Request.Path.Equals("/signin-google", StringComparison.OrdinalIgnoreCase)) {
+        Console.WriteLine($"[CBK] scheme={ctx.Request.Scheme}, host={ctx.Request.Host}, xfp={ctx.Request.Headers["X-Forwarded-Proto"]}, xfh={ctx.Request.Headers["X-Forwarded-Host"]}, xfpn={ctx.Request.Headers["X-Forwarded-Port"]}");
+    }
+    return next();
+
+});
+
 
 app.UseCustomSwagger ();
 app.UseBase ();
