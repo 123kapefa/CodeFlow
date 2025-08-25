@@ -59,6 +59,10 @@ var fwd = new ForwardedHeadersOptions {
     RequireHeaderSymmetry = false
 };
 
+fwd.KnownNetworks.Clear();
+fwd.KnownProxies.Clear();
+
+
 app.UseForwardedHeaders(fwd);
 
 app.UseWhen(ctx => ctx.Request.Path.StartsWithSegments("/signin-"), branch => {
