@@ -64,6 +64,8 @@ var fwd = new ForwardedHeadersOptions {
 
 fwd.KnownNetworks.Add(new Microsoft.AspNetCore.HttpOverrides.IPNetwork(IPAddress.Parse("172.18.0.0"), 16));
 
+fwd.KnownProxies.Add(IPAddress.Parse("172.18.0.22"));
+
 
 app.UseForwardedHeaders(fwd);
 
