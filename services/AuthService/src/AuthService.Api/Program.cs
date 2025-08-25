@@ -63,11 +63,7 @@ fwd.KnownNetworks.Clear();
 fwd.KnownProxies.Clear();
 
 
-app.UseForwardedHeaders(new ForwardedHeadersOptions {
-    ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost,
-    KnownProxies = { IPAddress.Loopback, new IPAddress(new byte[] { 10, 0, 0, 1 }) },
-    ForwardedForHeaderName = "X-Forwarded-For" 
-});
+app.UseForwardedHeaders(fwd);
 
 app.UseWhen(ctx => ctx.Request.Path.StartsWithSegments("/signin-"), branch => {
     branch.Use(( ctx, next ) => {

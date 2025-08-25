@@ -79,7 +79,7 @@ function Tags() {
         similar questions.
       </p>
 
-      <div className="tags-toolbar d-flex align-items-center gap-2 mb-4">
+      <div className="justify-content-sm-between tags-toolbar d-flex align-items-center gap-2 mb-4">
         <Form className="me-2" style={{ maxWidth: "300px" }}>
           <Form.Control
             type="text"
