@@ -69,6 +69,17 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions {
     ForwardedForHeaderName = "X-Forwarded-For" 
 });
 
+app.UseWhen(ctx => ctx.Request.Path.StartsWithSegments("/signin-"), branch => {
+    branch.Use(( ctx, next ) => {
+        // Жёстко фиксируем то, что ждёт Google/GitHub
+        ctx.Request.Scheme = "https";
+        if(!string.Equals(ctx.Request.Host.Host, "codeflow-project.ru", StringComparison.OrdinalIgnoreCase))
+            ctx.Request.Host = new HostString("codeflow-project.ru"); // без порта
+
+        return next();
+    });
+});
+
 // 2) Явно нормализуем схему/хост/порт из X-Forwarded-* (если пришли)
 app.Use(( ctx, next ) => {
     // Scheme
