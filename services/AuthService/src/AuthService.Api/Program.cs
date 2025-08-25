@@ -59,22 +59,42 @@ var fwd = new ForwardedHeadersOptions {
     RequireHeaderSymmetry = false
 };
 
-fwd.KnownNetworks.Add(
-    new Microsoft.AspNetCore.HttpOverrides.IPNetwork(IPAddress.Parse("172.18.0.0"), 16)
-);
+fwd.KnownNetworks.Clear();
+fwd.KnownProxies.Clear();
+
+//fwd.KnownNetworks.Add(
+//    new Microsoft.AspNetCore.HttpOverrides.IPNetwork(IPAddress.Parse("172.18.0.0"), 16)
+//);
 
 
-fwd.KnownProxies.Add(IPAddress.Parse("172.18.0.22"));
-fwd.KnownProxies.Add(IPAddress.Parse("::ffff:172.18.0.22"));
+//fwd.KnownProxies.Add(IPAddress.Parse("172.18.0.22"));
+//fwd.KnownProxies.Add(IPAddress.Parse("::ffff:172.18.0.22"));
 
 app.UseForwardedHeaders(fwd);
 
-app.Use(async ( ctx, next ) => {
-    if(ctx.Request.Path.Equals("/signin-google", StringComparison.OrdinalIgnoreCase) ||
-        ctx.Request.Path.Equals("/signin-github", StringComparison.OrdinalIgnoreCase)) {
+// 2) Явно нормализуем схему/хост/порт из X-Forwarded-* (если пришли)
+app.Use(( ctx, next ) => {
+    // Scheme
+    if(ctx.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto) &&
+        proto.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+             .Any(p => string.Equals(p, "https", StringComparison.OrdinalIgnoreCase))) {
         ctx.Request.Scheme = "https";
     }
-    await next();
+
+    // Host
+    if(ctx.Request.Headers.TryGetValue("X-Forwarded-Host", out var fwdHost)) {
+        var host = fwdHost.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)[0];
+        if(ctx.Request.Headers.TryGetValue("X-Forwarded-Port", out var fwdPort) &&
+            int.TryParse(fwdPort.ToString().Split(',')[0].Trim(), out var port) &&
+            port != 0 && port != 80 && port != 443) {
+            ctx.Request.Host = new HostString(host, port);
+        }
+        else {
+            ctx.Request.Host = new HostString(host); // порт по умолчанию для https не добавляем
+        }
+    }
+
+    return next();
 });
 
 //app.Use(( ctx, next ) => {
