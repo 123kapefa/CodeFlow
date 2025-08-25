@@ -51,20 +51,31 @@ builder.Services.AddScoped<IExternalTokenService, ExternalTokenService>();
 
 var app = builder.Build ();
 
-app.UseForwardedHeaders(new ForwardedHeadersOptions {
+var fwd = new ForwardedHeadersOptions {
     ForwardedHeaders = ForwardedHeaders.XForwardedProto
                      | ForwardedHeaders.XForwardedHost
                      | ForwardedHeaders.XForwardedFor,
-    ForwardLimit = 2,   
-});
+    ForwardLimit = 2, // для /signin-* цепочка: nginx -> authservice
+    RequireHeaderSymmetry = false
+};
+
+fwd.KnownNetworks.Clear();
+fwd.KnownProxies.Clear();
+
+
+app.UseForwardedHeaders(fwd);
 
 app.UseWhen(ctx => ctx.Request.Path.StartsWithSegments("/signin-"), branch => {
     branch.Use(( ctx, next ) => {
+        // Жёстко фиксируем то, что ждёт Google/GitHub
         ctx.Request.Scheme = "https";
-        ctx.Request.Host = new HostString("codeflow-project.ru"); // без порта
+        if(!string.Equals(ctx.Request.Host.Host, "codeflow-project.ru", StringComparison.OrdinalIgnoreCase))
+            ctx.Request.Host = new HostString("codeflow-project.ru"); // без порта
+
         return next();
     });
 });
+
 
 app.Use(( ctx, next ) => {
     if(ctx.Request.Path.Equals("/signin-google", StringComparison.OrdinalIgnoreCase)) {
