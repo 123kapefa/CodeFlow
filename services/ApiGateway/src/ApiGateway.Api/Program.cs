@@ -41,6 +41,17 @@ app.UseRouting();
 // CorsMiddleware ������ ������ ����� UseRouting � UseAuth
 app.UseCors("ReactDev");
 
+
+
+app.Use(( ctx, next ) => {
+    if(ctx.Request.Path.StartsWithSegments("/signin-")) {
+        ctx.Request.Scheme = "https";
+        ctx.Request.Host = new HostString("codeflow-project.ru"); // без порта
+    }
+    return next();
+});
+
+
 // доверяем заголовкам от reverse-proxy (nginx)
 var fwd = new ForwardedHeadersOptions {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
@@ -59,6 +70,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions {
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.Use(async ( ctx, next ) => {
     Console.WriteLine($"GW IsAuth={ctx.User?.Identity?.IsAuthenticated}, sub={ctx.User?.FindFirst("sub")?.Value}");
     await next();
