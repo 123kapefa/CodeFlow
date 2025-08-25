@@ -60,6 +60,20 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions {
     KnownProxies = { }
 });
 
+app.Use(( ctx, next ) => {
+    if(ctx.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto)) {
+        // заголовок может быть "https" или "https, http"
+        var hasHttps = proto.ToString()
+                            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                            .Any(p => string.Equals(p, "https", StringComparison.OrdinalIgnoreCase));
+
+        if(hasHttps)
+            ctx.Request.Scheme = "https";
+    }
+
+    return next();
+});
+
 app.UseCustomSwagger ();
 app.UseBase ();
 
