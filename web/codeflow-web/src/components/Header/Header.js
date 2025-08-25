@@ -24,9 +24,9 @@ function Header({ onBurgerClick }) {
             <picture>
               <source
                 media="(max-width: 460px)"
-                srcSet="/Logo/logo_short.png"
+                srcSet="/logo/logo_short.png"
               />
-              <img src="/Logo/logo-transparent.png" alt="logo" />
+              <img src="/logo/logo-transparent.png" alt="logo" />
             </picture>
           </Link>
         </div>
