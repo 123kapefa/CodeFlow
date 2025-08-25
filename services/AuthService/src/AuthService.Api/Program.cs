@@ -55,9 +55,8 @@ var fwd = new ForwardedHeadersOptions {
     ForwardedHeaders = ForwardedHeaders.XForwardedProto
                      | ForwardedHeaders.XForwardedHost
                      | ForwardedHeaders.XForwardedFor,
-    ForwardLimit = 2,        // nginx + yarp
-    KnownNetworks = { },     // доверять всем (в докере это удобно)
-    KnownProxies = { }
+    ForwardLimit = 2, // для /signin-* цепочка: nginx -> authservice
+    RequireHeaderSymmetry = false
 };
 
 fwd.KnownNetworks.Add(
@@ -72,16 +71,11 @@ app.UseForwardedHeaders(fwd);
 
 
 app.Use(( ctx, next ) => {
-    if(ctx.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto)) {
-        // заголовок может быть "https" или "https, http"
-        var hasHttps = proto.ToString()
-                            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                            .Any(p => string.Equals(p, "https", StringComparison.OrdinalIgnoreCase));
-
-        if(hasHttps)
-            ctx.Request.Scheme = "https";
+    if(ctx.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto) &&
+        proto.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+             .Any(p => string.Equals(p, "https", StringComparison.OrdinalIgnoreCase))) {
+        ctx.Request.Scheme = "https";
     }
-
     return next();
 });
 
