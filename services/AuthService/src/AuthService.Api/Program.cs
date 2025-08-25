@@ -30,7 +30,7 @@ builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(JwtSett
 
 // Внешняя cookie (временная, на период внешнего логина)
 builder.Services
-  .AddAuthentication(o => {      
+  .AddAuthentication(o => {
       o.DefaultScheme = AuthSchemes.ExternalCookie;
   })
   .AddCookie(AuthSchemes.ExternalCookie, o => {
@@ -40,6 +40,7 @@ builder.Services
       o.ExpireTimeSpan = TimeSpan.FromMinutes(10);
       o.SlidingExpiration = false;
   });
+
 
 // Подключаем провайдеров
 builder.Services.AddGoogleAuth(builder.Configuration);
@@ -52,13 +53,6 @@ builder.Services.AddScoped<IExternalTokenService, ExternalTokenService>();
 var app = builder.Build ();
 
 
-app.Use(( ctx, next ) => {
-    if(ctx.Request.Path.StartsWithSegments("/signin-")) {
-        ctx.Request.Scheme = "https";
-        ctx.Request.Host = new HostString("codeflow-project.ru"); // без порта
-    }
-    return next();
-});
 
 
 var fwd = new ForwardedHeadersOptions {
@@ -81,14 +75,14 @@ fwd.KnownProxies.Add(IPAddress.Parse("::ffff:172.18.0.22"));
 
 app.UseForwardedHeaders(fwd);
 
+app.Use(( ctx, next ) => {
+    if(ctx.Request.Path.StartsWithSegments("/signin-")) {
+        ctx.Request.Scheme = "https";
+        ctx.Request.Host = new HostString("codeflow-project.ru"); // без порта
+    }
+    return next();
+});
 
-//app.UseWhen(ctx => ctx.Request.Path.StartsWithSegments("/signin-"), branch => {
-//    branch.Use((ctx, next) => {
-//        ctx.Request.Scheme = "https";
-//        ctx.Request.Host   = new HostString("codeflow-project.ru");
-//        return next();
-//    });
-//});
 
 
 app.Use(( ctx, next ) => {
