@@ -69,15 +69,22 @@ fwd.KnownProxies.Add(IPAddress.Parse("::ffff:172.18.0.22"));
 
 app.UseForwardedHeaders(fwd);
 
-
-app.Use(( ctx, next ) => {
-    if(ctx.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto) &&
-        proto.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-             .Any(p => string.Equals(p, "https", StringComparison.OrdinalIgnoreCase))) {
+app.Use(async ( ctx, next ) => {
+    if(ctx.Request.Path.Equals("/signin-google", StringComparison.OrdinalIgnoreCase) ||
+        ctx.Request.Path.Equals("/signin-github", StringComparison.OrdinalIgnoreCase)) {
         ctx.Request.Scheme = "https";
     }
-    return next();
+    await next();
 });
+
+//app.Use(( ctx, next ) => {
+//    if(ctx.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto) &&
+//        proto.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+//             .Any(p => string.Equals(p, "https", StringComparison.OrdinalIgnoreCase))) {
+//        ctx.Request.Scheme = "https";
+//    }
+//    return next();
+//});
 
 app.UseCustomSwagger ();
 app.UseBase ();
