@@ -83,6 +83,10 @@ app.Use(( ctx, next ) => {
     return next();
 });
 
+// 2) Аутентификация должна быть ДО роутинга/эндпоинтов
+app.UseAuthentication();
+app.UseAuthorization();
+
 
 
 app.Use(( ctx, next ) => {
