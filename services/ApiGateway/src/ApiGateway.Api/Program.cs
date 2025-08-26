@@ -41,18 +41,36 @@ app.UseRouting();
 // CorsMiddleware ������ ������ ����� UseRouting � UseAuth
 app.UseCors("ReactDev");
 
+
+
+app.Use(( ctx, next ) => {
+    if(ctx.Request.Path.StartsWithSegments("/signin-")) {
+        ctx.Request.Scheme = "https";
+        ctx.Request.Host = new HostString("codeflow-project.ru"); // без порта
+    }
+    return next();
+});
+
+
 // доверяем заголовкам от reverse-proxy (nginx)
 var fwd = new ForwardedHeadersOptions {
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
 };
-// для локалки убираем ограничение «доверенных прокси»
 fwd.KnownNetworks.Clear();
 fwd.KnownProxies.Clear();
 
-app.UseForwardedHeaders(fwd);
+app.UseForwardedHeaders(new ForwardedHeadersOptions {
+    ForwardedHeaders = ForwardedHeaders.XForwardedProto
+                     | ForwardedHeaders.XForwardedHost
+                     | ForwardedHeaders.XForwardedFor,
+    ForwardLimit = 2,            // <-- критично: nginx + yarp
+    KnownNetworks = { },
+    KnownProxies = { }
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.Use(async ( ctx, next ) => {
     Console.WriteLine($"GW IsAuth={ctx.User?.Identity?.IsAuthenticated}, sub={ctx.User?.FindFirst("sub")?.Value}");
     await next();

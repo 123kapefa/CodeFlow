@@ -19,6 +19,9 @@ public static class GoogleAuthExtensions {
             options.CallbackPath = "/signin-google";
             options.SaveTokens = true;
 
+            options.CorrelationCookie.SameSite = SameSiteMode.None;
+            options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+
             // гарантируем нужные scope
             options.Scope.Clear();
             options.Scope.Add("openid");
@@ -29,6 +32,17 @@ public static class GoogleAuthExtensions {
             options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "sub");
             options.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
             options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
+
+            options.Events ??= new Microsoft.AspNetCore.Authentication.OAuth.OAuthEvents();
+            options.Events.OnRedirectToAuthorizationEndpoint = ctx =>
+            {
+                ctx.Response.Redirect(
+                    ctx.RedirectUri
+                       .Replace("http://codeflow-project.ru", "https://codeflow-project.ru")
+                       .Replace("http://www.codeflow-project.ru", "https://codeflow-project.ru")
+                );
+                return Task.CompletedTask;
+            };
 
             options.Events.OnCreatingTicket = async ctx => {
                 var email = ctx.Principal?.FindFirstValue(ClaimTypes.Email);
