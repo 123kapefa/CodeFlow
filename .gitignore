@@ -404,6 +404,7 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 .idea/
+services/*/.run
 
 ##
 ## Visual studio for Mac
@@ -483,5 +484,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
-. e n v . p r o d u c t i o n  
+. e n v . p r o d u c t i o n 
+ 
  
