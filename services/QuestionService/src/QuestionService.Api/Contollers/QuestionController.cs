@@ -33,6 +33,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 using QuestionService.Application.Features.ReduceQuestionAnswers;
 using QuestionService.Application.Features.GetQuestionsByTags;
+using QuestionService.Application.Features.GetQuestionTitlesByIds;
 
 namespace QuestionService.Api.Contollers;
 
@@ -78,12 +79,20 @@ public class QuestionController : ControllerBase {
   [SwaggerOperation (Summary = "Получить вопрос по questionId.",
     Description = "Возвращает полный объект(QuestionDTO) с тегами и историей изменений.", OperationId = "Question_Get",
     Tags = new[] { "Question" })]
-  public async Task<Result<PagedResult<IEnumerable<QuestionShortDTO>>>> GetQuestionsByIdsAsync (
+  public async Task<Result<IEnumerable<QuestionShortDTO>>> GetQuestionsByIdsAsync (
     [FromBody] IEnumerable<Guid> questionIds,
-    [FromQuery] PageParams pageParams,
-    [FromQuery] SortParams sortParams,
-    [FromServices] ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetQuestionsByIdsCommand> handler) =>
-    await handler.Handle (new GetQuestionsByIdsCommand (questionIds, pageParams, sortParams),
+    [FromServices] ICommandHandler<IEnumerable<QuestionShortDTO>, GetQuestionsByIdsCommand> handler) =>
+    await handler.Handle (new GetQuestionsByIdsCommand (questionIds),
+      new CancellationToken (false));
+  
+  [HttpPost ("get-questions-title-by-ids")]
+  [SwaggerOperation (Summary = "Получить вопрос по questionId.",
+    Description = "Возвращает полный объект(QuestionDTO) с тегами и историей изменений.", OperationId = "Question_Get",
+    Tags = new[] { "Question" })]
+  public async Task<Result<IEnumerable<QuestionTitleDto>>> GetQuestionTitlesByIdsAsync (
+    [FromBody] IEnumerable<Guid> questionIds,
+    [FromServices] ICommandHandler<IEnumerable<QuestionTitleDto>, GetQuestionTitlesByIdsCommand> handler) =>
+    await handler.Handle (new GetQuestionTitlesByIdsCommand (questionIds),
       new CancellationToken (false));
 
   [HttpGet ("short/{questionId}")] // TODO нужен для теста
@@ -162,16 +171,6 @@ public class QuestionController : ControllerBase {
     Guid questionId,
     [FromServices] ICommandHandler<UpdateQuestionViewCommand> handler) =>
     await handler.Handle (new UpdateQuestionViewCommand (questionId), new CancellationToken (false));
-
-  // Вроде как не нужен, поскольку запрос приходит из VoteService
-  // [HttpPut ("{questionId}/vote/{value}")]
-  // [SwaggerOperation (Summary = "Обновить поле Upvotes или Downvotes.",
-  //   Description = "Обновляет данные в таблице Questions.", OperationId = "Question_Put")]
-  // public async Task<Result> UpdateQuestionVoteAsync (
-  //   Guid questionId,
-  //   int value,
-  //   [FromServices] ICommandHandler<UpdateQuestionVoteCommand> handler) =>
-  //   await handler.Handle (new UpdateQuestionVoteCommand (questionId, value), new CancellationToken (false));
 
   [HttpPut ("{questionId}/answers")]
   [SwaggerOperation (Summary = "Обновить поле AnswersCount.", Description = "Обновляет данные в таблице Questions.",

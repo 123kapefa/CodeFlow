@@ -33,6 +33,7 @@ public class AggregationController : ControllerBase {
     private readonly AnswerApi _answers;
     private readonly TagApi _tags;
     private readonly CommentApi _comments;
+    private readonly ReputationApi _reputations;
 
     public AggregationController(
       HttpService httpService,
@@ -40,13 +41,15 @@ public class AggregationController : ControllerBase {
       AnswerApi answers,
       TagApi tags,
       CommentApi comments,
-      UserApi users ) {
+      UserApi users,
+      ReputationApi reputations) {
         _httpService = httpService;
         _questions = questions;
         _answers = answers;
         _tags = tags;
         _comments = comments;
         _users = users;
+        _reputations = reputations;
     }
 
     [HttpPost("get-question")]
@@ -292,8 +295,8 @@ public class AggregationController : ControllerBase {
         var questionsList = await _questions.GetQuestionsByIdsAsync(
           questionIds, ct);
 
-        var userIds = questionsList.Value.Select(q => q.UserId).ToList();
-        var tagIds = questionsList.Value.Select(q => q.QuestionTags.Select(t => t.TagId))
+        var userIds = questionsList.Select(q => q.UserId).ToList();
+        var tagIds = questionsList.Select(q => q.QuestionTags.Select(t => t.TagId))
          .SelectMany(t => t)
          .Distinct()
          .ToList();
@@ -309,6 +312,37 @@ public class AggregationController : ControllerBase {
         var result = new { questionsList, tagsList, usersList, };
 
         return Ok(result);
+    }
+
+    [HttpGet ("get-reputation-full-list/{userId:guid}")]
+    public async Task<IActionResult> AggregateReputationSummary ([FromRoute] Guid userId, CancellationToken ct) {
+      var reputationList = await _reputations.GetReputationFullListByUserIdAsync(userId, ct);
+
+      var questionIds = reputationList.Value
+       .SelectMany(r => r.Events?.Select(e => e.ParentId) ?? Enumerable.Empty<Guid>())
+       .Where(id => id != Guid.Empty)
+       .Distinct()
+       .ToList();
+
+      var questionTitles = await _questions.GetQuestionTitlesByIdsAsync(questionIds, ct);
+      var titleById = (questionTitles ?? Enumerable.Empty<QuestionTitleDto>())
+       .GroupBy(q => q.QuestionId)                // на случай дубликатов
+       .Select(g => g.First())
+       .ToDictionary(q => q.QuestionId, q => q.Title);
+
+      foreach (var dayGroup in reputationList.Value) {
+        if (dayGroup?.Events == null) continue;
+
+        foreach (var ev in dayGroup.Events) {
+          if (ev.ParentId != Guid.Empty && titleById.TryGetValue(ev.ParentId, out var title)) {
+            ev.Title = title;
+          }
+        }
+      }
+
+      return Ok(new { reputationList });
+
+
     }
 }
 

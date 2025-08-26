@@ -14,6 +14,7 @@ using QuestionService.Application.Features.GetQuestionsByIds;
 using QuestionService.Application.Features.GetQuestionsByTags;
 using QuestionService.Application.Features.GetQuestionShort;
 using QuestionService.Application.Features.GetQuestionTags;
+using QuestionService.Application.Features.GetQuestionTitlesByIds;
 using QuestionService.Application.Features.GetUserQuestions;
 using QuestionService.Application.Features.ReduceQuestionAnswers;
 using QuestionService.Application.Features.UpdateQuestion;
@@ -49,7 +50,8 @@ public static class HandlerCollectionExtensions {
         builder.Services.AddScoped<ICommandHandler<UpdateQuestionVoteCommand>, UpdateQuestionVoteHandler>();
         builder.Services.AddScoped<ICommandHandler<UpdateQuestionAnswersCommand>, UpdateQuestionAnswersHandler>();
         builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetQuestionsCommand>, GetQuestionsHandler>();
-        builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetQuestionsByIdsCommand>, GetQuestionsByIdsHandler>();
+        builder.Services.AddScoped<ICommandHandler<IEnumerable<QuestionShortDTO>, GetQuestionsByIdsCommand>, GetQuestionsByIdsHandler>();
+        builder.Services.AddScoped<ICommandHandler<IEnumerable<QuestionTitleDto>, GetQuestionTitlesByIdsCommand>, GetQuestionTitlesByIdsHandler>();
         builder.Services.AddScoped<ICommandHandler<PagedResult<IEnumerable<QuestionShortDTO>>, GetUserQuestionsCommand>, GetUserQuestionsHandler>();
         builder.Services.AddScoped<ICommandHandler<ReduceQuestionAnswersCommand>, ReduceQuestionAnswersHandler>();
         builder.Services.AddScoped<ICommandHandler<IEnumerable<QuestionShortDTO>, GetQuestionsByTagsCommand>, GetQuestionsByTagsHandler>();

@@ -15,6 +15,7 @@ var builder = WebApplication.CreateBuilder (args);
 builder.AddBase ();
 builder.AddHandlers ();
 builder.AddDatabase ();
+builder.AddHandlers ();
 builder.AddCustomSerilog ();
 builder.AddCustomSwagger ();
 builder.AddReputationMessaging ();

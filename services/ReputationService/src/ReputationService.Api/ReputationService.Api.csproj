@@ -32,10 +32,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\ReputationService.Application\ReputationService.Application.csproj" />
       <ProjectReference Include="..\ReputationService.Infrastructure\ReputationService.Infrastructure.csproj" />
     </ItemGroup>
