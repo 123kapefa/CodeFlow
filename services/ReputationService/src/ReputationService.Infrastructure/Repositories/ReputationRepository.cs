@@ -118,8 +118,8 @@ public sealed class ReputationRepository : IReputationRepository {
       if (newDelta != 0) {
         var applied = eff.Apply (newDelta, eventId);
         if (applied) {
-          _context.ReputationEntries.Add (ReputationEntry.Create (newId, parentId, newAnswerId, ReputationSourceType.Answer,
-            "AcceptedAnswer", reason, newDelta, occurredAt, eventId, sourceService));
+          _context.ReputationEntries.Add (ReputationEntry.Create (newId, parentId, newAnswerId,
+            ReputationSourceType.Answer, "AcceptedAnswer", reason, newDelta, occurredAt, eventId, sourceService));
           changes.Add (await ApplyDeltaToSummary (newId, newDelta, ct));
         }
       }
@@ -208,8 +208,8 @@ public sealed class ReputationRepository : IReputationRepository {
 
     if (eff is null) {
       if (delta == 0) return 0;
-      _context.ReputationEffects.Add (ReputationEffect.Create (userId, parentId, sourceId, st, kind, delta, version, eventId,
-        sourceService));
+      _context.ReputationEffects.Add (ReputationEffect.Create (userId, parentId, sourceId, st, kind, delta, version,
+        eventId, sourceService));
       return delta;
     }
     else {
@@ -235,28 +235,24 @@ public sealed class ReputationRepository : IReputationRepository {
     reputationSummary.UpdatedAt = DateTime.UtcNow;
     return new (UserId: userId, NewReputation: reputationSummary.Total, OccurredAt: reputationSummary.UpdatedAt);
   }
-  
-  private async Task<ReputationEffect> GetOrCreateEffect(
+
+  private async Task<ReputationEffect> GetOrCreateEffect (
     Guid userId,
     Guid parentId,
     Guid sourceId,
     ReputationSourceType sourceType,
     string effectKind,
     string sourceService,
-    CancellationToken ct)
-  {
-    var eff = await _context.ReputationEffects
-     .FirstOrDefaultAsync(x =>
-        x.UserId == userId &&
-        x.SourceId == sourceId &&
-        x.SourceType == sourceType &&
-        x.EffectKind == effectKind, ct);
+    CancellationToken ct) {
+    var eff = await _context.ReputationEffects.FirstOrDefaultAsync (
+      x => x.UserId == userId && x.SourceId == sourceId && x.SourceType == sourceType && x.EffectKind == effectKind,
+      ct);
 
-    if (eff is null)
-    {
-      eff = ReputationEffect.Create(userId, parentId, sourceId, sourceType, effectKind, 0, version: 0, Guid.Empty, sourceService);
-      _context.ReputationEffects.Add(eff);
-      await _context.SaveChangesAsync(ct);
+    if (eff is null) {
+      eff = ReputationEffect.Create (userId, parentId, sourceId, sourceType, effectKind, 0, version: 0, Guid.Empty,
+        sourceService);
+      _context.ReputationEffects.Add (eff);
+      await _context.SaveChangesAsync (ct);
     }
 
     return eff;
