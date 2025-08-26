@@ -1,6 +1,9 @@
-﻿using Ardalis.Result;
+﻿using System.Collections;
+
+using Ardalis.Result;
 
 using Contracts.Common.Filters;
+using Contracts.DTOs.QuestionService;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
@@ -87,27 +90,43 @@ public class QuestionServiceRepository : IQuestionServiceRepository {
     }
   }
 
-  public async Task<Result<(IEnumerable<Question> items, PagedInfo pageInfo)>> GetQuestionsByIdsAsync (
+  public async Task<Result<IEnumerable<Question>>> GetQuestionsByIdsAsync (
     IEnumerable<Guid> questionIds,
-    PageParams pageParams,
-    SortParams sortParams,
     CancellationToken token) {
-    _logger.LogInformation ("GetQuestionsAsync started. PageParams: {@PageParams}, SortParams: {@SortParams}",
-      pageParams, sortParams);
+    _logger.LogInformation ("GetQuestionsAsync started.");
 
     try {
       var questions = await _dbContext.Questions
        .Include (q => q.QuestionTags)
        .Where (q => questionIds.Contains (q.Id))
-       .Sort (sortParams)
-       .ToPagedAsync (pageParams);
+       .ToListAsync (token);
 
-      _logger.LogInformation ("GetQuestionsAsync: получено {Count} вопросов", questions.Value.items.Count ());
-      return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Success (questions);
+      _logger.LogInformation ("GetQuestionsAsync: получено {Count} вопросов", questions.Count ());
+      return Result<IEnumerable<Question>>.Success (questions);
     }
     catch (Exception ex) {
       _logger.LogError (ex, "GetQuestionsAsync: ошибка базы данных");
-      return Result<(IEnumerable<Question> items, PagedInfo pageInfo)>.Error ("Ошибка базы данных");
+      return Result<IEnumerable<Question>>.Error ("Ошибка базы данных");
+    }
+  }
+  
+  public async Task<Result<IEnumerable<QuestionTitleDto>>> GetQuestionTitlesByIdsAsync (
+    IEnumerable<Guid> questionIds,
+    CancellationToken token) {
+    _logger.LogInformation ("GetQuestionsAsync started.");
+
+    try {
+      var questions = await _dbContext.Questions
+       .Where (q => questionIds.Contains (q.Id))
+       .Select (q => new QuestionTitleDto { QuestionId = q.Id, Title = q.Title })
+       .ToListAsync (token);
+
+      _logger.LogInformation ("GetQuestionsAsync: получено {Count} вопросов", questions.Count ());
+      return Result<IEnumerable<QuestionTitleDto>>.Success (questions);
+    }
+    catch (Exception ex) {
+      _logger.LogError (ex, "GetQuestionsAsync: ошибка базы данных");
+      return Result<IEnumerable<QuestionTitleDto>>.Error ("Ошибка базы данных");
     }
   }
 

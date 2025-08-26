@@ -41,6 +41,12 @@ public static class ServiceCollectionExtensions {
         client.BaseAddress = new Uri(builder.Configuration["Services:Tag"]!);
       })
      .AddStandardResilienceHandler(); 
+    
+    builder.Services.AddHttpClient<ReputationApi>(client =>
+      {
+        client.BaseAddress = new Uri(builder.Configuration["Services:Reputation"]!);
+      })
+     .AddStandardResilienceHandler(); 
 
     return builder;
   }

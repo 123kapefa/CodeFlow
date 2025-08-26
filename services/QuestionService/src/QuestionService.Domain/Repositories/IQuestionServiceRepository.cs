@@ -1,6 +1,7 @@
 ﻿using Ardalis.Result;
 
 using Contracts.Common.Filters;
+using Contracts.DTOs.QuestionService;
 
 using QuestionService.Domain.Entities;
 
@@ -13,10 +14,12 @@ public interface IQuestionServiceRepository {
         TagFilter tagFilter,
         CancellationToken token );    
     
-    Task<Result<(IEnumerable<Question> items, PagedInfo pageInfo)>> GetQuestionsByIdsAsync(
+    Task<Result<IEnumerable<Question>>> GetQuestionsByIdsAsync(
         IEnumerable<Guid> questionIds,
-        PageParams pageParams, 
-        SortParams sortParams,
+        CancellationToken token );
+    
+    Task<Result<IEnumerable<QuestionTitleDto>>> GetQuestionTitlesByIdsAsync(
+        IEnumerable<Guid> questionIds,
         CancellationToken token );
     
     Task<Result<IEnumerable<Question>>> GetQuestionsByTagsAsync(

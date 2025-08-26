@@ -4,5 +4,5 @@ using Contracts.Common.Filters;
 
 namespace QuestionService.Application.Features.GetQuestionsByIds;
 
-public record GetQuestionsByIdsCommand (IEnumerable<Guid> QuestionIds, PageParams PageParams, SortParams SortParams)
+public record GetQuestionsByIdsCommand (IEnumerable<Guid> QuestionIds)
   : ICommand;
