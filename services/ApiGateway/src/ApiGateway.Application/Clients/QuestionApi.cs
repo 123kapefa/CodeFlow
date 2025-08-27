@@ -61,14 +61,15 @@ public sealed class QuestionApi {
           new PagedInfo(1, 30, 0, 0), new List<QuestionShortDTO>());
     }
 
-    public async Task<IEnumerable<QuestionShortDTO>> GetQuestionsByUserIdAsync(
+    public async Task<PagedResult<IEnumerable<QuestionShortDTO>>> GetQuestionsByUserIdAsync(
       Guid userId,
       CancellationToken ct ) {
         HeaderPropagation.CopyAuthAndTrace(_http, _ctx.HttpContext!);
-        var response = _http.GetFromJsonAsync<IEnumerable<QuestionShortDTO>>(
+        var response = _http.GetFromJsonAsync<PagedResult<IEnumerable<QuestionShortDTO>>>(
           $"/questions/user/{userId}", ct);
 
-        return response.Result ?? new List<QuestionShortDTO>();
+        return response.Result ??
+            new PagedResult<IEnumerable<QuestionShortDTO>>(new PagedInfo(1, 30, 0, 0), new List<QuestionShortDTO>());
     }
 
     public async Task<IEnumerable<QuestionShortDTO>> GetQuestionsByIdsAsync(
@@ -97,7 +98,7 @@ public sealed class QuestionApi {
       return questions.Result ?? new List<QuestionTitleDto>();
     }
 
-    public async Task<PagedResult<IEnumerable<QuestionShortDTO>>> GetQuestionsPageByIdsAsync(
+    public async Task<IEnumerable<QuestionShortDTO>> GetQuestionsPageByIdsAsync(
       List<Guid> questionIds,
       PageParams pageParams,
       SortParams sortParams,
@@ -107,10 +108,9 @@ public sealed class QuestionApi {
         var response = _http.PostAsJsonAsync($"/questions/get-questions-by-ids", questionIds, ct);
         response.Result.EnsureSuccessStatusCode();
         var questions =
-          response.Result.Content.ReadFromJsonAsync<PagedResult<IEnumerable<QuestionShortDTO>>>(cancellationToken: ct);
+          response.Result.Content.ReadFromJsonAsync<IEnumerable<QuestionShortDTO>>(cancellationToken: ct);
 
-        return questions.Result ??
-          new PagedResult<IEnumerable<QuestionShortDTO>>(new PagedInfo(1, 5, 0, 0), new List<QuestionShortDTO>());
+        return questions.Result ?? new List<QuestionShortDTO>();
     }
 
     public async Task<IEnumerable<QuestionShortDTO>> GetByTagsSortedAsync(

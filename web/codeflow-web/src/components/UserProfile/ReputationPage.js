@@ -223,7 +223,7 @@ export default function ReputationPage({ userId, totalReputation }) {
                     className="rep-full__event d-flex align-items-center py-1 small"
                   >
                     <span className="text-muted me-2">
-                      {reasonLabel(ev.reasonCode)}
+                      {reasonLabel(ev.reasonCode === "AcceptedAnswer" ? "accepted" : ev.reasonCode)}
                     </span>
                     <span className={`fw-semibold me-2 ${signCls(ev.delta)}`}>
                       {ev.delta > 0 ? `+${ev.delta}` : ev.delta}
