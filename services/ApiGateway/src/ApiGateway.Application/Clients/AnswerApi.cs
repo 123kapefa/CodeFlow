@@ -31,7 +31,11 @@ public sealed class AnswerApi {
     HeaderPropagation.CopyAuthAndTrace (_http, _ctx.HttpContext!);
     var response = _http.GetFromJsonAsync<PagedResult<IEnumerable<AnswerDto>>> (
       $"/answers/user/{userId}?page=1&pageSize=5&orderBy=CreatedAt&sortDirection=Ascending", ct);
-    return response.Result!.Value;
+
+        if(response.Result is null)
+            return new List<AnswerDto>();
+
+        return response.Result!.Value;
   }
 
 
