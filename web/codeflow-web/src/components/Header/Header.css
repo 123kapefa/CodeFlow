@@ -1,54 +1,72 @@
 /* ─────────── Top-bar ─────────── */
+/* ─────────── Top-bar ─────────── */
 .topbar {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem; /* расстояние между элементами */  
   padding: 0 1rem;
   border-bottom: 1px solid #e4e4e4;
   background: #fff;
 }
 
-.topbar .logo { flex: 0 0 auto; }
-.topbar .logo img { height: 28px; }
-
-/* Поиск — на десктопе растягивается, но умеет сжиматься */
-.topbar .search {
-  flex: 1 1 auto;   /* может сжиматься/расти */
-  min-width: 0;     /* важно: разрешаем сжатие содержимого */
-  margin-left: 2rem; /* можно подправить */
+.topbar .logo {
+  flex: 0 0 auto; /* логотип фиксированной ширины */
 }
 
-.topbar .search input,
-.mobile-search input {
+.topbar .search {
+  flex: 1; /* растягиваем строку поиска на всё доступное пространство */
+  margin-left: 2rem; /* смещаем правее от логотипа */
+}
+
+.topbar .search input {
+  width: 100%;
+}
+
+.topbar .logo img {
+  height: 28px;
+}
+.search {
+  flex: 1;
+}
+.search input {
   width: 100%;
   padding: 6px 12px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-
 .topbar__icons {
   list-style: none;
   display: flex;
   gap: 0.75rem;
   margin: 0;
-  flex: 0 0 auto; /* не сжимать иконки */
 }
+
+.topbar .search {
+  margin-left: 5.5%; /* подгони под своё значение */
+  flex: 1;
+}
+
 
 /* Мобильная строка поиска под шапкой */
 .mobile-search {
-  display: none;          /* по умолчанию скрыта */
+  display: none;
   border-bottom: 1px solid #e4e4e4;
   background: #fff;
   padding: 8px 1rem;
 }
 
-/* Брейкпоинт: на узких экранах прячем поиск в шапке и показываем мобильный */
+/* Брейкпоинт: переносим поле поиска вниз */
 @media (max-width: 640px) {
   .topbar { gap: 0.5rem; }
   .topbar .search { display: none; margin-left: 0; }
   .mobile-search { display: block; }
 }
 
+/* Компактнее отступы на очень узких экранах */
+@media (max-width: 445px) {
+  .topbar { gap: 0.5rem; }
+  .topbar .btn { padding: 0 10px; }
+}
 
 
 /* 1) Кнопки в шапке: не переносить текст, держать фиксированную высоту и центрировать контент */
@@ -72,8 +90,3 @@
   object-fit: cover;          /* без искажений */
 }
 
-/* 4) На очень узких экранах чуточку ужмём отступы, сохранив высоту */
-@media (max-width: 445px) {
-  .topbar { gap: 0.5rem; }
-  .topbar .btn { padding: 0 10px; }  /* компактнее по горизонтали, без роста по высоте */
-}
