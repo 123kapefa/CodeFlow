@@ -1,0 +1,50 @@
+/* серый фон для подробного списка (Full) */
+.rep-full__events {
+  background: var(--bs-gray-100, #f8f9fa);
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+}
+
+/* --- Адаптивность для маленьких экранов --- */
+@media (max-width: 475px) {
+  /* Заголовок + панель управления в колонку */
+  .rep-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 0.5rem;
+  }
+
+  .rep-controls {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* Bootstrap .btn-group по умолчанию inline-flex — разрешим перенос */
+  .rep-controls .btn-group {
+    flex-wrap: wrap;
+  }
+
+  /* При желании кнопкам можно позволить растягиваться */
+  .rep-controls .btn-group .btn {
+    flex: 1 1 auto;
+  }
+
+  /* События в Full-режиме — в столбик */
+  .rep-full__event {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 4px;
+  }
+
+  /* Убрать "выталкивание" времени вправо */
+  .rep-full__event .ms-auto {
+    margin-left: 0 !important;
+  }
+
+  /* Немного компактнее внутренние отступы */
+  .rep-full__events {
+    padding: 0.5rem;
+  }
+}

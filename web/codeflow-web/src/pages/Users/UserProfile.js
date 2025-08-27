@@ -12,13 +12,15 @@ import AboutBlock from "../../components/UserProfile/AboutBlock";
 import PasswordChangeForm from "../../components/UserProfile/ProfileSettings/PasswordChangeForm";
 import EmailChangeForm from "../../components/UserProfile/ProfileSettings/EmailChangeForm";
 
-import QuestionsSummaryPage from "../Questions/QuestionsSummaryPage"
+import QuestionsSummaryPage from "../Questions/QuestionsSummaryPage";
 import AnswersSummaryPage from "../Answer/AnswersSummaryPage";
-import TagsSummaryPage from "../Tags/TagsSummaryPage"
+import TagsSummaryPage from "../Tags/TagsSummaryPage";
 
 import { RefreshToken } from "../../features/RefreshToken/RefreshToken";
 import { useAuth } from "../../features/Auth/AuthProvider ";
 import EditProfileForm from "../../components/UserProfile/ProfileSettings/EditProfileForm";
+
+import ReputationPage from "../../components/UserProfile/ReputationPage";
 
 import "./UserProfile.css";
 
@@ -37,6 +39,8 @@ export default function UserProfile() {
   /* внутренние вкладки для каждого раздела */
   const [activityTab, setActivity] = useState("summary");
   const [settingsTab, setSettings] = useState("edit");
+
+  const [repOpen, setRepOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -255,9 +259,9 @@ export default function UserProfile() {
       case "questions":
         return <QuestionsSummaryPage userId={userId} />;
       case "tags":
-        return <TagsSummaryPage userId={userId}/>;
+        return <TagsSummaryPage userId={userId} />;
       case "reputation":
-        return <ReputationChart userId={userId} />;
+        return <ReputationPage userId={userId} />;
       default:
         return (
           <>
