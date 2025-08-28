@@ -9,6 +9,7 @@ using Contracts.DTOs.CommentService;
 using Contracts.DTOs.QuestionService;
 
 using Microsoft.AspNetCore.Http;
+using Sprache;
 
 namespace ApiGateway.Application.Clients;
 
@@ -31,6 +32,15 @@ public sealed class AnswerApi {
     HeaderPropagation.CopyAuthAndTrace (_http, _ctx.HttpContext!);
     var response = _http.GetFromJsonAsync<PagedResult<IEnumerable<AnswerDto>>> (
       $"/answers/user/{userId}?page=1&pageSize=5&orderBy=CreatedAt&sortDirection=Ascending", ct);
+
+
+        Console.WriteLine("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
+        Console.WriteLine("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
+        Console.WriteLine("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
+        Console.WriteLine($"ANSWERAPI RES -> {response.Result.Value.ToList().Count}");
+        Console.WriteLine("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
+        Console.WriteLine("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
+        Console.WriteLine("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
 
         if(response.Result is null)
             return new List<AnswerDto>();

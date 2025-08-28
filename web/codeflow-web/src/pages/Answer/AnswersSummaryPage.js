@@ -7,15 +7,15 @@ import { useAuthFetch } from "../../features/useAuthFetch/useAuthFetch";
 import { API_BASE } from "../../config";
 
 export default function AnswersSummaryPage({ userId }) {
-     const authFetch = useAuthFetch(); 
+  const authFetch = useAuthFetch();
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
   const [pageInfo, setPageInfo] = useState(null);
   const [tagsMap, setTagsMap] = useState({});
 
   // сортировка и пагинация
-  const [orderBy, setOrderBy] = useState("CreatedAt");      
-  const [sortDir, setSortDir] = useState("Descending");     
+  const [orderBy, setOrderBy] = useState("CreatedAt");
+  const [sortDir, setSortDir] = useState("Descending");
   const [page, setPage] = useState(1);
   const pageSize = 30;
 
@@ -33,10 +33,22 @@ export default function AnswersSummaryPage({ userId }) {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
 
-      // данные в questionsList
-      setItems(json?.questionsList?.value ?? []);
-      setPageInfo(json?.questionsList?.pagedInfo ?? null);
+      console.log("AnswersSummaryPage: got", json);
 
+      // данные в questionsList
+      const raw = json?.questionsList ?? [];
+      const items = Array.isArray(raw) ? raw : raw?.value ?? [];
+      setItems(items);
+
+      const info = Array.isArray(raw)
+        ? {
+            pageNumber: page,
+            pageSize,
+            totalPages: 1,
+            totalRecords: raw.length,
+          }
+        : raw?.pagedInfo ?? null;
+      setPageInfo(info);
       // карта id -> name из tagsList (чтобы подписать теги в карточке)
       const map = Object.create(null);
       for (const t of json?.tagsList ?? []) map[t.id] = t.name;
@@ -46,7 +58,9 @@ export default function AnswersSummaryPage({ userId }) {
     }
   }, [userId, page, pageSize, orderBy, sortDir]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   if (loading) {
     return (
@@ -83,7 +97,9 @@ export default function AnswersSummaryPage({ userId }) {
           <ToggleButton
             id="answers-sort-most"
             type="radio"
-            variant={orderBy === "AnswersCount" ? "primary" : "outline-secondary"}
+            variant={
+              orderBy === "AnswersCount" ? "primary" : "outline-secondary"
+            }
             checked={orderBy === "AnswersCount"}
             onChange={() => setSort("AnswersCount", "Descending")}
           >

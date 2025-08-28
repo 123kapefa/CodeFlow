@@ -130,7 +130,7 @@ export default function ReputationChart({ userId, days = 30 }) {
 
       <div className="rep-chart" onMouseLeave={onLeave}>
         <div className="rep-chart__baseline" />
-        <div className="rep-chart__bars rounded-0" >
+        <div className="rep-chart__bars">
           {bars.map((b, i) => {
             const value = Math.abs(b.delta);
             const height =

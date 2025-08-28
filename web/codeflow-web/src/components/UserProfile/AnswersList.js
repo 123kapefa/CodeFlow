@@ -14,9 +14,11 @@ function ScorePill({ value }) {
 
 export default function AnswersList({ userId, limit = 5 }) {
   const { data, loading, err } = useUserSummary(userId);
-  const items = data?.questionsAnswerList?.value ?? [];
-  const total = data?.questionsAnswerList?.pagedInfo?.totalRecords ?? 0;
-
+  const raw = data?.questionsAnswerList ?? [];
+  const items = Array.isArray(raw) ? raw : raw?.value ?? []; // на будущее – обе схемы
+  const total = Array.isArray(raw)
+    ? raw.length
+    : raw?.pagedInfo?.totalRecords ?? items.length;
   return (
     <Card className="mb-4">
       <Card.Header
