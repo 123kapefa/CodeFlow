@@ -310,6 +310,7 @@ services:
     depends_on:
       - rabbitmq
       - reputation-db
+    restart: unless-stopped
     networks: [ clonenet ]
     
   # ────────── VoteService + БД ──────────
@@ -342,6 +343,7 @@ services:
     depends_on:
       - rabbitmq
       - vote-db
+    restart: unless-stopped
     networks: [ clonenet ]
 
 # ────────── тома для персистентных БД ──────────
