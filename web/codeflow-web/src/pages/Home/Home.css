@@ -1,10 +1,10 @@
 /* Контейнер страницы Home */
-.home-page { padding-left: 12px; padding-right: 12px; }
+.home-page {
+  padding-left: 12px;
+  padding-right: 12px;
+}
 
-/* QuestionCard: мобильная раскладка
-   — в текущей разметке внутри карточки есть .d-flex с двумя колонками:
-     слева метрики (фикс. ширина 90px inline-style), справа контент. 
-   На мобильном переносим в колонку, метрики делаем компактной строкой сверху. */
+/* QuestionCard: мобильная раскладка */
 @media (max-width: 576px) {
   /* находим тот самый .d-flex внутри карточки */
   .home-page .card .card-body > .d-flex {
@@ -13,8 +13,8 @@
   }
   /* левая колонка с метриками — превращаем в компактный ряд */
   .home-page .card .card-body > .d-flex > .text-center.me-5 {
-    width: 100% !important;    /* перебиваем inline width: 90px */
-    margin-right: 0 !important; 
+    width: 100% !important; /* перебиваем inline width: 90px */
+    margin-right: 0 !important;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -34,18 +34,34 @@
 }
 
 /* Теги и бейджи не должны растягивать ширину */
-.home-page .tag-badge { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-
-@media (max-width: 576px) {
-  .question-list-card .qc-row { flex-direction: column; gap: 8px; }
-  .question-list-card .qc-metrics { width: 100% !important; margin-right: 0 !important; display: flex; justify-content: space-between; gap: 12px; }
+.home-page .tag-badge {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+@media (max-width: 576px) {
+  .question-list-card .qc-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .question-list-card .qc-metrics {
+    width: 100% !important;
+    margin-right: 0 !important;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+}
 
 /* 1) Разрешаем сжатие flex-контента справа в карточке */
-.question-list-card .qc-row { min-width: 0; }
-.question-list-card .qc-row > .flex-grow-1 { min-width: 0; }
+.question-list-card .qc-row {
+  min-width: 0;
+}
+.question-list-card .qc-row > .flex-grow-1 {
+  min-width: 0;
+}
 
 /* 2) Перенос длинных заголовков и контента превью */
 .question-list-card .card-title,
@@ -87,9 +103,11 @@
   min-width: 0;
 }
 
-/* 5) Уже имеющиеся мобильные правила — оставляем и дополняем страховкой */
 @media (max-width: 576px) {
-  .question-list-card .qc-row { flex-direction: column; gap: 8px; }
+  .question-list-card .qc-row {
+    flex-direction: column;
+    gap: 8px;
+  }
   .question-list-card .qc-metrics {
     width: 100% !important;
     margin-right: 0 !important;
@@ -99,5 +117,6 @@
   }
 }
 
-/* 6) Доп. страховка от горизонтального скролла страницы Home (можно удалить после проверки) */
-.home-page { overflow-x: hidden; }
+.home-page {
+  overflow-x: hidden;
+}

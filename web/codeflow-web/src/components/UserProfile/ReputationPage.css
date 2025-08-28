@@ -21,12 +21,12 @@
     gap: 0.5rem;
   }
 
-  /* Bootstrap .btn-group по умолчанию inline-flex — разрешим перенос */
+  /* Bootstrap .btn-group по умолчанию inline-flex — перенос */
   .rep-controls .btn-group {
     flex-wrap: wrap;
   }
 
-  /* При желании кнопкам можно позволить растягиваться */
+
   .rep-controls .btn-group .btn {
     flex: 1 1 auto;
   }

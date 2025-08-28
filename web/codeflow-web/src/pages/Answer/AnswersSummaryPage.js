@@ -33,8 +33,6 @@ export default function AnswersSummaryPage({ userId }) {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
 
-      console.log("AnswersSummaryPage: got", json);
-
       // данные в questionsList
       const raw = json?.questionsList ?? [];
       const items = Array.isArray(raw) ? raw : raw?.value ?? [];
@@ -49,7 +47,7 @@ export default function AnswersSummaryPage({ userId }) {
           }
         : raw?.pagedInfo ?? null;
       setPageInfo(info);
-      // карта id -> name из tagsList (чтобы подписать теги в карточке)
+      // теги в tagsList
       const map = Object.create(null);
       for (const t of json?.tagsList ?? []) map[t.id] = t.name;
       setTagsMap(map);

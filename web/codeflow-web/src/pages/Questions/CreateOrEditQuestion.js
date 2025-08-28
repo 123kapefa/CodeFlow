@@ -62,7 +62,7 @@ export default function CreateOrEditQuestion() {
     if (!loading && !user) navigate("/login");
   }, [loading, user, navigate]);
 
-  // 2) Подсказки тегов (как у тебя)
+  // 2) Подсказки тегов
   useEffect(() => {
 
     if (tagInput.length < 2) {
@@ -118,7 +118,7 @@ export default function CreateOrEditQuestion() {
           return;
         }
 
-        setTitle(data.question.title); // Title readonly
+        setTitle(data.question.title); 
         setContent(data.question.content);
 
         // map по id из массива data.tags
@@ -142,11 +142,11 @@ export default function CreateOrEditQuestion() {
         navigate(`/questions/${id}`);
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [isEdit, id, user]);
 
   if (loading || (isEdit && !title && !content && !selectedTags.length)) {
-    // простая защита: показать спиннер, пока редактирование не префиллится
+   
     return (
       <Container className="py-5 text-center">
         <Spinner animation="border" />
@@ -189,9 +189,9 @@ export default function CreateOrEditQuestion() {
       if (isEdit) {
         // ---- ОБНОВЛЕНИЕ ВОПРОСА ----
         const dto = {
-          id, // Guid вопроса
-          userEditorId: user.userId, // кто редактирует
-          content, // HTML из ReactQuill
+          id,
+          userEditorId: user.userId, 
+          content,
           questionTagsDTO: selectedTags.map((t) => ({
             tagId: t.id ?? t.tagId,
           })),

@@ -27,8 +27,6 @@ export default function EmailChangeForm({ userId }) {
       return;
     }
 
-    console.log(oldEmail)
-
     setLoading(true);
 
     const doRequest = () =>

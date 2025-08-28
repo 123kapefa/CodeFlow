@@ -25,7 +25,7 @@ export default function QuestionHistoryPage() {
         });
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const data = await r.json(); // QuestionHistoryDTO[]
-        // на всякий случай отсортируем по дате убыв.
+        
         const sorted = [...data].sort(
           (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
         );

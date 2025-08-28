@@ -43,8 +43,7 @@ export default function PasswordChangeConfirm() {
       if (!email || !token) {
         throw new Error("Missing email or token.");
       }
-
-      // отправляем именно JSON в тело (не в сегмент пути)
+      
       const resp = await fetchAuth(`${API_BASE}/auth/password-change-confirm`, {
         method: "POST",
         headers: {
@@ -52,7 +51,7 @@ export default function PasswordChangeConfirm() {
           Accept: "application/json",
         },
         body: JSON.stringify({ email, token }),
-        credentials: "include", // не обязательно, но безвредно
+        credentials: "include", 
       });
 
       if (!resp.ok) {

@@ -30,7 +30,7 @@ export default function AnswerHistoryPage() {
     if (!authLoading && !user) {
       navigate("/login", {
         replace: true,
-        state: { returnUrl: location.pathname }, // вернемся после логина
+        state: { returnUrl: location.pathname }, 
       });
     }
   }, [authLoading, user, navigate, location.pathname]);

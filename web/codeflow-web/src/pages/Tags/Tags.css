@@ -10,8 +10,8 @@
 /* Уже 460px: переносим кнопки под поиск и центрируем их */
 @media (max-width: 460px) {
   .tags-toolbar {
-    flex-direction: column;   /* кнопки под поиск */
-    align-items: stretch;     /* поиск на всю ширину */
+    flex-direction: column;  
+    align-items: stretch;     
   }
   .tags-toolbar form {
     max-width: none;
@@ -19,7 +19,7 @@
     margin-right: 0;
   }
   .tags-toolbar .btn-group {
-    align-self: center;       /* центрируем ряд кнопок */
-    white-space: nowrap;      /* кнопки в одну линию */
+    align-self: center;      
+    white-space: nowrap;    
   }
 }

@@ -7,7 +7,7 @@
 
 .rep-chart {
   position: relative;
-  height: 110px; /* общая высота области */
+  height: 110px; 
   user-select: none;
 }
 
@@ -27,20 +27,20 @@
 .rep-chart__baseline {
      display: grid;
   grid-auto-flow: column;
-  grid-gap: 1%;              /* расстояние между колонками */
+  grid-gap: 1%;              
   align-items: end;
   height: 100px;
  
 }
 
 .rep-bar {
-  width: 100%;                 /* ← сделаем шире (по умолчанию у тебя было 3-4px) */
-  border-radius: 0;           /* ← убираем скругления */
-  background-color: #28a745;  /* базовый зелёный */
+  width: 100%;                
+  border-radius: 0;           
+  background-color: #28a745; 
 }
 
-.rep-bar.pos { background: #198754; }   /* bootstrap green */
-.rep-bar.neg { background: #dc3545; }   /* bootstrap red */
+.rep-bar.pos { background: #198754; }   
+.rep-bar.neg { background: #dc3545; }   
 .rep-bar.zero { background: rgba(0,0,0,0.08); height: 6px !important; }
 
 .rep-bar:hover,
@@ -49,7 +49,7 @@
 }
 
 .rep-tooltip {
-  position: fixed; /* чтобы позиционировалось над контейнером/экраном */
+  position: fixed; 
   transform: translate(-50%, calc(-100% - 10px));
   background: rgba(0,0,0,0.85);
   color: #fff;

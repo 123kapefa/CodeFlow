@@ -282,11 +282,11 @@ export default function QuestionPage() {
 
   // КОММЕНТЫ
   const postComment = async ({ type, targetId, content }) => {
-    // СФОРМИРУЕМ PAYLOAD В ТОЧНОМ ФОРМАТЕ СЕРВЕРА (PascalCase):
+   
     const payload = {
       AuthorId: user.id ?? user.userId,
       Content: content,
-      Type: type, // "Question" | "Answer" (точно как на сервере)
+      Type: type, // "Question" | "Answer" 
       TargetId: targetId, // GUID вопроса или ответа
     };
 
@@ -351,12 +351,11 @@ export default function QuestionPage() {
     try {
       const json = JSON.parse(text);
       if (json?.detail) {
-        // убираем "Next error(s) occurred:" если есть
+        
         let detail = json.detail
           .replace(/^Next error\(s\) occurred:/i, "")
           .trim();
-
-        // detail может быть: "* Сообщение1\n* Сообщение2"
+        
         return detail
           .split("\n")
           .map((l) => l.trim())
@@ -376,10 +375,9 @@ export default function QuestionPage() {
   const handleVoteResponse = async (res, { rollback } = {}) => {
     if (res.ok) return true;
 
-    // читаем тело ОДИН раз
+   
     const bodyText = await res.text();
-
-    // откатываем оптимистичное изменение (перезагрузка вопроса — простой и надёжный способ)
+   
     if (rollback) await rollback();
 
     if (res.status === 401) {
@@ -389,7 +387,7 @@ export default function QuestionPage() {
     }
 
     if (res.status === 409 || res.status === 429) {
-      const msg = extractProblemMessage(bodyText); // ← тут вытащится "Слишком много попыток. Попробуйте позже."
+      const msg = extractProblemMessage(bodyText); 
       const retryAfter = res.headers.get("Retry-After");
       if (retryAfter) {
         const sec = parseInt(retryAfter, 10);
@@ -525,10 +523,7 @@ export default function QuestionPage() {
       setAcceptingA((m) => ({ ...m, [answerId]: true }));    
 
       const oldAnsweredUserId = data.answers.find(a => a.isAccepted === true)?.userId ?? null;
-      const userAnswerId = data.answers.find(a => a.id === answerId)?.userId ?? null;
-
-      console.log("oldAnsweredUserId  ->",oldAnsweredUserId)
-      console.log("answerId  ->",answerId)
+      const userAnswerId = data.answers.find(a => a.id === answerId)?.userId ?? null;    
 
       const res = await fetchAuth(
         `${API_BASE}/questions/${question.id}/answer-accept`,

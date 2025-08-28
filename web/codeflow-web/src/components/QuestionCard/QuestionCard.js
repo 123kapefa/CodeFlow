@@ -18,7 +18,7 @@ function AnswersPill({ answers, isClosed }) {
 }
 
 function formatAsked(q) {
-  const iso = q.createdAt ?? q.askedAt; // поддержим оба
+  const iso = q.createdAt ?? q.askedAt; 
   if (iso) {
     try {
       // dd/MM/yyyy

@@ -267,8 +267,7 @@ function TagCard({
                   const raw = e.target.value.toLowerCase(); // сразу переводим в lower
                   if (raw === "" || tagRegex.test(raw)) {
                     setEditName(raw);
-                  }
-                  // если не проходит regex — просто не обновляем state
+                  }                  
                 }}
                 placeholder="Tag name"
               />

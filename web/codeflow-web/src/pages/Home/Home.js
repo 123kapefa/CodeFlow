@@ -29,7 +29,6 @@ function timeAgo(iso) {
 export default function Home() {
   const navigate = useNavigate();
 
-  /* 1. Хуки всегда идут первыми */
   const { user, loading } = useAuth();
   const fetchAuth = useAuthFetch();
 
@@ -112,7 +111,7 @@ export default function Home() {
           return {
             id: q.id,
             title: q.title,
-            content: q.content, // у тебя уже есть обрезка в QuestionCard
+            content: q.content,
             votes: (q.upvotes ?? 0) - (q.downvotes ?? 0),
             answers: q.answersCount ?? 0,
             views: q.viewsCount ?? 0,

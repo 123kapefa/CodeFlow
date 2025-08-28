@@ -28,17 +28,15 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Clear previous error
+    
     setError("");
-
-    // Optional: trim whitespace from password
+   
     const pwd = password.trim();
 
     const validationError = validatePassword(pwd);
     if (validationError) {
       setError(validationError);
-      return; // stop submit if invalid
+      return; 
     }
 
     try {
@@ -51,14 +49,13 @@ function Signup() {
 
       if (!response.ok) {
         const err = await response.json();
-        console.log(err);
-        console.log(response);
+   
         throw new Error(err.detail || "Ошибка регистрации");
       }
 
       // Если всё ок — переходим на главную
       toast.success("Регистрация успешна.", {
-        onClose: () => navigate("/login"), // дождаться анимации
+        onClose: () => navigate("/login"), 
         autoClose: 1000,
       });
     } catch (err) {
@@ -133,7 +130,7 @@ function Signup() {
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
-                    if (error) setError(""); // clear message while typing
+                    if (error) setError(""); 
                   }}
                   placeholder="6+ characters (at least 1 letter & 1 number)"
                   required

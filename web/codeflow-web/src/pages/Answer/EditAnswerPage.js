@@ -46,10 +46,9 @@ export default function EditAnswerPage() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const authFetch = useAuthFetch();
-
-  // можно притащить контент из navigate(..., { state: { content, questionId } })
+  
   const initialContentFromState = location.state?.content || "";
-  const questionId = location.state?.questionId; // пригодится для возврата
+  const questionId = location.state?.questionId; 
 
   const [content, setContent] = useState(initialContentFromState);
   const [saving, setSaving] = useState(false);
@@ -83,7 +82,7 @@ export default function EditAnswerPage() {
             }
           );
           if (!r.ok) throw new Error();
-          const ans = await r.json(); // ожидаем { userId, content, ... }
+          const ans = await r.json(); 
           if (ans.userId !== user.userId) {
             toast.error("Вы не можете редактировать этот ответ.", { toastId: "not-author" });
             navigate(-1);

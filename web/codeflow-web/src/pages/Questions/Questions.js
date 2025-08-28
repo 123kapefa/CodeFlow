@@ -24,7 +24,7 @@ import { API_BASE } from "../../config";
 
 function Questions() {
   /* ───────── URL-параметры ───────── */
-  const { tagId } = useParams(); // undefined или id тега
+  const { tagId } = useParams(); 
   const location = useLocation();
   const initialTagName = location.state?.tagName ?? null;
   const [qs, setQs] = useSearchParams();
@@ -134,10 +134,10 @@ function Questions() {
     return () => {
       isCancelled = true;
     };
-    // не добавляем currentTag сюда, чтобы не было лишних перезапросов
-  }, [page, orderBy, sortDir, tagId]); // eslint-disable-line react-hooks/exhaustive-deps
+    
+  }, [page, orderBy, sortDir, tagId]); 
 
-  // Хелперы для обновления query-строки (не мутируем исходный qs)
+ 
   const setPageQuery = (p) => {
     const next = new URLSearchParams(qs);
     next.set("page", String(p));

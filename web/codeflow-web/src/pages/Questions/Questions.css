@@ -1,4 +1,4 @@
-/* Заголовок со строкой тега может быть очень длинным — разрешаем перенос */
+/* Заголовок со строкой тега */
 .questions-page h2 { 
   word-break: break-word; 
   overflow-wrap: anywhere;
@@ -7,7 +7,7 @@
 /* Контейнер страницы */
 .questions-page { padding-left: 12px; padding-right: 12px; }
 
-/* Панель сортировки и пагинация — разрешаем перенос и компактные отступы */
+/* Панель сортировки и пагинация */
 .btn-group { flex-wrap: wrap; }
 .pagination { flex-wrap: wrap; }
 

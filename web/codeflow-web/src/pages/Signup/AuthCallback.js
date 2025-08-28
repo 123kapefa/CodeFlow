@@ -34,7 +34,7 @@ export default function AuthCallback() {
         Cookies.set("jwt", jwt, {
           path: "/",
           sameSite: "Lax",
-          // secure: true // включить в проде на https
+          // secure: true 
         });
 
         navigate(returnUrl, { replace: true });

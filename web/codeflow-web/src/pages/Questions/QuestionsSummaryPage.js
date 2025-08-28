@@ -7,14 +7,14 @@ import { API_BASE } from "../../config";
 
 
 export default function QuestionsSummaryPage({ userId }) {
-  const authFetch = useAuthFetch();      // добавит Bearer + рефреш при 401
+  const authFetch = useAuthFetch();      
   const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState([]);
   const [pageInfo, setPageInfo] = useState(null);
   const [tagsMap, setTagsMap] = useState({});
 
   // сортировка и пагинация
-  const [orderBy, setOrderBy] = useState("CreatedAt");     // CreatedAt | AnswersCount | Views | Score (если поддерживается)
+  const [orderBy, setOrderBy] = useState("CreatedAt");     
   const [sortDir, setSortDir] = useState("Descending");    // "Descending" | "Ascending"
   const [page, setPage] = useState(1);
   const pageSize = 30;
@@ -33,7 +33,7 @@ export default function QuestionsSummaryPage({ userId }) {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const json = await res.json();
-      // ожидаем { questionsList: { pagedInfo, value }, tagsList: [...] }
+     
       const list = json?.questionsList ?? {};
       setQuestions(list?.value ?? []);
       setPageInfo(list?.pagedInfo ?? null);

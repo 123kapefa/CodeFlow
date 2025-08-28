@@ -43,8 +43,7 @@ export default function EmailChangeConfirm() {
       if (!newEmail || !token) {
         throw new Error("Missing email or token.");
       }
-
-      // отправляем именно JSON в тело (не в сегмент пути)
+     
       const resp = await fetchAuth(`${API_BASE}/auth/email-change-confirm/${user.userId}`, {
         method: "POST",
         headers: {
@@ -52,7 +51,7 @@ export default function EmailChangeConfirm() {
           Accept: "application/json",
         },
         body: JSON.stringify({ newEmail, token }),
-        credentials: "include", // не обязательно, но безвредно
+        credentials: "include", 
       });
 
       if (!resp.ok) {

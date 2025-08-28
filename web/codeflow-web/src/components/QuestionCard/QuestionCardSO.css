@@ -18,11 +18,11 @@
   display: flex;
   align-items: center;
   gap: .75rem;
-  flex-wrap: wrap;            /* чтобы красиво переносилось на узких экранах */
+  flex-wrap: wrap;            
   min-width: 0;
 }
 .qso-metric strong { margin-right: .25rem; }
-.qso-views { color: #b94a48; } /* красный для views */
+.qso-views { color: #b94a48; } 
 
 .qso-badge-ans { padding: .35rem .5rem; font-weight: 600; }
 
@@ -30,7 +30,7 @@
 .qso-main {
   grid-column: 1;
   grid-row: 2;
-  min-width: 0;               /* чтобы длинные заголовки обрезались */
+  min-width: 0;              
 }
 .qso-title {
   display: inline-block;
@@ -46,9 +46,9 @@
 /* справа внизу — дата */
 .qso-right {
   grid-column: 2;
-  grid-row: 2;        /* нижняя строка */
-  align-self: end;    /* прижать к низу ячейки */
-  justify-self: end;  /* прижать к правому краю */
+  grid-row: 2;       
+  align-self: end;    
+  justify-self: end;  
   white-space: nowrap;
 }
 
@@ -56,7 +56,7 @@
 @media (max-width: 576px) {
   .qso-item {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto; /* метрики, контент, дата */
+    grid-template-rows: auto auto auto; 
   }
   .qso-right {
     grid-column: 1;
