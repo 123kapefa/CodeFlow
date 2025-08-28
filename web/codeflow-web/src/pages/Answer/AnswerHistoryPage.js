@@ -26,17 +26,17 @@ export default function AnswerHistoryPage() {
   const [loading, setLoading] = useState(true);
 
   // Guard: только авторизованные
-  useEffect(() => {
-    if (!authLoading && !user) {
-      navigate("/login", {
-        replace: true,
-        state: { returnUrl: location.pathname }, 
-      });
-    }
-  }, [authLoading, user, navigate, location.pathname]);
+  // useEffect(() => {
+  //   if (!authLoading && !user) {
+  //     navigate("/login", {
+  //       replace: true,
+  //       state: { returnUrl: location.pathname }, // вернемся после логина
+  //     });
+  //   }
+  // }, [authLoading, user, navigate, location.pathname]);
 
   useEffect(() => {
-    if (authLoading || !user) return;
+    // if (authLoading || !user) return;
 
     const ac = new AbortController();
 

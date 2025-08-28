@@ -57,14 +57,6 @@ public class AggregationController : ControllerBase {
         if(!Guid.TryParse(request.QuestionId, out var qid))
             return BadRequest("Invalid questionId");
 
-        Console.WriteLine("**");
-        Console.WriteLine("**");
-        Console.WriteLine($"User.Identity?.IsAuthenticated => {User.Identity?.IsAuthenticated}");
-        Console.WriteLine($"sub={User?.FindFirst("sub")?.Value}");
-        Console.WriteLine("**");
-        Console.WriteLine("**");
-
-
         var questionTask = _questions.GetAsync(qid, ct);
         var answersTask = _answers.GetByQuestionAsync(qid, ct);
         var questionCommentsTask = _comments.GetQuestionCommentsAsync(qid, ct);
