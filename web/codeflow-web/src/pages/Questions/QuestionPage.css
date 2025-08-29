@@ -1,0 +1,309 @@
+/* Контейнер страницы */
+.question-page {
+  max-width: 980px;
+}
+
+/* Заголовок и мета */
+.qp-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: .25rem;
+}
+.qp-meta {
+  color: #6a737c;
+  font-size: .9rem;
+}
+
+/* Универсальный блок поста (вопрос/ответ) */
+.post {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid #e3e6e8;
+}
+.post:first-of-type {
+   border-top: 1px solid #e3e6e8; /*верхняя линия у вопроса */
+}
+
+.vote-col {
+  width: 64px;
+  text-align: center;
+  flex: 0 0 64px;
+  user-select: none;
+}
+.vote-btn {
+  display: block;
+  width: 100%;
+  font-weight: 700;
+}
+.vote-score {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 4px 0;
+}
+.post-body {
+  flex: 1 1 auto;
+}
+.post-content {
+  font-size: 1rem;
+  color: #232629;
+}
+.post-content p {
+  margin-bottom: 1rem;
+}
+.post-content pre {
+  padding: 12px;
+  border: 1px solid #e3e6e8;
+  border-radius: 4px;
+  overflow: auto;
+}
+
+/* Теги */
+.post-tags {
+  margin-top: 12px;
+}
+.tag-badge {
+  border: 1px solid #e3e6e8 !important;
+  margin-right: 8px;
+  margin-bottom: 6px;
+  background: #e1ecf4 !important;
+  color: #39739d !important;
+}
+
+/* Заголовки секций */
+.answers-title,
+.your-answer-title {
+  margin-top: 24px;
+  margin-bottom: 12px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  /* border-top: 1px solid #e3e6e8; */
+}
+
+/* ReactQuill чуть плотнее к стилю SO */
+.ql-container {
+  height: auto !important;
+  min-height: 200px;
+}
+.ql-editor {
+  min-height: 160px;
+  overflow-y: visible !important;
+}
+
+
+/* Ряд под постом (и вопрос, и ответ) */
+.post-footer {
+  display: flex;
+  justify-content: space-between;  /* Edit слева, автор справа */
+  align-items: flex-start;
+  margin: 8px 0 16px;
+  padding-top: 8px; 
+  padding-bottom: 25px;
+   border-bottom: 1px solid #e3e6e8;
+}
+
+/* Левая часть (Edit и т.п.) */
+.post-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Ссылка Edit */
+.edit-link {
+    margin-left: 4vw;
+  color: #6a737c;
+  font-size: 0.85rem;
+}
+.edit-link:hover {
+  color: #0a95ff;
+  text-decoration: underline;
+}
+
+/* Правая карточка автора — одинаковый размер для вопроса и ответа */
+.post-author {
+  background-color: #f1f8ff;      /* светло-голубой как у SO */
+  border-radius: 3px;
+  padding: 6px 8px;
+  width: 260px;                    /* фиксированная ширина */
+  min-height: 70px;                /* одинаковая высота при пустых данных */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Содержимое карточки автора */
+.author-card {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;                 /* чтобы имя переносилось, но блок не рос */
+}
+
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 3px;
+  object-fit: cover;
+  background: #fff;
+}
+
+.author-name {
+  font-size: 0.9rem;
+  color: #0074cc;
+  text-decoration: none;
+}
+.author-name:hover {
+  text-decoration: underline;
+}
+
+.author-rep {
+  font-size: 0.85rem;
+  color: #6a737c;
+}
+
+/* заглушка-аватар */
+.author-avatar-fallback{
+  width:32px;height:32px;border-radius:3px;background:#6a737c;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;
+}
+
+
+/* .comment-block{
+   border-bottom: 1px solid #e3e6e8;
+} */
+
+.history-btn { color: #6c757d; }
+.history-btn:hover { color: #0a58ca; text-decoration: none; }
+.vote-col .history-btn svg { vertical-align: -2px; }
+
+
+
+/* Общий контейнер страницы создания/редактирования */
+.ask-page .card { border-radius: 8px; }
+
+/* ReactQuill: делаем тулбар прокручиваемым по горизонтали на узких */
+.ql-toolbar.ql-snow {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.ql-container {
+  height: auto !important;
+  min-height: 200px;   /* комфортная высота */
+}
+.ql-editor { min-height: 160px; }
+
+/* Список подсказок тегов привязываем к группе ввода */
+.tag-suggestions {
+  position: absolute;
+  z-index: 1000;
+  left: 0;
+  right: 0;            /* ширина = ширина Form.Group */
+  max-height: 240px;
+  overflow-y: auto;
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+}
+
+/* Контент Quill и вложенные элементы: защита от переполнения */
+.ql-editor img,
+.ql-editor video,
+.ql-editor table { max-width: 100%; height: auto; }
+.ql-editor table { display: block; overflow-x: auto; }
+.ql-editor pre { white-space: pre-wrap; overflow: auto; }
+
+/* Брейкпоинты */
+@media (max-width: 768px) {
+  .ask-page { padding-left: 12px; padding-right: 12px; }
+}
+@media (max-width: 576px) {
+  .tag-suggestions { max-height: 200px; }
+}
+
+
+
+/* Разрешаем сжатие flex‑контента справа  */
+.post-body { min-width: 0; }     /* критично для flex-детей */
+.post { overflow: hidden; }      /* страховка от субпиксельных выпадений */
+
+/* --- 2) Контент внутри вопроса/ответа — адаптивные медиа и переносы --- */
+.post-content img,
+.post-content video,
+.post-content table {
+  max-width: 100%;
+  height: auto;
+}
+.post-content table {
+  display: block;
+  overflow-x: auto;
+}
+.post-content pre,
+.post-content code {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: auto;
+}
+.post-content p, .post-content li, .post-content a {
+  overflow-wrap: anywhere;      /* перенос длинных слов/URL */
+}
+
+/* --- 3) Шапка страницы: перенос и ужимание заголовка --- */
+.question-page header .d-flex {
+  flex-wrap: wrap;              /* разрешаем перенос кнопки/заголовка */
+  row-gap: 8px;
+}
+.qp-title {
+  min-width: 0;                 /* чтобы длинный заголовок не распирал строку */
+  overflow: hidden;
+  text-overflow: ellipsis;      /* на очень узких экранах уместит заголовок */
+}
+
+/* --- 4) Мобильные правила для поста: стек, компактное голосование, автор во всю ширину --- */
+@media (max-width: 768px) {
+  .post {
+    flex-direction: column;     /* голосование наверху, контент ниже */
+    align-items: stretch;
+    gap: 12px;
+  }
+  .vote-col {
+    flex: 0 0 auto;
+    width: auto;                /* убрать фиксированные 64px */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left;           /* визуально аккуратнее в строку */
+  }
+  .vote-btn { width: auto; }    /* кнопки голосования уже не растягивать на всю ширину */
+  .vote-score { margin: 0 4px; }
+
+  /* Низ поста — в колонку; карточка автора на 100% ширины */
+  .post-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .post-author {
+    width: 100%;
+  }
+}
+
+/* --- 5) Чуть компактнее на совсем узких, на всякий случай --- */
+@media (max-width: 576px) {
+  .post { gap: 10px; }
+  .post-tags { margin-top: 8px; }
+}
+
+/* --- 6) Теги не должны распирать ширину --- */
+.tag-badge {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- 7) Комментарии: перенос длинных строк --- */
+.comment-block, .comment-block * {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}

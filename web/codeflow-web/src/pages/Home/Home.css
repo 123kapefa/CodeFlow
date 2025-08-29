@@ -1,0 +1,122 @@
+/* Контейнер страницы Home */
+.home-page {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+/* QuestionCard: мобильная раскладка */
+@media (max-width: 576px) {
+  /* находим тот самый .d-flex внутри карточки */
+  .home-page .card .card-body > .d-flex {
+    flex-direction: column;
+    gap: 8px;
+  }
+  /* левая колонка с метриками — превращаем в компактный ряд */
+  .home-page .card .card-body > .d-flex > .text-center.me-5 {
+    width: 100% !important; /* перебиваем inline width: 90px */
+    margin-right: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    order: 1;
+  }
+  /* правая колонка контента — ниже метрик */
+  .home-page .card .card-body > .d-flex > .flex-grow-1 {
+    order: 2;
+    min-width: 0;
+  }
+  /* обрезка превью контента, чтобы не распухало по высоте */
+  .home-page .card .text-muted.small.mb-2 {
+    max-height: 3.5em; /* ~2 строки */
+    overflow: hidden;
+  }
+}
+
+/* Теги и бейджи не должны растягивать ширину */
+.home-page .tag-badge {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 576px) {
+  .question-list-card .qc-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .question-list-card .qc-metrics {
+    width: 100% !important;
+    margin-right: 0 !important;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+}
+
+/* 1) Разрешаем сжатие flex-контента справа в карточке */
+.question-list-card .qc-row {
+  min-width: 0;
+}
+.question-list-card .qc-row > .flex-grow-1 {
+  min-width: 0;
+}
+
+/* 2) Перенос длинных заголовков и контента превью */
+.question-list-card .card-title,
+.question-list-card .card-title a {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.question-list-card .text-muted.small.mb-2,
+.question-list-card .text-muted.small.mb-2 * {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* 3) Медиа в превью не должны шире контейнера */
+.question-list-card .text-muted.small.mb-2 img,
+.question-list-card .text-muted.small.mb-2 video,
+.question-list-card .text-muted.small.mb-2 table {
+  max-width: 100%;
+  height: auto;
+}
+.question-list-card .text-muted.small.mb-2 table {
+  display: block;
+  overflow-x: auto;
+}
+.question-list-card .text-muted.small.mb-2 pre,
+.question-list-card .text-muted.small.mb-2 code {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: auto;
+}
+
+/* 4) Нижняя строка (аватар, имя, время) — разрешаем перенос и ужимание */
+.question-list-card .d-flex.justify-content-end.align-items-center {
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
+.question-list-card .d-flex.justify-content-end.align-items-center > * {
+  min-width: 0;
+}
+
+@media (max-width: 576px) {
+  .question-list-card .qc-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .question-list-card .qc-metrics {
+    width: 100% !important;
+    margin-right: 0 !important;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+}
+
+.home-page {
+  overflow-x: hidden;
+}

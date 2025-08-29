@@ -1,0 +1,368 @@
+services:
+  # ────────── инфраструктура ──────────
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    hostname: rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    # В ПРОДЕ порты НЕ публикуем! (UI можно открыть временно по нужде)
+    networks: [ clonenet ]
+
+  redis:
+    image: redis:7.2
+    container_name: redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks: [ clonenet ]
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # RedisInsight лучше не публиковать наружу в проде. Оставляю без ports.
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: redisinsight
+    restart: unless-stopped
+    networks: [ clonenet ]
+    depends_on: [ redis ]
+
+  # ────────── Nginx (SPA + reverse proxy) ──────────
+  nginx:
+    build:
+      context: ./web/codeflow-web
+      dockerfile: Dockerfile.nginx  # multi-stage build CRA -> nginx
+    container_name: nginx
+    restart: unless-stopped
+    depends_on: [ apigateway ]
+    ports:
+      - "80:80"
+      - "443:443"            # включим после выпуска сертификата
+    volumes:
+      - ./web/codeflow-web/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - letsencrypt:/etc/letsencrypt
+      - certbot-www:/var/www/certbot
+    networks: [ clonenet ]
+
+  # ────────── Certbot (Let's Encrypt) ──────────
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    restart: unless-stopped
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - certbot-www:/var/www/certbot
+    networks: [ clonenet ]
+
+  # ────────── ApiGateway ──────────
+  apigateway:
+    build:
+      context: .
+      dockerfile: services/ApiGateway/docker/Dockerfile
+      args:
+        PROJECT_NAME: ApiGateway
+        DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env.production
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      Services__Auth: http://authservice:5000
+      Services__User: http://userservice:5000
+      Services__Question: http://questionservice:5000
+      Services__Answer: http://answerservice:5000
+      Services__Comment: http://commentservice:5000
+      Services__Tag: http://tagservice:5000
+      Services__Reputation: http://reputationservice:5000
+      Services__Vote: http://voteservice:5000
+    depends_on:
+      - authservice
+      - userservice
+      - questionservice
+      - answerservice
+      - commentservice
+      - tagservice
+      - reputationservice
+      - voteservice
+    expose:
+      - "5000"                 # доступен ТОЛЬКО внутри сети
+    restart: unless-stopped
+    networks: [ clonenet ]
+
+  # ────────── AuthService + БД ──────────
+  postgres-auth:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: authdb
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  authservice:
+    build:
+      context: .
+      dockerfile: services/AuthService/docker/Dockerfile
+      args:
+        PROJECT_NAME: AuthService
+        DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env.production
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      Rabbit__Host: rabbitmq
+      Rabbit__User: guest
+      Rabbit__Pass: guest
+    depends_on: [ rabbitmq, postgres-auth ]
+    restart: unless-stopped
+    networks: [ clonenet ]
+
+  # ────────── UserService + БД ──────────
+  user-db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: userdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  userservice:
+    build:
+      context: .
+      dockerfile: services/UserService/docker/Dockerfile
+      args:
+        PROJECT_NAME: UserService
+        DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env.production
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__UserServiceDbContext: 'Host=user-db;Port=5432;Database=userdb;Username=user;Password=secret'
+      Rabbit__Host: rabbitmq
+      Rabbit__User: guest
+      Rabbit__Pass: guest
+    depends_on: [ rabbitmq, user-db ]
+    restart: unless-stopped
+    networks: [ clonenet ]
+
+  # ────────── QuestionService + БД ──────────
+  question-db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: questiondb
+      POSTGRES_USER: question
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - question-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  questionservice:
+    build:
+      context: .
+      dockerfile: services/QuestionService/docker/Dockerfile
+      args:
+        PROJECT_NAME: QuestionService
+        DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env.production
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__QuestionServiceDbContext: 'Host=question-db;Port=5432;Database=questiondb;Username=question;Password=secret'
+      Rabbit__Host: rabbitmq
+      Rabbit__User: guest
+      Rabbit__Pass: guest
+      ConnectionStrings__Redis: 'redis:6379,abortConnect=false,connectRetry=3,connectTimeout=5000'
+    depends_on: [ rabbitmq, question-db, redis ]
+    restart: unless-stopped
+    networks: [ clonenet ]
+
+  # ────────── AnswerService + БД ──────────
+  answer-db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: answerdb
+      POSTGRES_USER: answer
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - answer-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  answerservice:
+    build:
+      context: .
+      dockerfile: services/AnswerService/docker/Dockerfile
+      args:
+        PROJECT_NAME: AnswerService
+        DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env.production
+
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__AnswerServiceDbContext: 'Host=answer-db;Port=5432;Database=answerdb;Username=answer;Password=secret'
+      Rabbit__Host: rabbitmq
+      Rabbit__User: guest
+      Rabbit__Pass: guest
+    depends_on: [ rabbitmq, answer-db ]
+    restart: unless-stopped
+    networks: [ clonenet ]
+
+  # ────────── CommentService + БД ──────────
+  comment-db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: commentdb
+      POSTGRES_USER: comment
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - comment-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  commentservice:
+    build:
+      context: .
+      dockerfile: services/CommentService/docker/Dockerfile
+      args:
+        PROJECT_NAME: CommentService
+        DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env.production
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__CommentServiceDbContext: 'Host=comment-db;Port=5432;Database=commentdb;Username=comment;Password=secret'
+      Rabbit__Host: rabbitmq
+      Rabbit__User: guest
+      Rabbit__Pass: guest
+    depends_on: [ rabbitmq, comment-db ]
+    restart: unless-stopped
+    networks: [ clonenet ]
+
+  # ────────── TagService + БД ──────────
+  tag-db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tagdb
+      POSTGRES_USER: tag
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - tag-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  tagservice:
+    build:
+      context: .
+      dockerfile: services/TagService/docker/Dockerfile
+      args:
+        PROJECT_NAME: TagService
+        DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env.production
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__TagServiceDbContext: 'Host=tag-db;Port=5432;Database=tagdb;Username=tag;Password=secret'
+      Rabbit__Host: rabbitmq
+      Rabbit__User: guest
+      Rabbit__Pass: guest
+    depends_on: [ rabbitmq, tag-db ]
+    restart: unless-stopped
+    networks: [ clonenet ]
+    
+  # ────────── ReputationService + БД ──────────
+  reputation-db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: reputationdb
+      POSTGRES_USER: reputation
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - reputation-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  reputationservice:
+    build:
+      context: .
+      dockerfile: services/ReputationService/docker/Dockerfile
+      args:
+        PROJECT_NAME: ReputationService
+        DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env.production
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__ReputationServiceDbContext: 'Host=reputation-db;Port=5432;Database=reputationdb;Username=reputation;Password=secret'
+      Rabbit__Host: rabbitmq
+      Rabbit__User: guest
+      Rabbit__Pass: guest
+    depends_on:
+      - rabbitmq
+      - reputation-db
+    restart: unless-stopped
+    networks: [ clonenet ]
+    
+  # ────────── VoteService + БД ──────────
+  vote-db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: votedb
+      POSTGRES_USER: vote
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - vote-db-data:/var/lib/postgresql/data
+    networks: [ clonenet ]
+
+  voteservice:
+    build:
+      context: .
+      dockerfile: services/VoteService/docker/Dockerfile
+      args:
+        PROJECT_NAME: VoteService
+        DOTNET_VERSION: 9.0-preview
+    env_file:
+      - .env.production
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__VoteServiceDbContext: 'Host=vote-db;Port=5432;Database=votedb;Username=vote;Password=secret'
+      Rabbit__Host: rabbitmq
+      Rabbit__User: guest
+      Rabbit__Pass: guest
+    depends_on:
+      - rabbitmq
+      - vote-db
+    restart: unless-stopped
+    networks: [ clonenet ]
+
+# ────────── тома для персистентных БД ──────────
+volumes:
+  auth-db-data:
+  user-db-data:
+  question-db-data:
+  answer-db-data:
+  comment-db-data:
+  tag-db-data:
+  reputation-db-data:
+  vote-db-data:
+
+# ────────── общая bridge-сеть ──────────
+  redis-data:
+  letsencrypt:
+  certbot-www:
+
+# ────────── сеть ──────────
+networks:
+  clonenet:
+    driver: bridge

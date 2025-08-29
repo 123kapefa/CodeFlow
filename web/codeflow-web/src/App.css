@@ -1,0 +1,236 @@
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* Главный контейнер приложения — колонка на всю высоту */
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* ─────────── Sidebar + Content ─────────── */
+.main {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 16px;           /* если используете отступ между колонками */
+  flex: 1;
+  min-height: 0;
+}
+
+/* Контент должен уметь сжиматься в любых строках/flex внутри */
+.main .content { min-width: 0; }
+
+.sidebar {
+  border-right: 1px solid #e4e4e4;
+  padding: 1rem 0.5rem;
+  background: #fff;
+}
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar li {
+  margin-bottom: 0.5rem;
+}
+.sidebar a {
+  text-decoration: none;
+  color: #222;
+  display: block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+.sidebar a:hover {
+  background: #f1f1f1;
+}
+.sidebar .label {
+  background: #e4f0ff;
+  color: #0a66ff;
+  font-size: 0.75rem;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+/* базовый стиль ссылок в сайдбаре */
+.sidebar .nav-link {
+  color: #495057;
+  border-radius: 8px;
+  transition: background .15s ease, color .15s ease;
+}
+.sidebar .nav-link:hover {
+  text-decoration: none;
+  background: #f8f9fa;
+}
+
+/* активная ссылка */
+.sidebar .nav-link.active {
+  background: #e7eaf3;          /* мягкий фон */
+  color:black;               /* цвет как у primary */
+  font-weight: 600;
+  border-right: 3px solid gray;
+}
+
+/* ─────────── Dynamic content zone ─────────── */
+.content {
+  padding: 1rem 2rem;
+  border: 1px solid gray;
+  border-radius: 5px;
+  color: black;
+  min-height: 0;
+}
+
+/* ─────────── Footer ─────────── */
+.footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  background: #232629;
+  color: #bbc0c4;
+  font-size: 0.9rem;
+}
+
+.footer-body {
+  background: #232629;
+}
+.footer h4 {
+  color: #fff;
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+.footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.footer a {
+  color: #bbc0c4;
+  text-decoration: none;
+}
+.footer a:hover {
+  color: white;
+}
+
+/* reach_editor */
+.ql-container {
+  height: auto !important;
+  min-height: 200px !important;
+}
+
+.ql-editor {
+  min-height: 160px;
+  overflow-y: visible !important;
+}
+
+.no-left-padding {
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* answers pill — как на StackOverflow */
+.answers-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  line-height: 1;
+  font-size: 0.875rem; /* ~14px */
+  white-space: nowrap;
+}
+
+.answers-pill.accepted {
+  background: #2f6f44; /* зелёный SO */
+  color: #fff;
+}
+
+.answers-pill.outlined {
+  border: 1px solid #2f6f44;
+  color: #2f6f44;
+  background: transparent;
+}
+
+.answers-pill.none {
+  border: 1px solid rgba(108, 117, 125, 0.35); /* мягко-серый бордер */
+  color: #6c757d;
+}
+
+/* чек слева, компактный */
+.answers-pill svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+}
+
+
+.form-check.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem; /* расстояние между чекбоксом и текстом */
+}
+
+
+.btn-group { flex-wrap: wrap; }
+.pagination { flex-wrap: wrap; }
+
+.question-card { min-width: 0; }
+.question-card pre,
+.question-card code { white-space: pre-wrap; word-break: break-word; }
+.question-card img { max-width: 100%; height: auto; }
+
+
+/* ─────────── Mobile sidebar drawer ─────────── */
+@media (max-width: 992px) {
+  .main {
+    display: block;
+    grid-template-columns: 1fr; /* убираем колонку сайдбара */
+  }
+  .sidebar {
+    display: none; /* по умолчанию скрыт на мобилках */
+  }
+  .sidebar.is-open {
+    display: block;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 280px;
+    max-width: 85%;
+    background: #fff;
+    z-index: 1040; /* выше контента */
+    overflow-y: auto;
+    box-shadow: 0 0 20px rgba(0,0,0,.25);
+    padding: 1rem 0.5rem; /* чтобы было пространство внутри */
+  }
+}
+
+/* затемнение под выезжающим меню */
+.mobile-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  z-index: 1030; /* чуть ниже, чем sidebar */
+}
+
+
+
+/* Прямой ребёнок .App — растягиваем и делаем колонкой */
+.App > .container-xxl {
+  flex: 1 1 auto;      /* пусть заполняет доступную высоту */
+  display: flex;       /* чтобы дети могли использовать flex-рост */
+  flex-direction: column;
+  min-height: 0;       /* предотвращает распирание по высоте */
+}
+
+/* .main уже grid, но теперь он действительно может расти */
+.main {
+  flex: 1 1 auto;      /* занимает всё между Header и Footer */
+  min-height: 0;       /* корректная прокрутка внутри */
+
+}

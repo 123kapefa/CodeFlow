@@ -1,0 +1,19 @@
+/* Заголовок со строкой тега */
+.questions-page h2 { 
+  word-break: break-word; 
+  overflow-wrap: anywhere;
+}
+
+/* Контейнер страницы */
+.questions-page { padding-left: 12px; padding-right: 12px; }
+
+/* Панель сортировки и пагинация */
+.btn-group { flex-wrap: wrap; }
+.pagination { flex-wrap: wrap; }
+
+@media (max-width: 576px) {
+  .questions-page .row.align-items-center.mb-2,
+  .questions-page .row.align-items-center.mb-3 {
+    row-gap: 8px;
+  }
+}
