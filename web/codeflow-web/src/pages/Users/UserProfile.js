@@ -22,6 +22,7 @@ import EditProfileForm from "../../components/UserProfile/ProfileSettings/EditPr
 
 import ReputationPage from "../../components/UserProfile/ReputationPage";
 
+
 import "./UserProfile.css";
 
 import { API_BASE } from "../../config";
@@ -41,6 +42,8 @@ export default function UserProfile() {
   const [settingsTab, setSettings] = useState("edit");
 
   const [repOpen, setRepOpen] = useState(false);
+
+  
 
   const navigate = useNavigate();
 
@@ -165,6 +168,8 @@ export default function UserProfile() {
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState("");
 
+     const { logout } = useAuth(); 
+
     const canDelete = agree && confirmText.trim() === (userName ?? "");
 
     const doDelete = async () => {
@@ -194,6 +199,7 @@ export default function UserProfile() {
           throw new Error(msg);
         }
 
+        await logout();
         onDeleted?.(); // уведомим родителя
       } catch (e) {
         setError(e.message ?? "Failed to delete account");
@@ -294,16 +300,7 @@ export default function UserProfile() {
           <DeleteAccountForm
             ownerId={ownerId}
             userName={profile.userName}
-            onDeleted={async () => {
-              // выходим из аккаунта и уводим на главную
-              try {
-                // локальный логаут — без отправки JWT в заголовках
-                Cookies.remove("jwt", { path: "/" });
-                Cookies.remove("refresh_token", { path: "/" });
-              } finally {
-                navigate("/"); // домой
-              }
-            }}
+            onDeleted={() => navigate("/")}
           />
         );
       case "security":

@@ -63,8 +63,8 @@ public class PasswordChangeHandler : ICommandHandler<PasswordChangeCommand> {
         await _passwordChangeRepository.SaveAsync(user.Id, command.Request.NewPassword, token);
 
     var encodedToken = Uri.EscapeDataString(token);
-    var url = $"http://localhost:3000/password-change-confirm?email={user.Email}&token={encodedToken}";
-    var html = $"<p>Вы запросили смену пароля. Подтвердите:</p><p><a href='{url}'>Подтвердить смену</a></p>";
+        var url = $"{Environment.GetEnvironmentVariable("URI")}/password-change-confirm?email={user.Email}&token={encodedToken}";
+        var html = $"<p>Вы запросили смену пароля. Подтвердите:</p><p><a href='{url}'>Подтвердить смену</a></p>";
 
     await _emailSender.SendEmailAsync(user.Email!, "Подтверждение смены пароля", html);
 
