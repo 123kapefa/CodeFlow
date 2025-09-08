@@ -25,7 +25,7 @@ export default function TagsSummaryPage({ userId }) {
   // управление
   const [page, setPage] = useState(1);
   const pageSize = 30;
-  const [orderBy, setOrderBy] = useState("QuestionsCreated"); // QuestionsCreated | AnswersWritten | Name
+  const [orderBy, setOrderBy] = useState("Name"); // QuestionsCreated | AnswersWritten | Name
   const [sortDir, setSortDir] = useState(0); // 0 = Desc, 1 = Asc
   const [search, setSearch] = useState("");
 
@@ -98,7 +98,7 @@ export default function TagsSummaryPage({ userId }) {
           {(pageInfo?.totalRecords ?? 0).toLocaleString()} Tags
         </div>
 
-        <div className="d-flex align-items-center gap-2">          
+        <div className="d-flex align-items-center gap-2">
           <ButtonGroup>
             <ToggleButton
               id="tags-sort-q"
@@ -144,7 +144,7 @@ export default function TagsSummaryPage({ userId }) {
       </div>
 
       {err && <div className="alert alert-danger py-2">{err}</div>}
-    
+
       <div className="list-group">
         {items.map((t) => {
           const qn = t.questionsCreated ?? 0;
@@ -182,10 +182,21 @@ export default function TagsSummaryPage({ userId }) {
 
               {/* справа — 0 score и динамическая метрика */}
               <small className="text-muted">
-                
-                <span>
-                  {metricCount} {metricLabel}
-                </span>
+                {metricMode === "questions" && qn > 0 && (
+                  <span>
+                    {qn} {qn === 1 ? "question" : "questions"}
+                  </span>
+                )}
+                {metricMode === "answers" && an > 0 && (
+                  <span>
+                    {an} {an === 1 ? "answer" : "answers"}
+                  </span>
+                )}
+                {metricMode === "posts" && (
+                  <span>
+                    {posts} {posts === 1 ? "post" : "posts"}
+                  </span>
+                )}
               </small>
             </div>
           );

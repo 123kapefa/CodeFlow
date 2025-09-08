@@ -63,7 +63,7 @@ public class EmailChangeHandler : ICommandHandler<EmailChangeCommand> {
         var encodedToken = Uri.EscapeDataString(token);
 
       
-    var url = $"http://localhost:3000/email-change-confirm?email={command.Request.NewEmail}&token={encodedToken}";
+    var url = $"{Environment.GetEnvironmentVariable("URI")}/email-change-confirm?email={command.Request.NewEmail}&token={encodedToken}";
 
     var body = $"Чтобы подтвердить новую почту перейдите по ссылке:<br>" +
       $"<a href='{url}' >Подтвердить новую почту</a>";
